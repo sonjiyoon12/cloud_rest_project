@@ -1,0 +1,37 @@
+package com.cloud.cloud_rest.recruit;
+
+import lombok.Getter;
+import lombok.Setter;
+
+import java.time.LocalDate;
+
+
+public class RecruitRequest {
+
+    @Getter
+    @Setter
+    public static class SaveDTO {
+
+        private String title;
+        private String content;
+        private LocalDate deadline;
+        private Long corpId;
+
+        public Recruit toEntity(Corp corp) {
+            return Recruit.builder()
+                    .corp(corp)
+                    .title(title)
+                    .content(content)
+                    .deadline(deadline)
+                    .build();
+        }
+    }
+
+    @Getter
+    @Setter
+    public static class UpdateDTO {
+        private String title;
+        private String content;
+        private LocalDate deadline;
+    }
+}

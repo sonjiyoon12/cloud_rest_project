@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.awt.image.CropImageFilter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -20,24 +21,23 @@ public class Recruit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "recruit_id")
+    private Long recruitId;
 
     private String title;
 
     @Lob
     private String content;
 
-    private LocalDate deadLine;
+    private LocalDate deadline;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
 
     // Corp 엔티티와 다대일 연관관계 설정
-    //@ManyToOne(fetch = FetchType.LAZY)
-    //@JoinColumn(name = "corp_id", nullable = false)
-    //private Corp corp;
-
-    private Long corpId; //todo 연관관계 설정
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "corp_id", nullable = false)
+    private Corp corp;
 
     @OneToMany(mappedBy = "recruit",
             cascade = CascadeType.ALL,
@@ -45,15 +45,22 @@ public class Recruit {
     private List<RecruitSkill> recruitSkills = new ArrayList<>();
 
     @Builder
-    public Recruit(String title, String content, LocalDate deadLine, Long corpId) {
+    public Recruit(String title, String content, LocalDate deadline, Corp corp) {
         this.title = title;
         this.content = content;
-        this.deadLine = deadLine;
-        this.corpId = corpId;
+        this.deadline = deadline;
+        this.corp = corp;
     }
 
     //소유권 확인 메서드
-    //public boolean isOwner(Long corpId) {
-    //return this.corp != null && this.corp.getId().equals(corpId);
-    //}
+    public boolean isOwner(Corp corp) {
+    return this.corp != null && this.corp.getCorpId().equals(corp.getCorpId());
+    }
+
+    //업데이트 메서드
+    public void update(String title, String content, LocalDate deadline) {
+        this.title = title;
+        this.content = content;
+        this.deadline = deadline;
+    }
 }
