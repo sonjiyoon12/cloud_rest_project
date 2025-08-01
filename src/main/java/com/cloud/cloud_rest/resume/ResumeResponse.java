@@ -1,12 +1,13 @@
 package com.cloud.cloud_rest.resume;
 
+import com.cloud.cloud_rest._global.SessionUser;
 import com.cloud.cloud_rest.user.User;
 import lombok.Builder;
 import lombok.Data;
 
 public class ResumeResponse {
 
-    // 이력서 목록 응답
+    // 이력서 전체보기 응답
     @Data
     public static class ListDTO {
         private Long resumeId;
@@ -36,13 +37,13 @@ public class ResumeResponse {
         private String createdAt;
         private boolean isResumeOwner;
 
-        public DetailDTO(Resume resume, User user) {
+        public DetailDTO(Resume resume, SessionUser sessionUser) {
             this.resumeId = resume.getResumeId();
             this.title = resume.getTitle();
             this.content = resume.getContent();
             this.writerName = resume.getUser().getUsername();
             this.createdAt = resume.getCreatedAt().toString();
-            // this.isResumeOwner = sessionUser != null && resume.isOwner(sessionUser.getId());
+             this.isResumeOwner = sessionUser != null && resume.isOwner(sessionUser.getId());
         }
     }
 
