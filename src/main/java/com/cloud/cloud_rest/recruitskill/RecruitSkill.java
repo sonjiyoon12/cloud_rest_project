@@ -12,20 +12,23 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RecruitSkill {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    @EmbeddedId // 복합키 식별자
+    private RecruitSkillId skillId;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("recruitId") // 복합키의 recruitId와 매핑
     @JoinColumn(name = "recruit_id", nullable = false)
     private Recruit recruit;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("skillId") // 복합키의 skillId와 매핑
     @JoinColumn(name = "skill_id", nullable = false)
     private Skill skill;
 
+    // 생성자 -> 연관관계 주입
     public RecruitSkill(Recruit recruit, Skill skill) {
         this.recruit = recruit;
         this.skill = skill;
+        this.skillId = new RecruitSkillId(recruit.getId(), skill.getId()); // 아무튼 필요
     }
 }
