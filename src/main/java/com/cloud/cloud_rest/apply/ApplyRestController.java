@@ -28,14 +28,15 @@ public class ApplyRestController {
     // 전체 공고 지원 내역 조회
     @GetMapping("/applies")
     public ResponseEntity<?> findAll() {
-        return ResponseEntity.ok().body(new ApiUtil<>(""));
+        List<ApplyResponse.DetailDTO> applies = applyService.findAll();
+        return ResponseEntity.ok().body(new ApiUtil<>(applies));
     }
 
     // 특정 공고 지원 내역 조회
     @GetMapping("/applies/{id}")
     public ResponseEntity<?> findById(@PathVariable(name = "applyId") Long applyId) {
         ApplyResponse.DetailDTO apply = applyService.findById(applyId);
-        return ResponseEntity.ok().body(new ApiUtil<>(""));
+        return ResponseEntity.ok().body(new ApiUtil<>(apply));
     }
 
     // 특정 공고 지원 내역 삭제

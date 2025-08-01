@@ -6,7 +6,9 @@ import com.cloud.cloud_rest.resume.Resume;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -19,6 +21,7 @@ public class ApplyService {
     private final RecruitService recruitService;
 
     // 공고 지원
+    @Transactional
     public ApplyResponse.SaveDTO save(Long resumeId, Long recruitId) {
         Resume resume = resumeService.findById(resumeId);
         Recruit recruit = recruitService.findById(recruitId);
@@ -36,7 +39,12 @@ public class ApplyService {
 
     // 전체 공고 지원 내역 조회
     public List<ApplyResponse.DetailDTO> findAll() {
-        return null;
+        List<Apply> applies = applyJpaRepository.findAll();
+        List<ApplyResponse.DetailDTO> detailDTOS = new ArrayList<>();
+
+        return applies.stream()
+                .map(ApplyResponse.DetailDTO::new)
+                .toList();
     }
 
     // 특정 공고 지원 내역 조회
@@ -48,6 +56,11 @@ public class ApplyService {
     }
 
     // 특정 공고 지원 내역 삭제
+    @Transactional
     public void deleteById(Long id) {
+        Apply apply = applyJpaRepository.findById(id)
+                .orElseThrow(() -> new Exception404("게시글을 찾을 수 없습니다."));
+
+        applyJpaRepository.delete(apply);
     }
 }
