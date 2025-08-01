@@ -1,5 +1,6 @@
 package com.cloud.cloud_rest.resume;
 
+import com.cloud.cloud_rest._global.utils.DateUtil;
 import com.cloud.cloud_rest.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -47,8 +48,8 @@ public class Resume {
         return this.user.getUserId().equals(checkUserId);
     }
 
-    public String getTime() {
-        return null;
+    public String getFormatTime() {
+        return DateUtil.timestampFormat(createdAt);
     }
 
     // 수정 기능 추가
