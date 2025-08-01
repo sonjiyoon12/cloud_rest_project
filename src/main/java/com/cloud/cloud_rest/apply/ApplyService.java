@@ -1,6 +1,6 @@
 package com.cloud.cloud_rest.apply;
 
-import com.cloud.cloud_rest.errors.exception.Exception404;
+import com.cloud.cloud_rest._global.exception.Exception404;
 import com.cloud.cloud_rest.recruit.Recruit;
 import com.cloud.cloud_rest.recruit.RecruitRepository;
 import com.cloud.cloud_rest.resume.Resume;
