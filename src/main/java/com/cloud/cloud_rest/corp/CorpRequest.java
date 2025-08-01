@@ -10,15 +10,16 @@ public class CorpRequest {
         private String corpName;
         private String loginId;
         private String password;
+        private String rePassword;
         private String email;
 
-        public Corp toEntity(String corpUploadImage){
+        public Corp toEntity(String encoderPassword){
             return Corp.builder()
                     .corpName(corpName)
                     .loginId(loginId)
-                    .password(password)
+                    .password(encoderPassword)
                     .email(email)
-                    .corpImage(corpUploadImage)
+                    .corpImage("basic.png")
                     .build();
         }
     }
