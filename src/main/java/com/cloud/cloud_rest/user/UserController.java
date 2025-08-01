@@ -19,6 +19,7 @@ public class UserController {
     private final UserService userService;
 
 
+    // 유저 회원가입
     @PostMapping("/")
     public ResponseEntity<?> save(@Valid @RequestBody UserRequest.SaveDTO saveDTO){
         UserResponse.SaveDTO save = userService.save(saveDTO);
@@ -27,6 +28,7 @@ public class UserController {
                 .body(new ApiUtil<>(save));
     }
 
+    // 유저 로그인 API
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody UserRequest.LoginDTO loginDTO){
         String jwtToken = userService.login(loginDTO);
@@ -36,6 +38,7 @@ public class UserController {
 
     }
 
+    // 유저 회원 정보 가져오기
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserInfo(@PathVariable(name = "id")Long id,
                                          @RequestAttribute("sessionUser") SessionUser sessionUser){
