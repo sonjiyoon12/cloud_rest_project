@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "board_tb")
+@Builder
 public class Board {
 
     @Id
@@ -35,13 +36,12 @@ public class Board {
     @Column(name = "views", columnDefinition = "int default 0")
     private Integer views; // 조회수
 
-    @Builder
-    public Board(String title, String content, Long userId, Integer views) {
-        this.title = title;
-        this.content = content;
-        this.userId = userId;
-        this.views = views;
-        this.createdAt = LocalDateTime.now();
+    public void update(BoardRequestDto.UpdateDto updateDTO) {
+        // userId는 게시글 생성시에만 필요 --> 수정시에는 변경하지않음
+        // board.setUserId(this.userId);
+        this.title = updateDTO.getTitle();
+        this.content = updateDTO.getContent();
+
     }
 
 }

@@ -1,6 +1,7 @@
-package com.cloud.cloud_rest.board;
+package com.cloud.cloud_rest.Comment;
 
 
+import com.cloud.cloud_rest.board.Board;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @Table(name = "board_comment_tb")
-public class BoardComment {
+public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,7 +41,7 @@ public class BoardComment {
 
 
     @Builder
-    public BoardComment(Board board, Long userId, String content, Boolean isSecret) {
+    public Comment(Board board, Long userId, String content, Boolean isSecret) {
         this.board = board;
         this.userId = userId;
         this.content = content;
