@@ -1,9 +1,7 @@
 package com.cloud.cloud_rest.board;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -12,6 +10,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "board_tb")
 public class Board {
 
@@ -36,5 +35,13 @@ public class Board {
     @Column(name = "views", columnDefinition = "int default 0")
     private Integer views; // 조회수
 
+    @Builder
+    public Board(String title, String content, Long userId, Integer views) {
+        this.title = title;
+        this.content = content;
+        this.userId = userId;
+        this.views = views;
+        this.createdAt = LocalDateTime.now();
+    }
 
 }
