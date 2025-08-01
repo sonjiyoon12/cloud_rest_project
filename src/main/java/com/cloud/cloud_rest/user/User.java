@@ -1,6 +1,6 @@
 package com.cloud.cloud_rest.user;
 
-import com.cloud.cloud_rest._define.DateUtil;
+import com.cloud.cloud_rest._global.utils.DateUtil;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

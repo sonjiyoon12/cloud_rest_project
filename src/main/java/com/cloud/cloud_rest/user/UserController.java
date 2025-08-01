@@ -1,7 +1,8 @@
 package com.cloud.cloud_rest.user;
 
+import com.cloud.cloud_rest._global.SessionUser;
 import com.cloud.cloud_rest._global._core.common.ApiUtil;
-import com.cloud.cloud_rest.errors.exception.Exception403;
+import com.cloud.cloud_rest._global.exception.Exception403;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+
 
     @PostMapping("/")
     public ResponseEntity<?> save(@Valid @RequestBody UserRequest.SaveDTO saveDTO){
@@ -36,7 +38,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserInfo(@PathVariable(name = "id")Long id,
-                                         @RequestAttribute("sessionUser")SessionUser sessionUser){
+                                         @RequestAttribute("sessionUser") SessionUser sessionUser){
 
         if(!sessionUser.getRole().equals("USER")){
             throw new Exception403("일반 유저만 볼수있습니다");
