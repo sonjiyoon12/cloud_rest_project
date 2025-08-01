@@ -1,5 +1,6 @@
 package com.cloud.cloud_rest.recruit;
 
+import com.cloud.cloud_rest.corp.Corp;
 import com.cloud.cloud_rest.recruitskill.RecruitSkill;
 import jakarta.persistence.*;
 import lombok.Builder;
