@@ -1,6 +1,6 @@
 package com.cloud.cloud_rest.apply;
 
-import com.cloud.cloud_rest._define.DateUtil;
+import com.cloud.cloud_rest._global.utils.DateUtil;
 import com.cloud.cloud_rest.recruit.Recruit;
 import com.cloud.cloud_rest.resume.Resume;
 import jakarta.persistence.*;
