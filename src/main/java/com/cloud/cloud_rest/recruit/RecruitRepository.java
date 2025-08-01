@@ -9,7 +9,6 @@ import java.util.List;
 public interface RecruitRepository extends JpaRepository<Recruit, Long> {
 
     List<Recruit> findByCorpId(Long corpId);
-    //Corp JPQL
     //@Query("SELECT r FROM Recruit r WHERE r.corp.corpId = :corpId")
     //List<Recruit> findByCorpEntity(@Param("corpId") Long corpId);
 
