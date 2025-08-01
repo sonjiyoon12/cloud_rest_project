@@ -1,7 +1,6 @@
 package com.cloud.cloud_rest.resume;
 
-import com.cloud.cloud_rest.errors.exception.Exception403;
-import com.cloud.cloud_rest.errors.exception.Exception404;
+import com.cloud.cloud_rest._global.exception.Exception404;
 import com.cloud.cloud_rest.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
