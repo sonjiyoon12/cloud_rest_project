@@ -1,6 +1,7 @@
-package com.cloud.cloud_rest.board;
+package com.cloud.cloud_rest.Like;
 
 
+import com.cloud.cloud_rest.board.Board;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @Table(name = "board_like_tb")
-public class BoardLike {
+public class Like {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
