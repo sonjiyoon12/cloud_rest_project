@@ -15,14 +15,11 @@ public class ResumeRestController {
 
     private final ResumeService resumeService;
 
-    // 게시글 목록 조회
-    @GetMapping("/")
-    public ResponseEntity<ApiUtil<List<ResumeResponse.ListDTO>>> List(
-            @RequestParam(name = "page", defaultValue = "0") int page,
-            @RequestParam(name = "size", defaultValue = "5") int size) {
-
-        List<ResumeResponse.ListDTO> resumeList = resumeService.list(page, size);
-        return ResponseEntity.ok(new ApiUtil<>(resumeList));
+    // 이력서 전체 조회
+    @GetMapping("/resumes")
+    public ResponseEntity<?> findAll() {
+        List<ResumeResponse.ListDTO> resumes = resumeService.findAll();
+        return ResponseEntity.ok().body(new ApiUtil<>(resumes));
     }
 
 }
