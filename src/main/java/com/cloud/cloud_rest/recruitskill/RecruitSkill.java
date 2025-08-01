@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class RecruitSkill {
 
     @EmbeddedId // 복합키 식별자
-    private RecruitSkillId skillId;
+    private RecruitSkillId recruitSkillId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("recruitId") // 복합키의 recruitId와 매핑
@@ -29,6 +29,6 @@ public class RecruitSkill {
     public RecruitSkill(Recruit recruit, Skill skill) {
         this.recruit = recruit;
         this.skill = skill;
-        this.skillId = new RecruitSkillId(recruit.getId(), skill.getId()); // 아무튼 필요
+        this.recruitSkillId = new RecruitSkillId(recruit.getRecruitId(), skill.getSkillId());
     }
 }
