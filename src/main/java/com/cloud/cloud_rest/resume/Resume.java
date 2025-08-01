@@ -1,5 +1,6 @@
 package com.cloud.cloud_rest.resume;
 
+import com.cloud.cloud_rest._define.DateUtil;
 import com.cloud.cloud_rest.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -41,5 +42,13 @@ public class Resume {
         this.isRep = isRep;
         this.createdAt = createdAt;
         this.user = user;
+    }
+
+    public boolean isOwner(Long checkUserId){
+        return this.user.getUserId().equals(checkUserId);
+    }
+
+    public String getTime() {
+        return null;
     }
 }
