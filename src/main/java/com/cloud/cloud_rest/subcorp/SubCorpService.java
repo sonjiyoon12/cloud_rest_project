@@ -3,7 +3,7 @@ package com.cloud.cloud_rest.subcorp;
 import com.cloud.cloud_rest._global.exception.Exception400;
 import com.cloud.cloud_rest._global.utils.Define;
 import com.cloud.cloud_rest.corp.Corp;
-import com.cloud.cloud_rest.recruit.CorpRepository;
+import com.cloud.cloud_rest.corp.CorpRepository;
 import com.cloud.cloud_rest.user.User;
 import com.cloud.cloud_rest.user.UserRepository;
 import lombok.RequiredArgsConstructor;
