@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@Table(name = "user_tb")
+@Table(name = "corp_tb")
 @Builder
 public class Corp {
 
@@ -21,6 +21,8 @@ public class Corp {
     private String loginId;
     private String password;
     private String email;
-    private String corpImage;
+    private String corpImage = "basic.png";
     private String createdAt;
+
+
 }
