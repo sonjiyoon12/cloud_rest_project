@@ -20,9 +20,11 @@ public class Apply {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long applyId;
 
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "resume_id", nullable = false)
     private Resume resume;
 
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recruit_id" , nullable = false)
     private Recruit recruit;
 
