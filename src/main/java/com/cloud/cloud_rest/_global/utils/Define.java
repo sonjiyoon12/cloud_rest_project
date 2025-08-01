@@ -1,4 +1,4 @@
-package com.cloud.cloud_rest._define;
+package com.cloud.cloud_rest._global.utils;
 
 import lombok.Data;
 
@@ -12,8 +12,8 @@ public class Define {
         public static final String ERROR_403 = "권한이 없습니다_403";
         public static final String ERROR_404 = "존재하지 않습니다_404";
         public static final String ERROR_500 = "서버오류_500";
-        public static final String USER_LOGIN_ERROR = "유저 로그인 오류";
-        public static final String COMPANY_LOGIN_ERROR = "회사 로그인 오류";
+        public static final String USER_LOGIN_ERROR = "유저 로그인 오류_USER";
+        public static final String COMP_LOGIN_ERROR = "회사 로그인 오류_COMP";
 
     }
 
