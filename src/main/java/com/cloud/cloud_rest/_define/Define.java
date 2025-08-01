@@ -1,4 +1,4 @@
-package com.cloud.cloud_.rest._define;
+package com.cloud.cloud_rest._define;
 
 import lombok.Data;
 

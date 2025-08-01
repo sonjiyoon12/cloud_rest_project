@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.sql.Timestamp;
 
 @Entity
 @NoArgsConstructor
@@ -26,6 +29,26 @@ public class User {
     private String phoneNumber;
     private String sex;
     private int age;
-    private String userImage;
+    private String userImage = "basic.png";
     private String address;
+    private String addressDefault;
+    private String addressDetail;
+
+    @CreationTimestamp
+    private Timestamp createdAt;
+
+    public String getFormatTime(){
+        return null;// 시간값 포맷
+    }
+
+
+    // update Dirty Checking
+    public void update(UserRequest.UpdateDTO updateDTO,String userUploadImage){
+        this.username = updateDTO.getUsername();
+        this.phoneNumber = updateDTO.getUsername();
+        this.userImage = userUploadImage;
+        this.address = updateDTO.getAddress();
+        this.addressDefault = updateDTO.getAddressDefault();
+        this.addressDetail = updateDTO.getAddressDetail();
+    }
 }

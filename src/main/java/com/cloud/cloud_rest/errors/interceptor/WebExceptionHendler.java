@@ -1,7 +1,8 @@
-package com.cloud.cloud_.rest.errors.interceptor;
+package com.cloud.cloud_rest.errors.interceptor;
 
-import com.cloud.cloud_.rest._define.Define;
+import com.cloud.cloud_rest._define.Define;
 import com.cloud.cloud_.rest.errors.exception.*;
+import com.cloud.cloud_rest.errors.exception.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ControllerAdvice;

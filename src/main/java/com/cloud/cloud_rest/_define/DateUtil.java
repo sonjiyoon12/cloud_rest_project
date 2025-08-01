@@ -1,4 +1,4 @@
-package com.cloud.cloud_.rest._define;
+package com.cloud.cloud_rest._define;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
 import java.sql.Timestamp;
