@@ -39,11 +39,11 @@ public class UserRequest {
         @NotBlank(message = "비밀번호를 재 입력해주세요")
         private String rePassword; // 비밀번호 재 입력
 
-        public User toEntity(){
+        public User toEntity(String encodePassword){
             return User.builder()
                     .username(this.username)
                     .loginId(this.loginId)
-                    .password(this.password)
+                    .password(encodePassword)
                     .email(this.email)
                     .phoneNumber(this.phoneNumber)
                     .sex(this.sex)

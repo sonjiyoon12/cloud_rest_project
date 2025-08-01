@@ -1,5 +1,6 @@
 package com.cloud.cloud_rest.user;
 
+import com.cloud.cloud_rest._define.DateUtil;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,14 +39,14 @@ public class User {
     private Timestamp createdAt;
 
     public String getFormatTime(){
-        return null;// 시간값 포맷
+        return DateUtil.timestampFormat(createdAt);
     }
 
 
     // update Dirty Checking
     public void update(UserRequest.UpdateDTO updateDTO,String userUploadImage){
         this.username = updateDTO.getUsername();
-        this.phoneNumber = updateDTO.getUsername();
+        this.phoneNumber = updateDTO.getPhoneNumber();
         this.userImage = userUploadImage;
         this.address = updateDTO.getAddress();
         this.addressDefault = updateDTO.getAddressDefault();

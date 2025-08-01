@@ -1,15 +1,11 @@
-package com.tenco.blog._core.interceptor;
+package com.cloud.cloud_rest._core.interceptor;
 
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
-import com.tenco.blog._core.errors.exception.Exception401;
-import com.tenco.blog._core.errors.exception.Exception500;
-import com.tenco.blog._core.utils.Define;
-import com.tenco.blog._core.utils.JwtUtil;
-import com.tenco.blog.user.SessionUser;
+import com.cloud.cloud_rest.errors.exception.Exception401;
+import com.cloud.cloud_rest.errors.exception.Exception500;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -44,7 +40,7 @@ public class LoginInterceptor implements HandlerInterceptor {
           // JWT 는 stateless 개념을 지키기 위해서 나옴 (모바일 쿠기에 접근 못함)
           // request.setAttribute는 요청 단위로 데이터를 저장하고 소멸 합니다.
           // 즉, 해당 데이터는 요청이 처리된 후 사리지며, 서버에 세션메로리에 저장되지 않습니다.
-          request.setAttribute(Define.SESSION_USER, sessionUser);
+          request.setAttribute("sessionUser", sessionUser);
           return true;
 
       } catch (TokenExpiredException e) {

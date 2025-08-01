@@ -48,6 +48,11 @@ dependencies {
 
 	// @NotBlank, @NotNull, @Email 등과 같은 유효성 검사 애노테이션 사용
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	// Swagger (SpringDoc OpenAPI 3) 추가
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
+	// https://mvnrepository.com/artifact/com.auth0/java-jwt
+	implementation group: 'com.auth0', name: 'java-jwt', version: '4.4.0'
 }
 
 tasks.named('test') {
