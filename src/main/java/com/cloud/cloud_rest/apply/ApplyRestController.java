@@ -1,6 +1,6 @@
 package com.cloud.cloud_rest.apply;
 
-import com.cloud.cloud_rest._core.common.ApiUtil;
+import com.cloud.cloud_rest._global._core.common.ApiUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

@@ -1,4 +1,4 @@
-package com.cloud.cloud_rest._core.common;
+package com.cloud.cloud_rest._global._core.common;
 
 import lombok.Data;
 

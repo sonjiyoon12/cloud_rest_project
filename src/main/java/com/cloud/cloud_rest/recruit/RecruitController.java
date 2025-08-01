@@ -1,12 +1,11 @@
 package com.cloud.cloud_rest.recruit;
 
-import com.cloud.cloud_rest._core.common.ApiUtil;
+import com.cloud.cloud_rest._global._core.common.ApiUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.AccessDeniedException;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor

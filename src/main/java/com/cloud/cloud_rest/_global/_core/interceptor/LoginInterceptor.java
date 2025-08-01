@@ -1,9 +1,11 @@
-package com.cloud.cloud_rest._core.interceptor;
+package com.cloud.cloud_rest._global._core.interceptor;
 
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
-import com.cloud.cloud_rest.errors.exception.Exception401;
-import com.cloud.cloud_rest.errors.exception.Exception500;
+import com.cloud.cloud_rest._define.JwtUtil;
+import com.cloud.cloud_rest._global.SessionUser;
+import com.cloud.cloud_rest._global.exception.Exception401;
+import com.cloud.cloud_rest._global.exception.Exception500;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;

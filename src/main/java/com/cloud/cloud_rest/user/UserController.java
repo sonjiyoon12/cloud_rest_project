@@ -1,6 +1,6 @@
 package com.cloud.cloud_rest.user;
 
-import com.cloud.cloud_rest._core.common.ApiUtil;
+import com.cloud.cloud_rest._global._core.common.ApiUtil;
 import com.cloud.cloud_rest.errors.exception.Exception403;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

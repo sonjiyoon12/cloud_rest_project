@@ -1,6 +1,6 @@
-package com.cloud.cloud_rest._core.config;
+package com.cloud.cloud_rest._global._core.config;
 
-import com.cloud.cloud_rest._core.interceptor.LoginInterceptor;
+import com.cloud.cloud_rest._global._core.interceptor.LoginInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
