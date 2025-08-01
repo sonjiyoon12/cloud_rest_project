@@ -1,6 +1,5 @@
 package com.cloud.cloud_rest.resume;
 
-import com.cloud.cloud_rest._define.DateUtil;
 import com.cloud.cloud_rest.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -50,5 +49,11 @@ public class Resume {
 
     public String getTime() {
         return null;
+    }
+
+    // 수정 기능 추가
+    public void update(ResumeRequest.UpdateDTO updateDTO) {
+        this.title = updateDTO.getTitle();
+        this.content = updateDTO.getContent();
     }
 }
