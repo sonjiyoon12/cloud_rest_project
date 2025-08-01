@@ -1,4 +1,4 @@
-package com.cloud.cloud_rest.errors.exception;
+package com.cloud.cloud_rest._global.exception;
 
 public class Exception403 extends RuntimeException {
     public Exception403(String message) {

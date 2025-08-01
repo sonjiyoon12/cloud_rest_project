@@ -1,8 +1,7 @@
-package com.cloud.cloud_rest.errors.interceptor;
+package com.cloud.cloud_rest._global.Intercepter;
 
-import com.cloud.cloud_rest._define.Define;
-import com.cloud.cloud_rest.errors.exception.*;
-import com.cloud.cloud_rest.errors.exception.*;
+import com.cloud.cloud_rest._global.utils.Define;
+import com.cloud.cloud_rest._global.exception.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -46,5 +45,20 @@ public class WebExceptionHendler {
         request.setAttribute("msg", e.getMessage());
         return "err/500";
     }
+
+    @ExceptionHandler(UserLoginExc.class)
+    public String ex400(UserLoginExc e, HttpServletRequest request) {
+        log.warn(Define.SaveDTO.USER_LOGIN_ERROR);
+        request.setAttribute("msg", e.getMessage());
+        return "redirect:/user/login";
+    }
+
+    @ExceptionHandler(CompLoginExc.class)
+    public String ex400(CompLoginExc e, HttpServletRequest request) {
+        log.warn(Define.SaveDTO.COMP_LOGIN_ERROR);
+        request.setAttribute("msg", e.getMessage());
+        return "redirect:/comp/login";
+    }
+
 
 }
