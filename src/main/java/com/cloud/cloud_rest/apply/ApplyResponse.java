@@ -20,7 +20,7 @@ public class ApplyResponse {
         public SaveDTO(Apply apply) {
             this.id = apply.getApplyId();
             this.resumeId = apply.getResume().getResumeId();
-            this.recruitId = apply.getRecruit().getId();
+            this.recruitId = apply.getRecruit().getRecruitId();
             this.createdAt = apply.getTime();
         }
     }
@@ -68,7 +68,7 @@ public class ApplyResponse {
         public RecruitDTO(Recruit recruit) {
             this.title = recruit.getTitle();
             this.content = recruit.getContent();
-            this.deadLine = recruit.getDeadLine();
+            this.deadLine = recruit.getDeadline();
             this.createdAt = recruit.getCreatedAt().toString();
         }
     }

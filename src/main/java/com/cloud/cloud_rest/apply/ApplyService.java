@@ -2,7 +2,9 @@ package com.cloud.cloud_rest.apply;
 
 import com.cloud.cloud_rest.errors.exception.Exception404;
 import com.cloud.cloud_rest.recruit.Recruit;
+import com.cloud.cloud_rest.recruit.RecruitRepository;
 import com.cloud.cloud_rest.resume.Resume;
+import com.cloud.cloud_rest.resume.ResumeJpaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,18 +19,17 @@ import java.util.List;
 public class ApplyService {
 
     private final ApplyJpaRepository applyJpaRepository;
-    private final ResumeService resumeService;
-    private final RecruitService recruitService;
+    private final ResumeJpaRepository resumeJpaRepository;
+    private final RecruitRepository recruitJpaRepository;
 
     // 공고 지원
     @Transactional
     public ApplyResponse.SaveDTO save(Long resumeId, Long recruitId) {
-        Resume resume = resumeService.findById(resumeId);
-        Recruit recruit = recruitService.findById(recruitId);
+        Resume resume = resumeJpaRepository.findById(resumeId)
+                .orElseThrow(() -> new Exception404("이력서를 찾을 수 없습니다."));
 
-        if (resume == null || recruit == null) {
-            throw new Exception404("이력서 또는 공고글을 찾을 수 없습니다.");
-        }
+        Recruit recruit = recruitJpaRepository.findById(recruitId)
+                .orElseThrow(() -> new Exception404("공고글을 찾을 수 없습니다."));
 
         ApplyRequest.SaveDTO saveDTO = new ApplyRequest.SaveDTO();
         Apply apply = saveDTO.toEntity(resume, recruit);
