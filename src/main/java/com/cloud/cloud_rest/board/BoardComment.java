@@ -31,7 +31,7 @@ public class BoardComment {
     @Column(name = "content")
     private String content; // 댓글 내용
 
-    @Column(name = "commented_at", columnDefinition = "datatime(6) default current_timestamp")
+    @Column(name = "commented_at", columnDefinition = "datetime(6) default current_timestamp")
     private LocalDateTime commentedAt; // 댓글 작성일시
 
     @Column(name = "is_secret", nullable = false, columnDefinition = "boolean default false")
