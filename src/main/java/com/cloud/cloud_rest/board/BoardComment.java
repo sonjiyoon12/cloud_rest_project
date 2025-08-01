@@ -2,6 +2,7 @@ package com.cloud.cloud_rest.board;
 
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -37,4 +38,13 @@ public class BoardComment {
     @Column(name = "is_secret", nullable = false, columnDefinition = "boolean default false")
     private Boolean isSecret; // 비밀 댓글 여부
 
+
+    @Builder
+    public BoardComment(Board board, Long userId, String content, Boolean isSecret) {
+        this.board = board;
+        this.userId = userId;
+        this.content = content;
+        this.isSecret = isSecret;
+        // commentedAt 는 DB에 자동 생성됨
+    }
 }
