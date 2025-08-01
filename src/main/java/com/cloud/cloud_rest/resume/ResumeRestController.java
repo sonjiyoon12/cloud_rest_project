@@ -1,6 +1,6 @@
 package com.cloud.cloud_rest.resume;
 
-import com.cloud.cloud_rest._core.common.ApiUtil;
+import com.cloud.cloud_rest._global._core.common.ApiUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
