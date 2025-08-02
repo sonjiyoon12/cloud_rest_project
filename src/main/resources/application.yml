@@ -2,3 +2,11 @@ spring:
   profiles:
     active:
       - dev
+
+springdoc:
+  api-docs:
+    path: /api-docs              # OpenAPI JSON 경로
+  swagger-ui:
+    path: /swagger-ui.html       # Swagger UI 경로
+    operations-sorter: method    # HTTP 메서드별 정렬
+    tags-sorter: alpha          # 태그 알파벳 정렬
