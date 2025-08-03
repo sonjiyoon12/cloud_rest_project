@@ -3,6 +3,7 @@ package com.cloud.cloud_rest.user;
 import com.cloud.cloud_rest._global.SessionUser;
 import com.cloud.cloud_rest._global._core.common.ApiUtil;
 import com.cloud.cloud_rest._global.exception.Exception403;
+import com.cloud.cloud_rest.corp.CorpResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,7 +21,7 @@ public class UserController {
 
 
     // 유저 회원가입
-    @PostMapping("/")
+    @PostMapping("/save")
     public ResponseEntity<?> save(@Valid @RequestBody UserRequest.SaveDTO saveDTO){
         UserResponse.SaveDTO save = userService.save(saveDTO);
         return ResponseEntity
@@ -32,9 +33,11 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody UserRequest.LoginDTO loginDTO){
         String jwtToken = userService.login(loginDTO);
+        User login = userService.getLoginId(loginDTO.getLoginId());
+        UserResponse.LoginDTO DTO = new UserResponse.LoginDTO(login);
         return ResponseEntity.ok()
                 .header("Authorization","Bearer" + jwtToken)
-                .body(new ApiUtil<>(null));
+                .body(new ApiUtil<>(DTO));
 
     }
 
@@ -51,6 +54,10 @@ public class UserController {
         return ResponseEntity.ok(new ApiUtil<>(userDTO));
     }
 
-
+    // 임시로 로그아웃 (사실상 필요없음) 서버에서 JWT를 강제로 무효화하려면 블랙리스트 같은 추가 설계 필요
+    @GetMapping("/logout")
+    public ResponseEntity<SessionUser> logout(@RequestAttribute("sessionUser") SessionUser sessionUser) {
+        return ResponseEntity.ok(sessionUser);
+    }
 
 }

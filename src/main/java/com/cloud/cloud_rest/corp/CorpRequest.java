@@ -2,6 +2,7 @@ package com.cloud.cloud_rest.corp;
 
 import com.cloud.cloud_rest.user.User;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 public class CorpRequest {
 
@@ -19,7 +20,6 @@ public class CorpRequest {
                     .loginId(loginId)
                     .password(encoderPassword)
                     .email(email)
-                    .corpImage("basic.png")
                     .build();
         }
     }
@@ -33,7 +33,8 @@ public class CorpRequest {
     @Data
     public static class UpdateDTO{
         private String corpName;
-        private String corpImage;
+        private String email;
+        private MultipartFile corpImage;
     }
 
 }

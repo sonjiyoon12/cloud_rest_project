@@ -42,12 +42,14 @@ public class CorpResponse {
     @Data
     public static class UpdateDTO{
         private String corpName;
+        private String email;
         private String corpImage;
 
         @Builder
-        public UpdateDTO(Corp corp,String corpUploadImage){
+        public UpdateDTO(Corp corp){
             this.corpName = corp.getCorpName();
-            this.corpImage = corpUploadImage;
+            this.email = corp.getEmail();
+            this.corpImage = corp.getCorpImage();
         }
     }
 

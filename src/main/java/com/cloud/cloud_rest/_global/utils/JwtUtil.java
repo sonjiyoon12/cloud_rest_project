@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.cloud.cloud_rest._global.SessionUser;
+import com.cloud.cloud_rest.corp.Corp;
 import com.cloud.cloud_rest.user.User;
 
 import java.util.Date;
@@ -25,21 +26,28 @@ public class JwtUtil {
     // 토큰 주세 (이 애플리케이션을 식별하는 값)
     private static final String SUBJECT = "Cloud_rest_blog";
 
+    public static String createForUser(User user) {
+        return createToken(user.getUserId(), user.getUsername(), user.getEmail(), "USER");
+    }
+
+    public static String createForCorp(Corp corp) {
+        return createToken(corp.getCorpId(), corp.getLoginId(), corp.getEmail(), "CORP");
+    }
+
     /**
      * JWT 토큰을 생성하는 메서드
      */
-    public static String create(User user) {
-        // 토큰 만료 시간 계산 (현재 시간 + 1 시간)
+    private static String createToken(Long id, String username, String email, String role) {
         Date expiresAt = new Date(System.currentTimeMillis() + EXPIRATION_TIME);
-        String jwt = JWT.create()
-                .withSubject(SUBJECT)       // 토큰 주체 설정
-                .withExpiresAt(expiresAt)  // 토큰 만료 시간 설정
-                .withClaim("id", user.getUserId())
-                .withClaim("username", user.getUsername())
-                .withClaim("email", user.getEmail())
+        return JWT.create()
+                .withSubject(SUBJECT)
+                .withExpiresAt(expiresAt)
+                .withClaim("id", id)
+                .withClaim("username", username)
+                .withClaim("email", email)
+                .withClaim("role", role)
                 .withIssuedAt(new Date())
                 .sign(Algorithm.HMAC512(SECRET_KEY));
-        return jwt;
     }
 
     /**

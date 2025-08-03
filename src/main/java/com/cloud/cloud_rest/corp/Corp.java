@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.sql.Timestamp;
 
 @Entity
 @NoArgsConstructor
@@ -21,8 +24,16 @@ public class Corp {
     private String loginId;
     private String password;
     private String email;
+
+    @Builder.Default
     private String corpImage = "basic.png";
-    private String createdAt;
 
+    @CreationTimestamp
+    private Timestamp createdAt;
 
+    public void update(CorpRequest.UpdateDTO updateDTO, String imagePath){
+        corpName = updateDTO.getCorpName();
+        corpImage = imagePath;
+        email = updateDTO.getEmail();
+    }
 }

@@ -30,7 +30,10 @@ public class User {
     private String phoneNumber;
     private String sex;
     private int age;
+
+    @Builder.Default
     private String userImage = "basic.png";
+
     private String address;
     private String addressDefault;
     private String addressDetail;
