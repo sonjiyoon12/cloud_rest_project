@@ -1,8 +1,12 @@
 package com.cloud.cloud_rest.resumeskill;
 
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.EmbeddedId;
+
 import java.io.Serializable;
 import java.util.Objects;
 
+@Embeddable
 public class ResumeSkillId implements Serializable {
     private Long resumeId;
     private Long skillId;
@@ -27,7 +31,5 @@ public class ResumeSkillId implements Serializable {
     public int hashCode() {
         return Objects.hash(resumeId, skillId);
     }
-
-
 
 }
