@@ -1,6 +1,6 @@
 package com.cloud.cloud_rest._global;
 
-import com.cloud.cloud_rest.corp.Corp;
+import com.cloud.cloud_rest.recruit.Corp;
 import com.cloud.cloud_rest.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
