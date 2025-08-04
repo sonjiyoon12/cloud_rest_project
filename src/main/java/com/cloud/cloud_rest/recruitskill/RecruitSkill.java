@@ -5,6 +5,7 @@ import com.cloud.cloud_rest.skill.Skill;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.builder.ToStringExclude;
 
 @Entity
 @Table(name = "recruitskill_tb")
@@ -18,11 +19,13 @@ public class RecruitSkill {
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("recruitId") // 복합키의 recruitId와 매핑
     @JoinColumn(name = "recruit_id", nullable = false)
+    @ToStringExclude
     private Recruit recruit;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("skillId") // 복합키의 skillId와 매핑
     @JoinColumn(name = "skill_id", nullable = false)
+    @ToStringExclude
     private Skill skill;
 
     // 생성자 -> 연관관계 주입

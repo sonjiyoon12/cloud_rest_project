@@ -3,7 +3,6 @@ package com.cloud.cloud_rest.user;
 import com.cloud.cloud_rest._global.SessionUser;
 import com.cloud.cloud_rest._global._core.common.ApiUtil;
 import com.cloud.cloud_rest._global.exception.Exception403;
-import com.cloud.cloud_rest.corp.CorpResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -36,9 +35,8 @@ public class UserController {
         User login = userService.getLoginId(loginDTO.getLoginId());
         UserResponse.LoginDTO DTO = new UserResponse.LoginDTO(login);
         return ResponseEntity.ok()
-                .header("Authorization","Bearer" + jwtToken)
+                .header("Authorization","Bearer " + jwtToken)
                 .body(new ApiUtil<>(DTO));
-
     }
 
     // 유저 회원 정보 가져오기

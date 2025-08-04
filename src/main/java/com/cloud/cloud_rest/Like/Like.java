@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.commons.lang3.builder.ToStringExclude;
 
 import java.time.LocalDateTime;
 
@@ -24,6 +25,7 @@ public class Like {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id",nullable = false)
+    @ToStringExclude
     private Board board; // 게시글 엔티티
 
     @Column(name = "user_id", nullable = false)

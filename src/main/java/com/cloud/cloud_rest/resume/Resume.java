@@ -3,10 +3,10 @@ package com.cloud.cloud_rest.resume;
 import com.cloud.cloud_rest._global.utils.DateUtil;
 import com.cloud.cloud_rest.user.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.builder.ToStringExclude;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
@@ -32,6 +32,7 @@ public class Resume {
     // User 테이블
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @ToStringExclude
     private User user;
 
     @Builder

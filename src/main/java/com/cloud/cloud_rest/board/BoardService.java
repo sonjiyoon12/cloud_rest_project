@@ -1,10 +1,11 @@
 package com.cloud.cloud_rest.board;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
+@Service
 public class BoardService {
 
     private final BoardRepository boardRepository;
@@ -59,9 +60,5 @@ public class BoardService {
         }
 
         boardRepository.delete(board);
-    }
-
-    // Board 엔티티를 위한 Repository (인터페이스만)
-    interface BoardRepository extends JpaRepository<Board, Long> {
     }
 }
