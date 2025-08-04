@@ -30,7 +30,7 @@ public class CorpService {
     public CorpResponse.CorpDTO save(CorpRequest.SaveDTO saveDTO){
         String bcyPassword = bCryptPasswordEncoder.encode(saveDTO.getPassword());
 
-        if(!corpRepository.existsLoginId(saveDTO.getLoginId())){
+        if(corpRepository.existsLoginId(saveDTO.getLoginId())){
             throw new Exception400("이미 사용 중인 아이디입니다.");
         }
 

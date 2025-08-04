@@ -30,7 +30,7 @@ public class UserService {
     public String login(UserRequest.LoginDTO loginDTO) {
         User user = getLoginId(loginDTO.getLoginId());
 
-        if (!bCryptPasswordEncoder.matches(loginDTO.getPassword(), user.getPassword())) {
+        if (!bCryptPasswordEncoder.matches(loginDTO.getPassword(),user.getPassword())) {
             throw new Exception500("아이디 또는 비밀번호 틀립니다");
         }
 
