@@ -14,4 +14,6 @@ public interface ResumeJpaRepository extends JpaRepository<Resume, Long> {
     @Query("SELECT r FROM Resume r JOIN FETCH r.user u WHERE r.resumeId = :resumeId")
     Optional<Resume> findByIdUser(@Param("resumeId") Long resumeId);
 
+
+
 }

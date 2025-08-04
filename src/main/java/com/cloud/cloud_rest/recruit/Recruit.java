@@ -6,9 +6,9 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.builder.ToStringExclude;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.awt.image.CropImageFilter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -38,6 +38,7 @@ public class Recruit {
     // Corp 엔티티와 다대일 연관관계 설정
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "corp_id", nullable = false)
+    @ToStringExclude
     private Corp corp;
 
     @OneToMany(mappedBy = "recruit",

@@ -4,6 +4,7 @@ import com.cloud.cloud_rest.recruitskill.RecruitSkill;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import resumeskill.ResumeSkill;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,9 @@ public class Skill {
             cascade = CascadeType.ALL,
             orphanRemoval = true)
     private List<RecruitSkill> recruitSkills = new ArrayList<>();
+
+    @OneToMany(mappedBy = "skill", cascade = CascadeType.ALL)
+    private List<ResumeSkill> resumeSkills = new ArrayList<>();
 
     public Skill(String name) {
         this.name = name;

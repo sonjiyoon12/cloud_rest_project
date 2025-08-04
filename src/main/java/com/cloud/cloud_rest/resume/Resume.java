@@ -3,13 +3,16 @@ package com.cloud.cloud_rest.resume;
 import com.cloud.cloud_rest._global.utils.DateUtil;
 import com.cloud.cloud_rest.user.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.builder.ToStringExclude;
 import org.hibernate.annotations.CreationTimestamp;
+import resumeskill.ResumeSkill;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @Builder
@@ -24,6 +27,8 @@ public class Resume {
 
     private String title;
     private String content;
+
+    @Builder.Default
     private Boolean isRep = false;
 
     @CreationTimestamp
@@ -32,6 +37,7 @@ public class Resume {
     // User 테이블
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @ToStringExclude
     private User user;
 
     @Builder
@@ -57,4 +63,8 @@ public class Resume {
         this.title = updateDTO.getTitle();
         this.content = updateDTO.getContent();
     }
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "resume", cascade = CascadeType.ALL)
+    private List<ResumeSkill> resumeSkills = new ArrayList<>();
+
 }

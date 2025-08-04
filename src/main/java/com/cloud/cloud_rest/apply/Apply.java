@@ -6,6 +6,7 @@ import com.cloud.cloud_rest.resume.Resume;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
+import org.apache.commons.lang3.builder.ToStringExclude;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
@@ -22,10 +23,12 @@ public class Apply {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "resume_id", nullable = false)
+    @ToStringExclude
     private Resume resume;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recruit_id" , nullable = false)
+    @ToStringExclude
     private Recruit recruit;
 
     @CreationTimestamp
