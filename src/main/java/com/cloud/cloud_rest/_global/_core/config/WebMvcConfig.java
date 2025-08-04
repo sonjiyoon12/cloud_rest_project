@@ -30,10 +30,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .excludePathPatterns(
                         "/api/boards/{id:\\d+}/detail", // 게시글 상세보기 누가나 응답 허용
                         "/api/corp/save",
-                        "/api/user/save",
+                        "/api/users/save",
                         "/api/corp/login",
-                        "/api/user/login"
-
+                        "/api/users/login",
+                        "/api/users/err/**"
                 );
 
     }
