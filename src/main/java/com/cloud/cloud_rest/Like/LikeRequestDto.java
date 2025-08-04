@@ -9,7 +9,8 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class LikeRequestDto {
+class LikeRequestDto {
     private Long boardId; // 좋아요 누를 게시글 Id
-    private Long userId; // 좋아요 누른 사용자 Id
+    private Long userId; // 좋아요 누를 사용자Id
 }
+

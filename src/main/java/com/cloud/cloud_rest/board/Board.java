@@ -7,13 +7,13 @@ import java.time.LocalDateTime;
 
 
 @Entity
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "board_tb")
 @Builder
 public class Board {
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,6 +35,9 @@ public class Board {
 
     @Column(name = "views", columnDefinition = "int default 0")
     private Integer views; // 조회수
+
+    @Column(name = "like_count", columnDefinition = "int default 0")
+    private Integer likeCount;
 
     public void update(BoardRequestDto.UpdateDto updateDTO) {
         // userId는 게시글 생성시에만 필요 --> 수정시에는 변경하지않음
