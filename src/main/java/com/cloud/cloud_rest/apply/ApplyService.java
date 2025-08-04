@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -41,7 +40,6 @@ public class ApplyService {
     // 전체 공고 지원 내역 조회
     public List<ApplyResponse.DetailDTO> findAll() {
         List<Apply> applies = applyJpaRepository.findAll();
-        List<ApplyResponse.DetailDTO> detailDTOS = new ArrayList<>();
 
         return applies.stream()
                 .map(ApplyResponse.DetailDTO::new)
