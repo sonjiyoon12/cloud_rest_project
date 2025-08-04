@@ -39,6 +39,14 @@ public class BoardController {
         return new ResponseEntity<>(boardPage, HttpStatus.OK);
     }
 
+    // 특정 사용자가 댓글을 작성한 모든 게시글을 조회
+    @GetMapping("/commented-by-user")
+    public ResponseEntity<Page<Board>> getBoardsCommentedByUser(
+            @RequestParam Long userId,
+            @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<Board> commentedBoards = boardService.getBoardsCommentedByUser(userId, pageable);
+        return new ResponseEntity<>(commentedBoards, HttpStatus.OK);
+    }
 
     // 특정 게시글 조회 (조회수 증가 포함)
     @GetMapping("/{boardId}")
