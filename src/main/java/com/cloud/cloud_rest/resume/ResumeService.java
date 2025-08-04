@@ -59,7 +59,7 @@ public class ResumeService {
         resumeJpaRepository.deleteById(resumeId);
     }
 
-    // 게시글 수정
+    // 이력서 수정
     @Transactional
     public ResumeResponse.UpdateDTO update(Long resumeId, ResumeRequest.UpdateDTO updateDTO,
                                            SessionUser sessionUser) {

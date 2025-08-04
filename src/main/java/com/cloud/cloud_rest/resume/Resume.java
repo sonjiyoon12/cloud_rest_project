@@ -8,8 +8,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.builder.ToStringExclude;
 import org.hibernate.annotations.CreationTimestamp;
+import resumeskill.ResumeSkill;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @Builder
@@ -24,6 +27,8 @@ public class Resume {
 
     private String title;
     private String content;
+
+    @Builder.Default
     private Boolean isRep = false;
 
     @CreationTimestamp
@@ -58,4 +63,8 @@ public class Resume {
         this.title = updateDTO.getTitle();
         this.content = updateDTO.getContent();
     }
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "resume", cascade = CascadeType.ALL)
+    private List<ResumeSkill> resumeSkills = new ArrayList<>();
+
 }
