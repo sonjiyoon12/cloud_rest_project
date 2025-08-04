@@ -59,22 +59,28 @@ public class CorpService {
         String savedFileName = null;
 
         try {
+            MultipartFile targetFile = null;
+
+            // 웹(Multipart) 용
             if (dto.getCorpImage() != null && !dto.getCorpImage().isEmpty()) {
-                // Multipart 파일 처리
-                savedFileName = fileUploadUtil.uploadProfileImage(dto.getCorpImage(), uploadPath.getCorpDir());
-            } else if (dto.getCorpImageBase64() != null && !dto.getCorpImageBase64().isEmpty()) {
-                // base64 처리: base64 -> MultipartFile 변환
-                String base64Image = dto.getCorpImageBase64();
-                if (base64Image != null && !base64Image.isEmpty()) {
-                    MultipartFile multipartFile = Base64FileConverterUtil.convert(base64Image);
-                    savedFileName = fileUploadUtil.uploadProfileImage(multipartFile, uploadPath.getCorpDir());
-                }
+                targetFile = dto.getCorpImage();
+            }
+            // 앱(Base64) 용
+            else if (dto.getCorpImageBase64() != null && !dto.getCorpImageBase64().isBlank()) {
+                targetFile = Base64FileConverterUtil.convert(dto.getCorpImageBase64());
             }
 
+            // 해당 파일이 없으면 savedFileName에 이름저장
+            if (targetFile != null) {
+                savedFileName = fileUploadUtil.uploadProfileImage(targetFile, uploadPath.getCorpDir());
+            }
+
+            // 이전 이미지 삭제
             if (savedFileName != null && oldImagePath != null) {
                 fileUploadUtil.deleteProfileImage(oldImagePath);
             }
 
+            // 해당 파일을 저장
             corp.update(dto, savedFileName);
 
         } catch (IOException e) {
@@ -83,6 +89,7 @@ public class CorpService {
 
         return new CorpResponse.UpdateDTO(corp);
     }
+
 
 
 
