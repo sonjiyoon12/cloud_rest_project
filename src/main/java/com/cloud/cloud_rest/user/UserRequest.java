@@ -1,7 +1,9 @@
 package com.cloud.cloud_rest.user;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,8 +24,10 @@ public class UserRequest {
         private String phoneNumber;
         @NotBlank(message = "성별을 입력해 주시기 바랍니다")
         private String sex;
-        @NotEmpty(message = "나이를 입력해주세요")
-        private int age;
+
+        @NotNull(message = "나이를 입력해주세요") // Integer일 경우
+        @Min(value = 1, message = "나이는 1살 이상이어야 합니다")
+        private Integer age;
 
         @NotBlank(message = "지번을 입력해주세요")
         private String address; // 지번
