@@ -2,6 +2,8 @@ package com.cloud.cloud_rest.skill;
 
 import com.cloud.cloud_rest.recruitskill.RecruitSkill;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import resumeskill.ResumeSkill;
@@ -12,7 +14,9 @@ import java.util.List;
 @Entity
 @Table(name = "skill_tb")
 @Getter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class Skill {
 
     @Id

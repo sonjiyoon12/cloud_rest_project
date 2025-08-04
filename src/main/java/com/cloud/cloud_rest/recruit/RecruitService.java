@@ -8,6 +8,8 @@ import com.cloud.cloud_rest.skill.SkillRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -81,6 +83,23 @@ public class RecruitService {
         }
 
         recruitRepository.delete(recruit);
+    }
+
+    // 전체 공고 목록 조회 (페이징)
+    public Page<RecruitResponse.RecruitListDTO> findAll(Pageable pageable) {
+        log.info("전체 공고 목록 조회 요청 - page: {}, size: {}", pageable.getPageNumber(), pageable.getPageSize());
+        Page<Recruit> recruitPage = recruitRepository.findAll(pageable);
+        return recruitPage.map(RecruitResponse.RecruitListDTO::of);
+    }
+
+    // 공고 상세 조회
+    public RecruitResponse.RecruitDetailDTO findById(Long recruitId) {
+        log.info("공고 상세 조회 요청 - recruitId: {}", recruitId);
+        Recruit recruit = recruitRepository.findById(recruitId)
+                .orElseThrow(() -> new EntityNotFoundException(RecruitErr.RECRUIT_NOT_FOUND + recruitId));
+
+        // DTO로 변환하여 반환
+        return RecruitResponse.RecruitDetailDTO.of(recruit);
     }
 
     // 기업별 전체 공고조회
