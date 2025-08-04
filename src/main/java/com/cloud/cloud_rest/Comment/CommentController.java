@@ -1,6 +1,11 @@
 package com.cloud.cloud_rest.Comment;
 
+import com.cloud.cloud_rest.board.BoardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 public class CommentController {
 
     private final CommentService commentService;
+    private final BoardService boardService;
 
     // 댓글 등록
     @PostMapping
@@ -18,6 +24,15 @@ public class CommentController {
         Long userId = 1L;
         CommentResponseDto responseDto = commentService.writeComment(requestDto, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
+    }
+
+    // 특정 게시글의 댓글 목록을 페이징하여 조회
+    @GetMapping("/by-board/{boardId}")
+    public ResponseEntity<Page<Comment>> getCommentsByBoardId(
+            @PathVariable Long boardId,
+            @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<Comment> commentPage = boardService.getCommentsByBoardId(boardId, pageable);
+        return new ResponseEntity<>(commentPage, HttpStatus.OK);
     }
 
     // 댓글 수정
