@@ -1,4 +1,4 @@
-package com.cloud.cloud_rest._define;
+package com.cloud.cloud_rest._global.utils;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;

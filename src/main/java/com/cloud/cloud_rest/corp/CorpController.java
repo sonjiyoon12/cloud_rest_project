@@ -52,7 +52,7 @@ public class CorpController {
         return ResponseEntity.ok(new ApiUtil<>(corp));
     }
 
-    @PutMapping(value = "/corp/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> update(@PathVariable(name = "id")Long id,
                                     @RequestBody CorpRequest.UpdateDTO updateDTO){
         CorpResponse.UpdateDTO update = corpService.updateDTO(id,updateDTO);

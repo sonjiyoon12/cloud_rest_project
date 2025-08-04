@@ -1,7 +1,6 @@
 package com.cloud.cloud_rest.corp;
 
 import com.cloud.cloud_rest._define.JwtUtil;
-import com.cloud.cloud_rest._global.SessionUser;
 import com.cloud.cloud_rest._global.exception.Exception403;
 import com.cloud.cloud_rest._global.exception.Exception404;
 import lombok.RequiredArgsConstructor;

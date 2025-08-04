@@ -1,10 +1,21 @@
 server:
   address: 0.0.0.0
   servlet:
+    tomcat:
+      max-part-count: 20 # 사용자가 보낸 input 태그의 갯수를 제한
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
     encoding:
       charset: utf-8
       force: true
   port: 8080
+
+# 이미지 저장 시 파일 저장 위치
+upload:
+  root-dir: ./uploads/
+  corp-dir: corp-images/
+  member-dir: user-images/
 
 # 로그 레벨의 개념
 # ERROR > WARN > INFO > DEBUG > TRACE
