@@ -2,7 +2,9 @@ package com.cloud.cloud_rest.corp;
 
 import com.cloud.cloud_rest._global.exception.Exception403;
 import com.cloud.cloud_rest._global.exception.Exception404;
+import com.cloud.cloud_rest._global.utils.FileUploadUtil;
 import com.cloud.cloud_rest._global.utils.JwtUtil;
+import com.cloud.cloud_rest._global.utils.UploadProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,8 @@ import java.util.UUID;
 public class CorpService {
     private final CorpRepository corpRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final FileUploadUtil fileUploadUtil; // 이미지 저장 및 삭제 기능
+    private final UploadProperties uploadPath; // 이미지 저장 경로 설정
 
     @Transactional
     public CorpResponse.CorpDTO save(CorpRequest.SaveDTO saveDTO){
@@ -44,20 +48,22 @@ public class CorpService {
     @Transactional
     public CorpResponse.UpdateDTO updateDTO(Long Id,CorpRequest.UpdateDTO updateDTO){
         Corp corp = getCorpId(Id);
-        String uploadImage = corp.getCorpImage();
-
-        MultipartFile imageFile = updateDTO.getCorpImage();
-
-        if (imageFile != null && !imageFile.isEmpty()) {
-            try {
-                uploadImage = "uploads/" + UUID.randomUUID() + "_" + imageFile.getOriginalFilename();
-                Files.copy(imageFile.getInputStream(), Paths.get(uploadImage));
-            } catch (IOException e) {
-                throw new RuntimeException("파일 업로드 실패", e);
+        String oldImagePath = corp.getCorpImage();
+        try {
+            
+            // 새 이밎로 서버 컴퓨터에 생성
+            String savedFileName = fileUploadUtil.uploadProfileImage(updateDTO.getCorpImage(),uploadPath.getCorpDir());
+            
+            // 기존 파일이 있으면 해당 경로에서 삭제
+            if(oldImagePath != null ){
+                fileUploadUtil.deleteProfileImage(oldImagePath,uploadPath.getCorpDir());
             }
+
+            corp.update(updateDTO,savedFileName);
+        } catch (IOException e){
+            throw new RuntimeException(e);
         }
 
-        corp.update(updateDTO,uploadImage);
 
         return new CorpResponse.UpdateDTO(corp);
     }
