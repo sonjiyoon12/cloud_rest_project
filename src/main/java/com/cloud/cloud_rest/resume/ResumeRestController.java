@@ -36,7 +36,7 @@ public class ResumeRestController {
 
     // 이력서 작성
     @PostMapping
-    public ResponseEntity<?> save(@Valid @RequestBody ResumeRequest.SaveDTO saveDTO,
+    public ResponseEntity<?> save(@Valid @RequestBody ResumeRequest.ResumeSaveDTO saveDTO,
                                   @RequestAttribute("sessionUser") SessionUser sessionUser) {
         ResumeResponse.SaveDTO savedResume = resumeService.save(saveDTO, sessionUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiUtil<>(savedResume));

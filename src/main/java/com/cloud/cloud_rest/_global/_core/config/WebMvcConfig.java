@@ -39,6 +39,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         // 구인공고
                         "/api/recruits",
                         "/api/recruits/{id:\\d+}",
+                        // 이력서
+                        "/api/resumes",
                         // 에러
                         "/api/**/err/**"
                 );

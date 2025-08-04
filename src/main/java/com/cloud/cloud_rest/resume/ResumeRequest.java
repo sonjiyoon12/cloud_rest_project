@@ -11,7 +11,7 @@ public class ResumeRequest {
 
     // 이력서 저장 DTO
     @Data
-    public static class SaveDTO {
+    public static class ResumeSaveDTO {
         @NotBlank(message = "제목을 입력해주세요")
         @Size(max = 100, message = "제목은 100자 이내로 작성해주세요")
         private String title;

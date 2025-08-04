@@ -8,6 +8,7 @@ import com.cloud.cloud_rest.skill.Skill;
 import com.cloud.cloud_rest.skill.SkillRepository;
 import com.cloud.cloud_rest.user.User;
 import com.cloud.cloud_rest.user.UserRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -44,7 +45,7 @@ public class ResumeService {
 
     // 이력서 작성
     @Transactional
-    public ResumeResponse.SaveDTO save(ResumeRequest.SaveDTO saveDTO, SessionUser sessionUser) {
+    public ResumeResponse.SaveDTO save(ResumeRequest.@Valid ResumeSaveDTO saveDTO, SessionUser sessionUser) {
         User user = userRepository.findById(sessionUser.getId()).orElseThrow(
                 () -> new Exception404("유저를 찾을 수 없습니다"));
 
