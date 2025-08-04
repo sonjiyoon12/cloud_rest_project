@@ -32,7 +32,6 @@ public class LikeService {
             return new LikeResponseDto(false, board.getLikeCount());
         } else {
             // 3.2 좋아요를 누르지 않았다면, 좋아요 추가
-            // toEntity() 메서드를 사용하여 Like 객체 생성
             Like newLike = requestDto.toEntity(board);
             likeRepository.save(newLike);
             board.setLikeCount(board.getLikeCount() + 1);

@@ -18,6 +18,4 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     // 사용자의 모든 댓글을 삭제하는 메서드
     void deleteByUserId(Long userId);
-
-
 }

@@ -48,7 +48,7 @@ public class Comment {
         this.isSecret = isSecret;
     }
 
-    // 댓글 내용과 비밀 댓글 여부를 업데이트하는 메서드 추가
+    // 댓글 내용과 비밀 댓글 여부를 업데이트하는 메서드
     public void update(CommentRequestDto requestDto) {
         this.content = requestDto.getContent();
         this.isSecret = requestDto.getIsSecret();

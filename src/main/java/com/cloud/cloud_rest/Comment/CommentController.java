@@ -1,6 +1,5 @@
 package com.cloud.cloud_rest.Comment;
 
-import com.cloud.cloud_rest.board.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 public class CommentController {
 
     private final CommentService commentService;
-    private final BoardService boardService;
 
     // 댓글 등록
     @PostMapping
@@ -31,7 +29,7 @@ public class CommentController {
     public ResponseEntity<Page<Comment>> getCommentsByBoardId(
             @PathVariable Long boardId,
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<Comment> commentPage = boardService.getCommentsByBoardId(boardId, pageable);
+        Page<Comment> commentPage = commentService.getCommentsByBoardId(boardId, pageable);
         return new ResponseEntity<>(commentPage, HttpStatus.OK);
     }
 
@@ -46,8 +44,8 @@ public class CommentController {
 
     // 댓글 삭제
     @DeleteMapping("/{commentId}")
-    public ResponseEntity<?> deleteComment(@PathVariable Long commentId,
-                                           @RequestParam Long userId) {
+    public ResponseEntity<?> deleteComment(@PathVariable Long commentId) {
+        Long userId = 1L;
         commentService.deleteComment(commentId, userId);
         return ResponseEntity.ok("댓글이 성공적으로 삭제 되었습니다.");
     }
