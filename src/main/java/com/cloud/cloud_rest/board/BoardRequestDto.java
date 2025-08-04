@@ -1,7 +1,6 @@
 package com.cloud.cloud_rest.board;
 
-import lombok.*;
-import lombok.Builder;
+import lombok.Data;
 
 public class BoardRequestDto {
 
@@ -11,7 +10,6 @@ public class BoardRequestDto {
         private String content;
         private Long userId;
 
-        @Builder
         public Board toEntity() {
             return Board.builder()
                     .title(title)
