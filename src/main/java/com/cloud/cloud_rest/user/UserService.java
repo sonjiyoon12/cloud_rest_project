@@ -1,9 +1,9 @@
 package com.cloud.cloud_rest.user;
 
-import com.cloud.cloud_rest._define.JwtUtil;
 import com.cloud.cloud_rest._global.exception.Exception403;
 import com.cloud.cloud_rest._global.exception.Exception404;
 import com.cloud.cloud_rest._global.exception.Exception500;
+import com.cloud.cloud_rest._global.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
