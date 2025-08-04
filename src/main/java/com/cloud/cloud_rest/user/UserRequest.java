@@ -25,8 +25,6 @@ public class UserRequest {
         @NotEmpty(message = "나이를 입력해주세요")
         private int age;
 
-        private String userImage = "basic.png";
-
         @NotBlank(message = "지번을 입력해주세요")
         private String address; // 지번
 
@@ -48,7 +46,6 @@ public class UserRequest {
                     .phoneNumber(this.phoneNumber)
                     .sex(this.sex)
                     .age(this.age)
-                    .userImage("basic.png")
                     .address(this.address)
                     .addressDefault(this.addressDefault)
                     .addressDetail(this.addressDetail)

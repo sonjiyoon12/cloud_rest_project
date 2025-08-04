@@ -1,5 +1,7 @@
 package com.cloud.cloud_rest.recruit;
 
+import com.cloud.cloud_rest.corp.Corp;
+import com.cloud.cloud_rest.corp.CorpRepository;
 import com.cloud.cloud_rest.recruitskill.RecruitSkill;
 import com.cloud.cloud_rest.skill.Skill;
 import com.cloud.cloud_rest.skill.SkillRepository;
@@ -97,7 +99,7 @@ public class RecruitService {
         return recruitRepository.countByCorpId(corpId);
     }
 
-///     ///     ///     ///     ///     ///     ///     ///     ///
+    ///     ///     ///     ///     ///     ///     ///     ///     ///
 
     //스킬처리 헬퍼
     private void updateRecruitSkills(Recruit recruit, List<Long> skillIds) {

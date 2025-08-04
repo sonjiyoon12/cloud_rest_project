@@ -1,8 +1,12 @@
 package com.cloud.cloud_rest.skill;
 
+import com.cloud.cloud_rest.recruitskill.RecruitSkill;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "skill_tb")
@@ -13,10 +17,15 @@ public class Skill {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "skill_id")
-    private long skillId;
+    private Long skillId;
 
     @Column(nullable = false, unique = true)
     private String name;
+
+    @OneToMany(mappedBy = "skill",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    private List<RecruitSkill> recruitSkills = new ArrayList<>();
 
     public Skill(String name) {
         this.name = name;
