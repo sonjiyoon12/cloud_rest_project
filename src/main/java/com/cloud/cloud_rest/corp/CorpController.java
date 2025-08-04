@@ -2,6 +2,7 @@ package com.cloud.cloud_rest.corp;
 
 import com.cloud.cloud_rest._global.SessionUser;
 import com.cloud.cloud_rest._global._core.common.ApiUtil;
+import com.cloud.cloud_rest._global.exception.Exception401;
 import com.cloud.cloud_rest._global.exception.Exception403;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,13 @@ public class CorpController {
 
     @PostMapping("/save")
     public ResponseEntity<?> save(@Valid @RequestBody CorpRequest.SaveDTO saveDTO){
+
+        if(!saveDTO.getPassword().equals(saveDTO.getRePassword())){
+            throw new Exception401("비빌번호가 서로 다릅니다");
+        }
+
         CorpResponse.CorpDTO corpDTO = corpService.save(saveDTO);
+
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(new ApiUtil<>(corpDTO));
@@ -52,10 +59,19 @@ public class CorpController {
         return ResponseEntity.ok(new ApiUtil<>(corp));
     }
 
+    // 웹 MULTIPART 형식 으로 받기
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> update(@PathVariable(name = "id")Long id,
-                                    @RequestBody CorpRequest.UpdateDTO updateDTO){
-        CorpResponse.UpdateDTO update = corpService.updateDTO(id,updateDTO);
+    public ResponseEntity<?> update(@PathVariable Long id,
+                                    @ModelAttribute CorpRequest.UpdateDTO updateDTO) {
+        CorpResponse.UpdateDTO update = corpService.updateDTO(id, updateDTO);
+        return ResponseEntity.ok(new ApiUtil<>(update));
+    }
+
+    // 웹에서 JSON 형식으로 받기(base64)
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updateJson(@PathVariable Long id,
+                                        @RequestBody CorpRequest.UpdateDTO updateDTO) {
+        CorpResponse.UpdateDTO update = corpService.updateDTO(id, updateDTO);
         return ResponseEntity.ok(new ApiUtil<>(update));
     }
 

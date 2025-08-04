@@ -31,9 +31,16 @@ public class Corp {
     @CreationTimestamp
     private Timestamp createdAt;
 
-    public void update(CorpRequest.UpdateDTO updateDTO, String imagePath){
-        corpName = updateDTO.getCorpName();
-        corpImage = imagePath;
-        email = updateDTO.getEmail();
+    public void update(CorpRequest.UpdateDTO updateDTO, String imagePath) {
+        if (updateDTO.getCorpName() != null) {
+            this.corpName = updateDTO.getCorpName();
+        }
+        if (updateDTO.getEmail() != null) {
+            this.email = updateDTO.getEmail();
+        }
+        if (imagePath != null) {
+            this.corpImage = imagePath;
+        }
     }
+
 }
