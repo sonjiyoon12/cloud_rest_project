@@ -19,42 +19,42 @@ public class WebExceptionHendler {
     }
 
     @ExceptionHandler(Exception401.class)
-    public String ex400(Exception401 e, HttpServletRequest request) {
+    public String ex401(Exception401 e, HttpServletRequest request) {
         log.warn(Define.SaveDTO.ERROR_401);
         request.setAttribute("msg", e.getMessage());
         return "err/401";
     }
 
     @ExceptionHandler(Exception403.class)
-    public String ex400(Exception403 e, HttpServletRequest request) {
+    public String ex403(Exception403 e, HttpServletRequest request) {
         log.warn(Define.SaveDTO.ERROR_403);
         request.setAttribute("msg", e.getMessage());
         return "err/403";
     }
 
     @ExceptionHandler(Exception404.class)
-    public String ex400(Exception404 e, HttpServletRequest request) {
+    public String ex404(Exception404 e, HttpServletRequest request) {
         log.warn(Define.SaveDTO.ERROR_404);
         request.setAttribute("msg", e.getMessage());
         return "err/404";
     }
 
     @ExceptionHandler(Exception500.class)
-    public String ex400(Exception500 e, HttpServletRequest request) {
+    public String ex500(Exception500 e, HttpServletRequest request) {
         log.warn(Define.SaveDTO.ERROR_500);
         request.setAttribute("msg", e.getMessage());
         return "err/500";
     }
 
     @ExceptionHandler(UserLoginExc.class)
-    public String ex400(UserLoginExc e, HttpServletRequest request) {
+    public String userLoginExc(UserLoginExc e, HttpServletRequest request) {
         log.warn(Define.SaveDTO.USER_LOGIN_ERROR);
         request.setAttribute("msg", e.getMessage());
         return "redirect:/user/login";
     }
 
     @ExceptionHandler(CompLoginExc.class)
-    public String ex400(CompLoginExc e, HttpServletRequest request) {
+    public String compLoginExc(CompLoginExc e, HttpServletRequest request) {
         log.warn(Define.SaveDTO.COMP_LOGIN_ERROR);
         request.setAttribute("msg", e.getMessage());
         return "redirect:/comp/login";
