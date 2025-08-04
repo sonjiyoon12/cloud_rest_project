@@ -16,15 +16,11 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class FileUploadUtil {
+
     private final UploadProperties uploadPath;
 
-    /**
-     * 파일 업로드 후 상대 경로를 반환 (DB 저장용)
-     */
     public String uploadProfileImage(MultipartFile multipartFile, String subDirName) throws IOException {
-        if (multipartFile == null || multipartFile.isEmpty()) {
-            return null;
-        }
+        if (multipartFile == null || multipartFile.isEmpty()) return null;
 
         // ./uploads/corp-images/
         String fullUploadPath = Paths.get(uploadPath.getRootDir(), subDirName).toString();
@@ -36,27 +32,21 @@ public class FileUploadUtil {
 
         Path filePath = Paths.get(fullUploadPath, uniqueFileName);
         multipartFile.transferTo(filePath);
+
+        // DB에는 상대경로 저장
         return Paths.get(subDirName, uniqueFileName).toString().replace("\\", "/");
     }
 
-    /**
-     * 기존 파일 삭제
-     */
     public void deleteProfileImage(String imagePath) {
-        if (imagePath != null && !imagePath.isEmpty()) {
-            try {
-                // ./uploads/corp-images/abc.jpg
-                Path filePath = Paths.get(uploadPath.getRootDir(), imagePath);
-                Files.deleteIfExists(filePath);
-            } catch (IOException e) {
-                throw new Exception400("프로필 이미지를 삭제하지 못했습니다");
-            }
+        if (imagePath == null || imagePath.isEmpty()) return;
+        try {
+            Path filePath = Paths.get(uploadPath.getRootDir(), imagePath);
+            Files.deleteIfExists(filePath);
+        } catch (IOException e) {
+            throw new RuntimeException("프로필 이미지를 삭제하지 못했습니다", e);
         }
     }
 
-    /**
-     * 업로드 경로 생성
-     */
     private void createUploadDirectory(String fullUploadPath) throws IOException {
         Path uploadDir = Paths.get(fullUploadPath);
         if (!Files.exists(uploadDir)) {
@@ -64,19 +54,11 @@ public class FileUploadUtil {
         }
     }
 
-    /**
-     * 파일 확장자 추출
-     */
     private String getFileExtension(String originFilename) {
-        if (originFilename == null || originFilename.lastIndexOf(".") == -1) {
-            return "";
-        }
+        if (originFilename == null || originFilename.lastIndexOf(".") == -1) return "";
         return originFilename.substring(originFilename.lastIndexOf("."));
     }
 
-    /**
-     * 파일명 생성: YYYYMMDD_HHmmss_UUID.ext
-     */
     private String generateUniqueFileName(String extension) {
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
         String uuid = UUID.randomUUID().toString().substring(0, 8);

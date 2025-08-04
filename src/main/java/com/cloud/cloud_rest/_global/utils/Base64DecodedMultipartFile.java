@@ -29,7 +29,8 @@ public class Base64DecodedMultipartFile implements MultipartFile {
 
     @Override
     public String getContentType() {
-        return "image/jpeg"; // 필요에 따라 변경
+        if (fileName.endsWith(".png")) return "image/png";
+        return "image/jpeg";
     }
 
     @Override
@@ -43,17 +44,17 @@ public class Base64DecodedMultipartFile implements MultipartFile {
     }
 
     @Override
-    public byte[] getBytes() throws IOException {
+    public byte[] getBytes() {
         return imgContent;
     }
 
     @Override
-    public InputStream getInputStream() throws IOException {
+    public InputStream getInputStream() {
         return new ByteArrayInputStream(imgContent);
     }
 
     @Override
-    public void transferTo(File dest) throws IOException, IllegalStateException {
+    public void transferTo(File dest) throws IOException {
         Files.write(dest.toPath(), imgContent);
     }
 }
