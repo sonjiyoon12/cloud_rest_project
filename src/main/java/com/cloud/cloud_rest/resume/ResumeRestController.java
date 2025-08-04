@@ -18,14 +18,14 @@ public class ResumeRestController {
     private final ResumeService resumeService;
 
     // 이력서 전체 조회
-    @GetMapping("/resumes")
+    @GetMapping
     public ResponseEntity<?> findAll() {
         List<ResumeResponse.ListDTO> resumes = resumeService.findAllResumeAndSkills();
         return ResponseEntity.ok().body(new ApiUtil<>(resumes));
     }
 
     // 이력서 상세보기
-    @GetMapping("/resumes/{id}/detail")
+    @GetMapping("/{id}/detail")
     public ResponseEntity<ApiUtil<ResumeResponse.DetailDTO>> detail(
             @PathVariable(name = "id") Long resumeId,
             @RequestAttribute(value = "sessionUser", required = false)SessionUser sessionUser) {
@@ -35,7 +35,7 @@ public class ResumeRestController {
     }
 
     // 이력서 작성
-    @PostMapping("/resumes")
+    @PostMapping
     public ResponseEntity<?> save(@Valid @RequestBody ResumeRequest.SaveDTO saveDTO,
                                   @RequestAttribute("sessionUser") SessionUser sessionUser) {
         ResumeResponse.SaveDTO savedResume = resumeService.save(saveDTO, sessionUser);
@@ -43,7 +43,7 @@ public class ResumeRestController {
     }
 
     // 이력서 수정
-    @PutMapping("/resumes/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable(name = "id") Long resumeId,
                                     @Valid @RequestBody ResumeRequest.UpdateDTO updateDTO,
                                     @RequestAttribute("sessionUser")SessionUser sessionUser){
@@ -53,7 +53,7 @@ public class ResumeRestController {
     }
 
     // 이력서 삭제
-    @DeleteMapping("/resumes/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<ApiUtil<String>> delete(
             @PathVariable(name = "id") Long resumeId,
             @RequestAttribute("sessionUser") SessionUser sessionUser) {
