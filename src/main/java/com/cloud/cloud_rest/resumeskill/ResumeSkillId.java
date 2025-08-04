@@ -1,4 +1,4 @@
-package resumeskill;
+package com.cloud.cloud_rest.resumeskill;
 
 import java.io.Serializable;
 import java.util.Objects;
