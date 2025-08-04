@@ -28,11 +28,18 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .addPathPatterns("/api/**")
                 // 공개 API는 제외 처리
                 .excludePathPatterns(
-                        "/api/boards/{id:\\d+}/detail", // 게시글 상세보기 누가나 응답 허용
+                        //게시판
+                        "/api/boards/{id:\\d+}/detail",
+                        //회원가입
                         "/api/corp/save",
                         "/api/users/save",
+                        //로그인
                         "/api/corp/login",
                         "/api/users/login",
+                        // 구인공고
+                        "/api/recruits",
+                        "/api/recruits/{id:\\d+}",
+                        //에러
                         "/api/**/err/**"
                 );
 
