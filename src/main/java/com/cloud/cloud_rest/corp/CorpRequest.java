@@ -34,7 +34,9 @@ public class CorpRequest {
     public static class UpdateDTO{
         private String corpName;
         private String email;
-        private MultipartFile corpImage;
+        private MultipartFile corpImage; // 웹에서 받을때
+        
+        private String corpImageBase64; // 모바일 / 외부 API
     }
 
 }

@@ -2,6 +2,7 @@ package com.cloud.cloud_rest.corp;
 
 import com.cloud.cloud_rest._global.SessionUser;
 import com.cloud.cloud_rest._global._core.common.ApiUtil;
+import com.cloud.cloud_rest._global.exception.Exception401;
 import com.cloud.cloud_rest._global.exception.Exception403;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,13 @@ public class CorpController {
 
     @PostMapping("/save")
     public ResponseEntity<?> save(@Valid @RequestBody CorpRequest.SaveDTO saveDTO){
+
+        if(!saveDTO.getPassword().equals(saveDTO.getRePassword())){
+            throw new Exception401("비빌번호가 서로 다릅니다");
+        }
+
         CorpResponse.CorpDTO corpDTO = corpService.save(saveDTO);
+
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(new ApiUtil<>(corpDTO));
@@ -52,9 +59,9 @@ public class CorpController {
         return ResponseEntity.ok(new ApiUtil<>(corp));
     }
 
-    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> update(@PathVariable(name = "id")Long id,
-                                    @RequestBody CorpRequest.UpdateDTO updateDTO){
+                                    @ModelAttribute @RequestBody CorpRequest.UpdateDTO updateDTO){
         CorpResponse.UpdateDTO update = corpService.updateDTO(id,updateDTO);
         return ResponseEntity.ok(new ApiUtil<>(update));
     }
