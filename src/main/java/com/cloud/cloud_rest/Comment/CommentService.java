@@ -3,8 +3,12 @@ package com.cloud.cloud_rest.Comment;
 import com.cloud.cloud_rest.board.Board;
 import com.cloud.cloud_rest.board.BoardRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -15,66 +19,67 @@ public class CommentService {
     private final BoardRepository boardRepository;
 
     /**
+     * 특정 게시글의 댓글 목록을 페이징하여 조회하는 메서드
+     *
+     * @param boardId  게시글 ID
+     * @param pageable 페이징 정보
+     * @return 댓글 목록 페이지
+     */
+    public Page<Comment> getCommentsByBoardId(Long boardId, Pageable pageable) {
+        return commentRepository.findByBoardBoardId(boardId, pageable);
+    }
+
+    /**
      * 댓글 등록 메서드
+     *
      * @param requestDto 댓글 내용, 게시글 ID, 비밀 댓글 여부를 담은 DTO
-     * @param userId 댓글 작성자의 ID
+     * @param userId     댓글 작성자의 ID
      * @return 등록된 댓글 정보를 담은 응답 DTO
      */
     @Transactional
     public CommentResponseDto writeComment(CommentRequestDto requestDto, Long userId) {
-        // 1. 게시글 존재 여부 확인
         Board board = boardRepository.findById(requestDto.getBoardId())
                 .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
-
-        // 2. 댓글 엔티티 생성 및 저장
-        Comment newComment = Comment.builder()
-                .board(board)
-                .userId(userId)
-                .content(requestDto.getContent())
-                .isSecret(requestDto.getIsSecret() != null ? requestDto.getIsSecret() : false)
-                .build();
+        Comment newComment = requestDto.toEntity(board);
+        newComment.setUserId(userId);
         commentRepository.save(newComment);
         return new CommentResponseDto(newComment);
     }
 
     /**
      * 댓글 수정 메서드
-     * @param commentId 수정할 댓글의 ID
+     *
+     * @param commentId  수정할 댓글의 ID
      * @param requestDto 새로운 내용을 담은 DTO
-     * @param userId 댓글 수정 권한 확인을 위한 사용자 ID
+     * @param userId     댓글 수정 권한 확인을 위한 사용자 ID
      */
     @Transactional
     public void updateComment(Long commentId, CommentRequestDto requestDto, Long userId) {
-        // 1. 댓글 존재 여부 확인
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 댓글입니다."));
-
-        // 2. 수정 권한 확인
-        if (!comment.getUserId().equals(userId)) {
-            throw new IllegalArgumentException("댓글 수정 권한이 없습니다.");
-        }
-
-        // 3. 댓글 내용 수정
-        comment.setContent(requestDto.getContent());
+        Optional<Comment> optionalComment = commentRepository.findByCommentIdAndUserId(commentId, userId);
+        Comment comment = optionalComment.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 댓글이거나 수정 권한이 없습니다."));
+        comment.update(requestDto);
     }
 
     /**
      * 댓글 삭제 메서드
+     *
      * @param commentId 삭제할 댓글의 ID
-     * @param userId 댓글 삭제 권한 확인을 위한 사용자 ID
+     * @param userId    댓글 삭제 권한 확인을 위한 사용자 ID
      */
     @Transactional
     public void deleteComment(Long commentId, Long userId) {
-        // 1. 댓글 존재 여부 확인
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 댓글입니다."));
-
-        // 2. 삭제 권한 확인
-        if (!comment.getUserId().equals(userId)) {
-            throw new IllegalArgumentException("댓글 삭제 권한이 없습니다.");
-        }
-
-        // 3. 댓글 삭제
+        Optional<Comment> optionalComment = commentRepository.findByCommentIdAndUserId(commentId, userId);
+        Comment comment = optionalComment.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 댓글이거나 삭제 권한이 없습니다."));
         commentRepository.delete(comment);
+    }
+
+    /**
+     * 사용자의 모든 댓글을 삭제하는 메서드
+     *
+     * @param userId 모든 댓글을 삭제할 사용자의 ID
+     */
+    @Transactional
+    public void deleteAllUserComments(Long userId) {
+        commentRepository.deleteByUserId(userId);
     }
 }
