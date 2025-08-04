@@ -26,4 +26,15 @@ public class SkillService {
                 .map(SkillResponse.SkillListDTO::of)
                 .collect(Collectors.toList());
     }
+
+    //관리자용 수정기능
+    @Transactional
+    public void addSkill(String name) {
+        //중복체크
+        skillRepository.findByNameIgnoreCase(name).ifPresent(skill -> {
+            throw new RuntimeException("이미 존재하는 기술입니다");
+        });
+
+        Skill newSkill = Skill.builder()
+    }
 }
