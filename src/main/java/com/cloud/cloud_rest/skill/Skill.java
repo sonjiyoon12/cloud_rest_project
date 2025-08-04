@@ -4,7 +4,7 @@ import com.cloud.cloud_rest.recruitskill.RecruitSkill;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import resumeskill.ResumeSkill;
+import com.cloud.cloud_rest.resumeskill.ResumeSkill;
 
 import java.util.ArrayList;
 import java.util.List;
