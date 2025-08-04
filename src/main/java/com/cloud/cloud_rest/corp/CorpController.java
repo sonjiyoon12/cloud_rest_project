@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -42,7 +41,7 @@ public class CorpController {
         CorpResponse.LoginDTO login = new CorpResponse.LoginDTO(corp);
 
         return ResponseEntity.ok()
-                .header("Authorization","Bearer" + jwtToken)
+                .header("Authorization","Bearer " + jwtToken)
                 .body(new ApiUtil<>(login));
     }
 
