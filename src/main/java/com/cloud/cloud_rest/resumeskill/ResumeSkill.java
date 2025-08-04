@@ -18,8 +18,7 @@ import lombok.NoArgsConstructor;
 public class ResumeSkill {
 
     @EmbeddedId
-    private ResumeSkillId id;
-
+    private ResumeSkillId resumeSkillId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("resumeId")
@@ -31,4 +30,9 @@ public class ResumeSkill {
     @JoinColumn(name = "skill_id")
     private Skill skill;
 
+    public ResumeSkill(Resume resume, Skill skill) {
+        this.resume = resume;
+        this.skill = skill;
+        this.resumeSkillId = new ResumeSkillId(resume.getResumeId(), skill.getSkillId());
+    }
 }

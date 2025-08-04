@@ -12,6 +12,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
+@RequestMapping("/api/resumes")
 public class ResumeRestController {
 
     private final ResumeService resumeService;
@@ -19,7 +20,7 @@ public class ResumeRestController {
     // 이력서 전체 조회
     @GetMapping("/resumes")
     public ResponseEntity<?> findAll() {
-        List<ResumeResponse.ListDTO> resumes = resumeService.findAll();
+        List<ResumeResponse.ListDTO> resumes = resumeService.findAllResumeAndSkills();
         return ResponseEntity.ok().body(new ApiUtil<>(resumes));
     }
 

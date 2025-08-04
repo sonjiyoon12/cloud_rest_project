@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+import java.util.List;
+
 public class ResumeRequest {
 
     // 이력서 저장 DTO
@@ -17,6 +19,7 @@ public class ResumeRequest {
         @Size(max = 5000, message = "내용은 5000자 이내로 작성해주세요")
         private String content;
         private boolean isRep = false;
+        private List<Long> skillIdList;
 
         public Resume toEntity(User user) {
             return Resume.builder()
@@ -38,6 +41,7 @@ public class ResumeRequest {
         @Size(max = 5000, message = "내용은 5000자 이내로 작성해주세요")
         private String content;
         private boolean isRep = false;
+        private List<Long> skillIdList;
 
     }
 }

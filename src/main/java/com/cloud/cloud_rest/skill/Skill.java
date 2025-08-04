@@ -32,6 +32,7 @@ public class Skill {
             orphanRemoval = true)
     private List<RecruitSkill> recruitSkills = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "skill", cascade = CascadeType.ALL)
     private List<ResumeSkill> resumeSkills = new ArrayList<>();
 
