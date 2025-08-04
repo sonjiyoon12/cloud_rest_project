@@ -2,6 +2,7 @@ package com.cloud.cloud_rest.user;
 
 import com.cloud.cloud_rest._global.SessionUser;
 import com.cloud.cloud_rest._global._core.common.ApiUtil;
+import com.cloud.cloud_rest._global.exception.Exception401;
 import com.cloud.cloud_rest._global.exception.Exception403;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,11 @@ public class UserController {
     // 유저 회원가입
     @PostMapping("/save")
     public ResponseEntity<?> save(@Valid @RequestBody UserRequest.SaveDTO saveDTO){
+
+        if(!saveDTO.getPassword().equals(saveDTO.getRePassword())){
+            throw new Exception401("비빌번호가 서로 다릅니다");
+        }
+
         UserResponse.SaveDTO save = userService.save(saveDTO);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
