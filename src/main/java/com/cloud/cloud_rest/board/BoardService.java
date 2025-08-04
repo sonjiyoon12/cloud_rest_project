@@ -1,20 +1,20 @@
 package com.cloud.cloud_rest.board;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
 @Service
+@RequiredArgsConstructor
 public class BoardService {
 
     private final BoardRepository boardRepository;
 
-    public BoardService(BoardRepository boardRepository) {
-        this.boardRepository = boardRepository;
-    }
-
-    @Transactional(readOnly = true)
+    @Transactional
     public Board saveBoard(BoardRequestDto.SaveDto saveDto, Long userId) {
         Board board = Board.builder()
                 .title(saveDto.getTitle())
@@ -22,20 +22,32 @@ public class BoardService {
                 .userId(userId)
                 .createdAt(LocalDateTime.now())
                 .views(0)
+                .likeCount(0)
                 .build();
         return boardRepository.save(board);
     }
 
-    // 특정 Id의 게시물 조회 + 조회수 증가 포함
+    @Transactional(readOnly = true)
+    public Page<Board> getBoardList(Pageable pageable, String search) {
+        if (search != null && !search.trim().isEmpty()) {
+            return boardRepository.searchByKeyword(search, pageable);
+        }
+        return boardRepository.findAll(pageable);
+    }
+
     @Transactional(readOnly = true)
     public Board getBoard(Long boardId) {
+        return boardRepository.findById(boardId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시물 ID 입니다: " + boardId));
+    }
+
+    @Transactional
+    public void increaseViews(Long boardId) {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시물 ID 입니다: " + boardId));
         board.setViews(board.getViews() + 1);
-        return boardRepository.save(board);
     }
 
-    // 게시물 수정
     @Transactional
     public Board updateBoard(Long boardId, BoardRequestDto.UpdateDto updateDto, Long userId) {
         Board board = boardRepository.findById(boardId)
@@ -49,7 +61,6 @@ public class BoardService {
         return boardRepository.save(board);
     }
 
-    // 게시물 삭제
     @Transactional
     public void deleteBoard(Long boardId, Long userId) {
         Board board = boardRepository.findById(boardId)
@@ -61,4 +72,5 @@ public class BoardService {
 
         boardRepository.delete(board);
     }
+
 }
