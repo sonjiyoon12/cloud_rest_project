@@ -15,6 +15,6 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     Page<Board> searchByKeyword(@Param("keyword") String keyword, Pageable pageable);
 
     // 특정 사용자가 댓글을 작성한 모든 게시글을 조회
-    @Query("SELECT b FROM Board b WHERE b.boardId IN (SELECT c.boardId FROM Comment c WHERE c.userId = :userId)")
+    @Query("SELECT b FROM Board b WHERE b.boardId IN (SELECT c.board.boardId FROM Comment c WHERE c.userId = :userId)")
     Page<Board> findBoardsCommentedByUser(@Param("userId") Long userId, Pageable pageable);
 }
