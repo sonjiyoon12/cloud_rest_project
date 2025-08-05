@@ -74,7 +74,7 @@ public class SkillService {
                 });
 
         // 4. 스킬 이름 업데이트
-        skillToUpdate.update(normalizedNewName);
+        skillToUpdate.updateName(normalizedNewName);
 
         // 5. DTO로 변환하여 반환 (@Transactional에 의해 변경 감지 후 자동 저장됨)
         return SkillResponse.SkillDetailDTO.of(skillToUpdate);
