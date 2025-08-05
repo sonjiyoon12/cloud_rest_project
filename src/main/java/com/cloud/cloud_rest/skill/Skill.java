@@ -1,6 +1,8 @@
 package com.cloud.cloud_rest.skill;
 
+import com.cloud.cloud_rest.corpskill.CorpSkill;
 import com.cloud.cloud_rest.recruitskill.RecruitSkill;
+import com.cloud.cloud_rest.userskill.UserSkill;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,6 +37,12 @@ public class Skill {
     @Builder.Default
     @OneToMany(mappedBy = "skill", cascade = CascadeType.ALL)
     private List<ResumeSkill> resumeSkills = new ArrayList<>();
+
+    @OneToMany(mappedBy = "skill" , cascade = CascadeType.ALL)
+    private List<UserSkill> userSkills = new ArrayList<>();
+
+    @OneToMany(mappedBy = "skill" , cascade = CascadeType.ALL)
+    private List<CorpSkill> corpSkills = new ArrayList<>();
 
     public Skill(String name) {
         this.name = name;
