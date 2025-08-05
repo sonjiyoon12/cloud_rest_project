@@ -1,6 +1,7 @@
 package com.cloud.cloud_rest._global._core.config;
 
 import com.cloud.cloud_rest._global._core.interceptor.LoginInterceptor;
+import com.cloud.cloud_rest._global.auth.AuthInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +14,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration // IoC 처리 (싱글톤 패턴 관리)
 public class WebMvcConfig implements WebMvcConfigurer {
     // DI 처리(생성자 의존 주입)
+    private final AuthInterceptor authInterceptor;
     private final LoginInterceptor loginInterceptor;
 
 
@@ -23,6 +25,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        // @Auth 어노테이션 지원용 인터셉터 등록
+        registry.addInterceptor(authInterceptor)
+                .addPathPatterns("/api/**");
+
         registry.addInterceptor(loginInterceptor)
                 // REST API 경로 변경
                 .addPathPatterns("/api/**")
@@ -36,9 +42,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         // 로그인
                         "/api/corp/login",
                         "/api/users/login",
-                        // 구인공고
+                        // 구인공고 @Auth로 관리
                         "/api/recruits",
-                        "/api/recruits/{id:\\d+}",
                         // 이력서
                         "/api/resumes",
                         // 에러
