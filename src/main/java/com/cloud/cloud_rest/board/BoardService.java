@@ -113,7 +113,10 @@ public class BoardService {
     // 게시글별 댓글 목록을 페이징하여 조회
     @Transactional(readOnly = true)
     public Page<Comment> getCommentsByBoardId(Long boardId, Pageable pageable) {
+
         return commentRepository.findByBoardBoardId(boardId, pageable);
+
+
     }
 
     // 특정 사용자가 댓글을 작성한 모든 게시글을 조회
