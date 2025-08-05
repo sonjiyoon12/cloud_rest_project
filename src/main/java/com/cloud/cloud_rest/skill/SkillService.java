@@ -1,6 +1,8 @@
 package com.cloud.cloud_rest.skill;
 
+import com.cloud.cloud_rest._global.SessionUser;
 import com.cloud.cloud_rest._global.exception.Exception400;
+import com.cloud.cloud_rest._global.exception.Exception403;
 import com.cloud.cloud_rest._global.exception.Exception404;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,8 +28,11 @@ public class SkillService {
     }
 
     @Transactional
-    public SkillResponse.SkillDetailDTO save(SkillRequest.SkillSaveDTO reqDTO) {
+    public SkillResponse.SkillDetailDTO save(SkillRequest.SkillSaveDTO reqDTO, SessionUser sessionUser) {
         log.info("스킬 저장 service 호출됨, requestDTO: {}", reqDTO);
+        if (!"ADMIN".equals(sessionUser.getRole())) {
+            throw new Exception403("스킬을 등록할 권한이 없습니다.");
+        }
         // 1. 입력값 정규화 (공백 제거, 소문자 변환)
         String normalizedName = reqDTO.getName().trim().toLowerCase();
 
@@ -38,7 +43,7 @@ public class SkillService {
 
         // 3. 정규화된 이름으로 저장
         Skill skill = Skill.builder()
-                .skillName(normalizedName)
+                .name(normalizedName)
                 .build();
         Skill savedSkill = skillRepository.save(skill);
 
@@ -47,8 +52,11 @@ public class SkillService {
     }
 
     @Transactional
-    public SkillResponse.SkillDetailDTO update(Long skillId, SkillRequest.SkillUpdateDTO reqDTO) {
+    public SkillResponse.SkillDetailDTO update(Long skillId, SkillRequest.SkillUpdateDTO reqDTO, SessionUser sessionUser) {
         log.info("스킬 수정 service 호출됨, skillId: {}, requestDTO: {}", skillId, reqDTO);
+        if (!"ADMIN".equals(sessionUser.getRole())) {
+            throw new Exception403("스킬을 수정할 권한이 없습니다.");
+        }
         // 1. 수정할 스킬 조회 (없으면 404)
         Skill skillToUpdate = skillRepository.findById(skillId)
                 .orElseThrow(() -> new Exception404(SkillErr.SKILL_NOT_FOUND.getMessage()));
@@ -60,7 +68,7 @@ public class SkillService {
         skillRepository.findByNameIgnoreCase(normalizedNewName)
                 .ifPresent(existingSkill -> {
                     // 찾은 스킬의 ID가 현재 수정하려는 스킬의 ID와 다르면, 이름이 중복된 것
-                    if (!existingSkill.getId().equals(skillId)) {
+                    if (!existingSkill.getSkillId().equals(skillId)) {
                         throw new Exception400(SkillErr.SKILL_ALREADY_EXISTS.getMessage());
                     }
                 });
@@ -73,8 +81,11 @@ public class SkillService {
     }
 
     @Transactional
-    public void delete(Long skillId) {
+    public void delete(Long skillId, SessionUser sessionUser) {
         log.info("스킬 삭제 service 호출됨, skillId: {}", skillId);
+        if (!"ADMIN".equals(sessionUser.getRole())) {
+            throw new Exception403("스킬을 삭제할 권한이 없습니다.");
+        }
         // 1. 스킬 존재 여부 확인
         if (!skillRepository.existsById(skillId)) {
             throw new Exception404(SkillErr.SKILL_NOT_FOUND.getMessage());

@@ -31,7 +31,7 @@ public interface SkillRepository extends JpaRepository<Skill, Long> {
      * @param skillId 확인할 스킬의 ID
      * @return 사용 중이면 true, 아니면 false
      */
-    @Query("select count(rs) > 0 from RecruitSkill rs where rs.skill.id = :skillId")
+    @Query("select count(rs) > 0 from RecruitSkill rs where rs.skill.skillId = :skillId")
     boolean isUsedInRecruitSkill(@Param("skillId") Long skillId);
 
     /**
@@ -40,7 +40,7 @@ public interface SkillRepository extends JpaRepository<Skill, Long> {
      * @param skillId 확인할 스킬의 ID
      * @return 사용 중이면 true, 아니면 false
      */
-    @Query("select count(rs) > 0 from ResumeSkill rs where rs.skill.id = :skillId")
+    @Query("select count(rs) > 0 from ResumeSkill rs where rs.skill.skillId = :skillId")
     boolean isUsedInResumeSkill(@Param("skillId") Long skillId);
 
     /**
@@ -49,6 +49,6 @@ public interface SkillRepository extends JpaRepository<Skill, Long> {
      * @param skillId 확인할 스킬의 ID
      * @return 사용 중이면 true, 아니면 false
      */
-    @Query("select count(us) > 0 from UserSkill us where us.skill.id = :skillId")
+    @Query("select count(us) > 0 from UserSkill us where us.skill.skillId = :skillId")
     boolean isUsedInUserSkill(@Param("skillId") Long skillId);
 }

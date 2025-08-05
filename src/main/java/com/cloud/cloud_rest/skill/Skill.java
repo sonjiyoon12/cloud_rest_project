@@ -12,19 +12,19 @@ import lombok.NoArgsConstructor;
 public class Skill {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long skillId;
 
     @Column(unique = true)
-    private String skillName;
+    private String name;
 
     @Builder
-    public Skill(Long id, String skillName) {
-        this.id = id;
-        this.skillName = skillName;
+    public Skill(Long skillId, String name) {
+        this.skillId = skillId;
+        this.name = name;
     }
 
     // 업데이트 메소드
-    public void update(String skillName) {
-        this.skillName = skillName;
+    public void update(String name) {
+        this.name = name;
     }
 }

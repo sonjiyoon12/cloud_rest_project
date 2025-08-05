@@ -4,7 +4,6 @@ import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.cloud.cloud_rest._global.SessionUser;
 import com.cloud.cloud_rest._global.exception.Exception401;
-import com.cloud.cloud_rest._global.exception.Exception403;
 import com.cloud.cloud_rest._global.exception.Exception500;
 import com.cloud.cloud_rest._global.utils.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -46,12 +45,6 @@ public class AuthInterceptor implements HandlerInterceptor {
 
         try {
             SessionUser sessionUser = JwtUtil.verify(jwt);
-
-            // 5. 역할(Role) 검사
-            String requiredRole = auth.role();
-            if (!requiredRole.isEmpty() && !sessionUser.getRole().equals(requiredRole)) {
-                throw new Exception403("'" + requiredRole + "' 역할만 접근할 수 있습니다.");
-            }
 
             request.setAttribute("sessionUser", sessionUser);
             return true;
