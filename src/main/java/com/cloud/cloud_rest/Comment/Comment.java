@@ -1,6 +1,5 @@
 package com.cloud.cloud_rest.Comment;
 
-
 import com.cloud.cloud_rest.board.Board;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -8,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.builder.ToStringExclude;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -21,25 +19,25 @@ public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "comment_id")
-    private Long commentId; // 댓글 고유 ID (PK)
+    private Long commentId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
     @ToStringExclude
-    private Board board; // 게시글 엔티티 (FK)
+    private Board board;
 
     @Column(name = "user_id", nullable = false)
-    private Long userId; // 댓글 작성자 ID (FK)
+    private Long userId;
 
     @Lob
     @Column(name = "content")
-    private String content; // 댓글 내용
+    private String content;
 
     @Column(name = "commented_at", columnDefinition = "datetime(6) default current_timestamp")
-    private LocalDateTime commentedAt; // 댓글 작성일시
+    private LocalDateTime commentedAt;
 
     @Column(name = "is_secret", nullable = false, columnDefinition = "boolean default false")
-    private Boolean isSecret; // 비밀 댓글 여부
+    private Boolean isSecret;
 
 
     @Builder
@@ -48,6 +46,11 @@ public class Comment {
         this.userId = userId;
         this.content = content;
         this.isSecret = isSecret;
-        // commentedAt 는 DB에 자동 생성됨
+    }
+
+    // 댓글 내용과 비밀 댓글 여부를 업데이트하는 메서드
+    public void update(CommentRequestDto requestDto) {
+        this.content = requestDto.getContent();
+        this.isSecret = requestDto.getIsSecret();
     }
 }
