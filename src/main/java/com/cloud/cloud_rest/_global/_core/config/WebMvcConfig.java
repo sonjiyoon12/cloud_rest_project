@@ -33,7 +33,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "/api/users/save",
                         "/api/corp/login",
                         "/api/users/login",
-                        "/error"
+                        "/api/users/err/**"
                 );
 
     }
