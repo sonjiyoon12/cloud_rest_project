@@ -1,5 +1,7 @@
 package com.cloud.cloud_rest.recruit;
 
+import com.cloud.cloud_rest._global.exception.Exception403;
+import com.cloud.cloud_rest._global.exception.Exception404;
 import com.cloud.cloud_rest.corp.Corp;
 import com.cloud.cloud_rest.corp.CorpRepository;
 import com.cloud.cloud_rest.recruitskill.RecruitSkill;
@@ -125,15 +127,16 @@ public class RecruitService {
         // 기존 스킬 모두 제거 (orphanRemoval=true 옵션으로 DB에서도 삭제됨)
         recruit.getRecruitSkills().clear();
 
-        if (skillIds != null && !skillIds.isEmpty()) {
-            List<Skill> skills = skillRepository.findAllById(skillIds);
-            // skillIds로 조회된 Skill이 없는 경우에 대한 예외처리도 고려해볼 수 있습니다.
-
-            List<RecruitSkill> newRecruitSkills = skills.stream()
-                    .map(skill -> new RecruitSkill(recruit, skill))
-                    .collect(Collectors.toList());
-
-            recruit.getRecruitSkills().addAll(newRecruitSkills);
+        if (skillIds == null || skillIds.isEmpty()) {
+            throw new Exception404("스킬이 존재하지않습니다");
         }
+        List<Skill> skills = skillRepository.findAllById(skillIds);
+        // skillIds로 조회된 Skill이 없는 경우에 대한 예외처리도 고려해볼 수 있습니다.
+
+        List<RecruitSkill> newRecruitSkills = skills.stream()
+                .map(skill -> new RecruitSkill(recruit, skill))
+                .collect(Collectors.toList());
+
+        recruit.getRecruitSkills().addAll(newRecruitSkills);
     }
 }
