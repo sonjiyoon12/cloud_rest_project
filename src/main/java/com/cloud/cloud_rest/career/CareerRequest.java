@@ -11,11 +11,11 @@ public class CareerRequest {
 
     // 경력사항 저장
     @Data
-    public static class SaveDTO {
+    public static class CareerSaveDTO {
         @NotBlank(message = "회사명을 입력해주세요")
         private String corpName;
 
-        @Size(max = 20, message = "직책은 30자 이내로 작성해주세요")
+        @Size(max = 20, message = "직책은 20자 이내로 작성해주세요")
         private String position;
 
         @NotBlank(message = "경력내용을 입력해주세요")
@@ -39,8 +39,7 @@ public class CareerRequest {
 
     // 경력 수정
     @Data
-    public static class UpdateDTO {
-        private Long careerId;
+    public static class CareerUpdateDTO {
         private String corpName;
         private String position;
         private String content;

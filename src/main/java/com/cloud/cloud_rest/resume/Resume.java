@@ -1,6 +1,7 @@
 package com.cloud.cloud_rest.resume;
 
 import com.cloud.cloud_rest._global.utils.DateUtil;
+import com.cloud.cloud_rest.career.Career;
 import com.cloud.cloud_rest.resumeskill.ResumeSkill;
 import com.cloud.cloud_rest.user.User;
 import jakarta.persistence.*;
@@ -63,6 +64,14 @@ public class Resume {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ResumeSkill> resumeSkills = new ArrayList<>();
 
+    @Builder.Default
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Career> careers = new ArrayList<>();
+
+    public void addCareer(Career career) {
+        careers.add(career);
+        career.setResume(this);
+    }
 
     public void addResumeSkill(ResumeSkill resumeSkill) {
         this.resumeSkills.add(resumeSkill);

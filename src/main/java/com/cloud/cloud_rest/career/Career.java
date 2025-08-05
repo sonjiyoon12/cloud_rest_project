@@ -31,4 +31,17 @@ public class Career {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "resume_id")
     private Resume resume;
+
+    public Career(Resume resume) {
+        this.resume = resume;
+    }
+
+    // 수정 기능 추가
+    public void update(CareerRequest.CareerUpdateDTO updateDTO) {
+        this.corpName = updateDTO.getCorpName();
+        this.position = updateDTO.getPosition();
+        this.content = updateDTO.getContent();
+        this.startAt = updateDTO.getStartAt();
+        this.endAt = updateDTO.getEndAt();
+    }
 }
