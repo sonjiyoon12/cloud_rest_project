@@ -12,7 +12,7 @@ public class RecruitRequest {
 
     @Getter
     @Setter
-    public static class SaveDTO {
+    public static class RecruitSaveDTO {
 
         private String title;
         private String content;
@@ -31,7 +31,7 @@ public class RecruitRequest {
 
     @Getter
     @Setter
-    public static class UpdateDTO {
+    public static class RecruitUpdateDTO {
         private String title;
         private String content;
         private LocalDate deadline;

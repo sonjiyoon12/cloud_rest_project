@@ -29,7 +29,7 @@ public class RecruitService {
 
     //공고 저장
     @Transactional
-    public RecruitResponse.RecruitListDTO save(RecruitRequest.SaveDTO dto, Long corpId) {
+    public RecruitResponse.RecruitListDTO save(RecruitRequest.RecruitSaveDTO dto, Long corpId) {
         log.info("공고 등록 요청 - corpId: {}, title: {}", corpId, dto.getTitle());
 
         // 인증된 사용자의 corpId를 사용하여 Corp 엔티티 조회
@@ -48,7 +48,7 @@ public class RecruitService {
 
     //공고 수정
     @Transactional
-    public RecruitResponse.RecruitListDTO update(Long recruitId, RecruitRequest.UpdateDTO dto, Long corpId) throws AccessDeniedException {
+    public RecruitResponse.RecruitListDTO update(Long recruitId, RecruitRequest.RecruitUpdateDTO dto, Long corpId) throws AccessDeniedException {
         log.info("공고 수정 요청 - recruitId: {}, title: {}", recruitId, dto.getTitle());
 
         Recruit recruit = recruitRepository.findById(recruitId)

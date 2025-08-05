@@ -31,7 +31,7 @@ public class RecruitController {
     // 공고 저장
     @PostMapping
     @Auth(role = "CORP") // 기업 회원만 접근 가능하도록 역할 지정
-    public ResponseEntity<ApiUtil<RecruitResponse.RecruitListDTO>> save(@RequestBody RecruitRequest.SaveDTO dto,
+    public ResponseEntity<ApiUtil<RecruitResponse.RecruitListDTO>> save(@RequestBody RecruitRequest.RecruitSaveDTO dto,
                                                                         @RequestAttribute SessionUser sessionUser) {
         // AuthInterceptor가 역할 검사를 대신하므로, 수동 검증 로직을 제거합니다.
         Long authenticatedCorpId = sessionUser.getId();
@@ -44,7 +44,7 @@ public class RecruitController {
     @PutMapping("/{id}")
     @Auth(role = "CORP") // 기업 회원만 접근 가능하도록 역할 지정
     public ResponseEntity<ApiUtil<RecruitResponse.RecruitListDTO>> update(@PathVariable Long id,
-                                                                          @RequestBody RecruitRequest.UpdateDTO dto,
+                                                                          @RequestBody RecruitRequest.RecruitUpdateDTO dto,
                                                                           @RequestAttribute SessionUser sessionUser) throws AccessDeniedException {
         // AuthInterceptor가 역할 검사를 대신하므로, 수동 검증 로직을 제거합니다.
         Long authenticatedCorpId = sessionUser.getId();
