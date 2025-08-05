@@ -16,6 +16,7 @@ upload:
   root-dir: ./uploads/
   corp-dir: corp-images/
   member-dir: user-images/
+  board-dir: board-images/
 
 # 로그 레벨의 개념
 # ERROR > WARN > INFO > DEBUG > TRACE

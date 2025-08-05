@@ -11,4 +11,5 @@ public class UploadProperties {
     private String rootDir;
     private String corpDir;
     private String uploadDir;
+    private String boardDir;
 }
