@@ -36,7 +36,7 @@ public class RecruitService {
         log.info("공고 등록 요청 - corpId: {}, title: {}", corpId, dto.getTitle());
 
         if (!corpId.equals(sessionUser.getId())) {
-            throw new Exception403("공고를 등록할 권한이 없습니다.");
+            throw new Exception403(RecruitErr.RECRUIT_FORBIDDEN.getMessage());
         }
 
         Corp corp = corpRepository.findById(corpId)
@@ -56,12 +56,12 @@ public class RecruitService {
         log.info("공고 수정 요청 - recruitId: {}, corpId: {}, title: {}", recruitId, corpId, dto.getTitle());
 
         if (!corpId.equals(sessionUser.getId())) {
-            throw new Exception403("공고를 수정할 권한이 없습니다.");
+            throw new Exception403(RecruitErr.RECRUIT_FORBIDDEN.getMessage());
         }
 
         // [개선] ID와 소유주 ID로 한번에 조회 및 검증. 실패 시, 공고가 없거나 남의 공고이므로 403 예외를 던집니다.
         Recruit recruit = recruitRepository.findByIdAndCorpId(recruitId, corpId)
-                .orElseThrow(() -> new Exception403(RecruitErr.NO_AUTHORITY_TO_UPDATE.getMessage()));
+                .orElseThrow(() -> new Exception403(RecruitErr.RECRUIT_FORBIDDEN.getMessage()));
 
         // 엔티티 업데이트
         recruit.update(dto.getTitle(), dto.getContent(), dto.getDeadline());
@@ -78,12 +78,12 @@ public class RecruitService {
         log.info("공고 삭제 요청 - recruitId: {}, corpId: {}", recruitId, corpId);
 
         if (!corpId.equals(sessionUser.getId())) {
-            throw new Exception403("공고를 삭제할 권한이 없습니다.");
+            throw new Exception403(RecruitErr.RECRUIT_FORBIDDEN.getMessage());
         }
 
         // [개선] ID와 소유주 ID로 한번에 조회 및 검증. 실패 시 403 예외를 던집니다.
         Recruit recruit = recruitRepository.findByIdAndCorpId(recruitId, corpId)
-                .orElseThrow(() -> new Exception403(RecruitErr.NO_AUTHORITY_TO_DELETE.getMessage()));
+                .orElseThrow(() -> new Exception403(RecruitErr.RECRUIT_FORBIDDEN.getMessage()));
 
         recruitRepository.delete(recruit);
     }

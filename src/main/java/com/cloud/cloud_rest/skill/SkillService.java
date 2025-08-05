@@ -31,7 +31,7 @@ public class SkillService {
     public SkillResponse.SkillDetailDTO save(SkillRequest.SkillSaveDTO reqDTO, SessionUser sessionUser) {
         log.info("스킬 저장 service 호출됨, requestDTO: {}", reqDTO);
         if (!"ADMIN".equals(sessionUser.getRole())) {
-            throw new Exception403("스킬을 등록할 권한이 없습니다.");
+            throw new Exception403(SkillErr.SKILL_FORBIDDEN.getMessage());
         }
         // 1. 입력값 정규화 (공백 제거, 소문자 변환)
         String normalizedName = reqDTO.getName().trim().toLowerCase();
@@ -55,7 +55,7 @@ public class SkillService {
     public SkillResponse.SkillDetailDTO update(Long skillId, SkillRequest.SkillUpdateDTO reqDTO, SessionUser sessionUser) {
         log.info("스킬 수정 service 호출됨, skillId: {}, requestDTO: {}", skillId, reqDTO);
         if (!"ADMIN".equals(sessionUser.getRole())) {
-            throw new Exception403("스킬을 수정할 권한이 없습니다.");
+            throw new Exception403(SkillErr.SKILL_FORBIDDEN.getMessage());
         }
         // 1. 수정할 스킬 조회 (없으면 404)
         Skill skillToUpdate = skillRepository.findById(skillId)
@@ -84,7 +84,7 @@ public class SkillService {
     public void delete(Long skillId, SessionUser sessionUser) {
         log.info("스킬 삭제 service 호출됨, skillId: {}", skillId);
         if (!"ADMIN".equals(sessionUser.getRole())) {
-            throw new Exception403("스킬을 삭제할 권한이 없습니다.");
+            throw new Exception403(SkillErr.SKILL_FORBIDDEN.getMessage());
         }
         // 1. 스킬 존재 여부 확인
         if (!skillRepository.existsById(skillId)) {
