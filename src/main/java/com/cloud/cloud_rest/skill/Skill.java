@@ -1,47 +1,30 @@
 package com.cloud.cloud_rest.skill;
 
-import com.cloud.cloud_rest.recruitskill.RecruitSkill;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import com.cloud.cloud_rest.resumeskill.ResumeSkill;
 
-import java.util.ArrayList;
-import java.util.List;
-
+@Getter
+@NoArgsConstructor
 @Entity
 @Table(name = "skill_tb")
-@Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class Skill {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "skill_id")
-    private Long skillId;
+    private Long id;
 
-    @Column(nullable = false, unique = true)
-    private String name;
+    @Column(unique = true)
+    private String skillName;
 
-    @OneToMany(mappedBy = "skill",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true)
-    private List<RecruitSkill> recruitSkills = new ArrayList<>();
-
-    @Builder.Default
-    @OneToMany(mappedBy = "skill", cascade = CascadeType.ALL)
-    private List<ResumeSkill> resumeSkills = new ArrayList<>();
-
-    public Skill(String name) {
-        this.name = name;
+    @Builder
+    public Skill(Long id, String skillName) {
+        this.id = id;
+        this.skillName = skillName;
     }
 
-    // 관리자용 수정기능
-    public void updateName(String newName) {
-        this.name = newName;
+    // 업데이트 메소드
+    public void update(String skillName) {
+        this.skillName = skillName;
     }
 }

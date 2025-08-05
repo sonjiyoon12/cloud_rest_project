@@ -6,8 +6,8 @@ import com.cloud.cloud_rest.corp.Corp;
 import com.cloud.cloud_rest.corp.CorpRepository;
 import com.cloud.cloud_rest.recruitskill.RecruitSkill;
 import com.cloud.cloud_rest.skill.Skill;
+import com.cloud.cloud_rest.skill.SkillErr;
 import com.cloud.cloud_rest.skill.SkillRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -15,7 +15,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,37 +28,31 @@ public class RecruitService {
     private final CorpRepository corpRepository;
     private final SkillRepository skillRepository;
 
+
     //공고 저장
     @Transactional
     public RecruitResponse.RecruitListDTO save(RecruitRequest.RecruitSaveDTO dto, Long corpId) {
         log.info("공고 등록 요청 - corpId: {}, title: {}", corpId, dto.getTitle());
 
-        // 인증된 사용자의 corpId를 사용하여 Corp 엔티티 조회
         Corp corp = corpRepository.findById(corpId)
-                .orElseThrow(() -> new EntityNotFoundException(RecruitErr.CORP_NOT_FOUND + corpId));
+                .orElseThrow(() -> new Exception404(RecruitErr.CORP_NOT_FOUND.getMessage()));
 
         Recruit recruit = dto.toEntity(corp);
         recruitRepository.save(recruit);
 
-        // 스킬 처리 로직
         updateRecruitSkills(recruit, dto.getSkillIds());
 
-        // DTO로 변환하여 반환
         return RecruitResponse.RecruitListDTO.of(recruit);
     }
 
     //공고 수정
     @Transactional
-    public RecruitResponse.RecruitListDTO update(Long recruitId, RecruitRequest.RecruitUpdateDTO dto, Long corpId) throws AccessDeniedException {
-        log.info("공고 수정 요청 - recruitId: {}, title: {}", recruitId, dto.getTitle());
+    public RecruitResponse.RecruitListDTO update(Long recruitId, RecruitRequest.RecruitUpdateDTO dto, Long corpId) {
+        log.info("공고 수정 요청 - recruitId: {}, corpId: {}, title: {}", recruitId, corpId, dto.getTitle());
 
-        Recruit recruit = recruitRepository.findById(recruitId)
-                .orElseThrow(() -> new EntityNotFoundException(RecruitErr.RECRUIT_NOT_FOUND + recruitId));
-
-        // 소유권 확인
-        if (!recruit.getCorp().getCorpId().equals(corpId)) {
-            throw new AccessDeniedException(RecruitErr.ACCESS_DENIED);
-        }
+        // [개선] ID와 소유주 ID로 한번에 조회 및 검증. 실패 시, 공고가 없거나 남의 공고이므로 403 예외를 던집니다.
+        Recruit recruit = recruitRepository.findByIdAndCorpId(recruitId, corpId)
+                .orElseThrow(() -> new Exception403(RecruitErr.NO_AUTHORITY_TO_UPDATE.getMessage()));
 
         // 엔티티 업데이트
         recruit.update(dto.getTitle(), dto.getContent(), dto.getDeadline());
@@ -67,22 +60,17 @@ public class RecruitService {
         // 스킬 처리 로직
         updateRecruitSkills(recruit, dto.getSkillIds());
 
-        // DTO로 변환하여 반환 (컴파일 오류 수정 및 일관성 유지)
         return RecruitResponse.RecruitListDTO.of(recruit);
     }
 
     // 공고 삭제
     @Transactional
-    public void recruitDelete(Long recruitId, Long corpId) throws AccessDeniedException {
+    public void recruitDelete(Long recruitId, Long corpId) {
         log.info("공고 삭제 요청 - recruitId: {}, corpId: {}", recruitId, corpId);
 
-        Recruit recruit = recruitRepository.findById(recruitId)
-                .orElseThrow(() -> new EntityNotFoundException(RecruitErr.RECRUIT_NOT_FOUND + recruitId));
-
-        // isOwner 메소드 대신 직접 ID를 비교하여 Corp 엔티티를 다시 조회하는 오버헤드를 줄일 수 있습니다.
-        if (!recruit.getCorp().getCorpId().equals(corpId)) {
-            throw new AccessDeniedException(RecruitErr.ACCESS_DENIED);
-        }
+        // [개선] ID와 소유주 ID로 한번에 조회 및 검증. 실패 시 403 예외를 던집니다.
+        Recruit recruit = recruitRepository.findByIdAndCorpId(recruitId, corpId)
+                .orElseThrow(() -> new Exception403(RecruitErr.NO_AUTHORITY_TO_DELETE.getMessage()));
 
         recruitRepository.delete(recruit);
     }
@@ -98,9 +86,8 @@ public class RecruitService {
     public RecruitResponse.RecruitDetailDTO findById(Long recruitId) {
         log.info("공고 상세 조회 요청 - recruitId: {}", recruitId);
         Recruit recruit = recruitRepository.findById(recruitId)
-                .orElseThrow(() -> new EntityNotFoundException(RecruitErr.RECRUIT_NOT_FOUND + recruitId));
+                .orElseThrow(() -> new Exception404(RecruitErr.RECRUIT_NOT_FOUND.getMessage()));
 
-        // DTO로 변환하여 반환
         return RecruitResponse.RecruitDetailDTO.of(recruit);
     }
 
@@ -108,7 +95,6 @@ public class RecruitService {
     public List<RecruitResponse.RecruitListDTO> findByCorpId(Long corpId) {
         log.info("기업별 공고 조회 요청 - corpId: {}", corpId);
         List<Recruit> recruits = recruitRepository.findByCorpId(corpId);
-        // 엔티티 리스트를 DTO 리스트로 변환하여 반환
         return recruits.stream()
                 .map(RecruitResponse.RecruitListDTO::of)
                 .collect(Collectors.toList());
@@ -120,20 +106,22 @@ public class RecruitService {
         return recruitRepository.countByCorpId(corpId);
     }
 
-    ///     ///     ///     ///     ///     ///     ///     ///     ///
 
-    //스킬처리 헬퍼
+    // 스킬처리 헬퍼
     private void updateRecruitSkills(Recruit recruit, List<Long> skillIds) {
-        // 기존 스킬 모두 제거 (orphanRemoval=true 옵션으로 DB에서도 삭제됨)
         recruit.getRecruitSkills().clear();
 
         if (skillIds == null || skillIds.isEmpty()) {
-            throw new Exception404("스킬이 존재하지않습니다");
+            return;
         }
-        List<Skill> skills = skillRepository.findAllById(skillIds);
-        // skillIds로 조회된 Skill이 없는 경우에 대한 예외처리도 고려해볼 수 있습니다.
 
-        List<RecruitSkill> newRecruitSkills = skills.stream()
+        List<Skill> foundSkills = skillRepository.findAllById(skillIds);
+
+        if (foundSkills.size() != skillIds.size()) {
+            throw new Exception404(SkillErr.SKILL_NOT_FOUND.getMessage());
+        }
+
+        List<RecruitSkill> newRecruitSkills = foundSkills.stream()
                 .map(skill -> new RecruitSkill(recruit, skill))
                 .collect(Collectors.toList());
 

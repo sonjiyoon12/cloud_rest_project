@@ -1,29 +1,48 @@
 package com.cloud.cloud_rest.skill;
 
 import com.cloud.cloud_rest._global._core.common.ApiUtil;
+import com.cloud.cloud_rest._global.auth.Auth;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/skills")
+@RestController
 public class SkillController {
 
     private final SkillService skillService;
 
-    //전체 스킬조회
-    @GetMapping
-    public ResponseEntity<ApiUtil<List<SkillResponse.SkillListDTO>>> findAll() {
-        List<SkillResponse.SkillListDTO> dtos = skillService.findAll();
-
-        return ResponseEntity.ok(new ApiUtil<>(dtos));
-
+    //스킬 목록
+    @GetMapping("/api/skills")
+    public ResponseEntity<?> findAll() {
+        List<SkillResponse.SkillListDTO> respDTO = skillService.findAll();
+        return ResponseEntity.ok(new ApiUtil<>(respDTO));
     }
 
+    // 스킬 저장
+    @PostMapping("/api/skills")
+    @Auth(role = "ADMIN") // 관리자
+    public ResponseEntity<?> save(@RequestBody @Valid SkillRequest.SkillSaveDTO reqDTO) {
+        SkillResponse.SkillDetailDTO respDTO = skillService.save(reqDTO);
+        return ResponseEntity.ok(new ApiUtil<>(respDTO));
+    }
+
+    // 스킬 수정
+    @PutMapping("/api/skills/{id}")
+    @Auth(role = "ADMIN") // 관리자
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody @Valid SkillRequest.SkillUpdateDTO reqDTO) {
+        SkillResponse.SkillDetailDTO respDTO = skillService.update(id, reqDTO);
+        return ResponseEntity.ok(new ApiUtil<>(respDTO));
+    }
+
+    // 스킬 삭제
+    @DeleteMapping("/api/skills/{id}")
+    @Auth(role = "ADMIN") // 관리자
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        skillService.delete(id);
+        return ResponseEntity.ok(new ApiUtil<>(null));
+    }
 }
