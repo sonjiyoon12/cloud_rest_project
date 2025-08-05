@@ -39,11 +39,14 @@ public class Board {
     @Column(name = "like_count", columnDefinition = "int default 0")
     private Integer likeCount;
 
-    public void update(BoardRequestDto.UpdateDto updateDTO) {
+    private String imagePath;
+
+    public void update(BoardRequestDto.UpdateDto updateDTO,String imagePath) {
         // userId는 게시글 생성시에만 필요 --> 수정시에는 변경하지않음
         // board.setUserId(this.userId);
         this.title = updateDTO.getTitle();
         this.content = updateDTO.getContent();
+        this.imagePath = imagePath;
 
     }
 

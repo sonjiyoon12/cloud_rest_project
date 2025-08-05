@@ -1,21 +1,19 @@
 package com.cloud.cloud_rest.Like;
 
-
 import com.cloud.cloud_rest.board.Board;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.apache.commons.lang3.builder.ToStringExclude;
 
 import java.time.LocalDateTime;
-
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "board_like_tb")
+@Builder
 public class Like {
 
     @Id
@@ -31,8 +29,7 @@ public class Like {
     @Column(name = "user_id", nullable = false)
     private Long userId; // 좋아요를 누른 사용자 ID
 
-    @Column(name = "liked_at",columnDefinition = "datetime(6) default current_timestamp")
+    @Column(name = "liked_at", columnDefinition = "datetime(6) default current_timestamp")
     private LocalDateTime likedAt; // 좋아요 누른 일시
-
 
 }

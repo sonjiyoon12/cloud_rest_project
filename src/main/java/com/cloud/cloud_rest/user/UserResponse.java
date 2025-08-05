@@ -89,10 +89,10 @@ public class UserResponse {
         private String addressDetail;
 
         @Builder
-        public UpdateDTO(User user, String userUploadImage) {
+        public UpdateDTO(User user) {
             this.username = user.getUsername();
             this.phoneNumber = user.getPhoneNumber();
-            this.userImage = userUploadImage;
+            this.userImage = user.getUserImage();
             this.address = user.getAddress();
             this.addressDefault = user.getAddressDefault();
             this.addressDetail = user.getAddressDetail();

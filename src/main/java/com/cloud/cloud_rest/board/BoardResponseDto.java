@@ -18,6 +18,7 @@ public class BoardResponseDto {
         private Long userId;
         private LocalDateTime createdAt;
         private Integer views;
+        private String imagePath;
 
         @Builder
         public DetailDto(Board board) {
@@ -27,6 +28,7 @@ public class BoardResponseDto {
             this.userId = board.getUserId();
             this.createdAt = board.getCreatedAt();
             this.views = board.getViews();
+            this.imagePath = board.getImagePath();
         }
     }
 
@@ -38,6 +40,7 @@ public class BoardResponseDto {
         private Long userId;
         private LocalDateTime createdAt;
         private Integer views;
+        private String imagePath;
 
         public ListDto(Board board) {
             this.boardId = board.getBoardId();
@@ -45,6 +48,7 @@ public class BoardResponseDto {
             this.userId = board.getUserId();
             this.createdAt = board.getCreatedAt();
             this.views = board.getViews();
+            this.imagePath = board.getImagePath();
         }
 
         // board 엔티티 리스트를 ListDto로 변환하는 정적 메서드
@@ -52,6 +56,31 @@ public class BoardResponseDto {
             return boards.stream()
                     .map(ListDto::new)
                     .collect(Collectors.toUnmodifiableList());
+        }
+    }
+
+    // 게시글 수정 완료 후 응답하는 Dto
+    @Data
+    public static class UpdateDto {
+        private Long boardId;
+        private String title;
+        private String content;
+        private Long userId;
+        private LocalDateTime createAt;
+        private Integer views;
+        private Integer likeCount;
+        private String imagePath;
+
+        @Builder
+        public UpdateDto(Board board) {
+            this.boardId = board.getBoardId();
+            this.title = board.getTitle();
+            this.content = board.getContent();
+            this.userId = board.getUserId();
+            this.createAt = board.getCreatedAt();
+            this.views = board.getViews();
+            this.likeCount = board.getLikeCount();
+            this.imagePath = board.getImagePath();
         }
     }
 }

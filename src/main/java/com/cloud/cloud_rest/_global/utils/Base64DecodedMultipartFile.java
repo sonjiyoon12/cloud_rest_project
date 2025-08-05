@@ -8,6 +8,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 
+/*
+* getName() / getOriginalFilename() → 파일 이름 반환
+getContentType() → 이미지 타입 판별
+isEmpty() → 내용 없는지 확인
+getSize() / getBytes() → 파일 크기, 내용 가져오기
+getInputStream() → 스트림으로 읽기
+transferTo(File dest) → 실제 파일로 저장
+* */
+
 public class Base64DecodedMultipartFile implements MultipartFile {
     private final byte[] imgContent;
     private final String fileName;

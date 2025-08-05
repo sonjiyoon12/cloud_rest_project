@@ -4,9 +4,12 @@ import com.cloud.cloud_rest._global.SessionUser;
 import com.cloud.cloud_rest._global._core.common.ApiUtil;
 import com.cloud.cloud_rest._global.exception.Exception401;
 import com.cloud.cloud_rest._global.exception.Exception403;
+import com.cloud.cloud_rest.corp.CorpRequest;
+import com.cloud.cloud_rest.corp.CorpResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,6 +57,25 @@ public class UserController {
 
         UserResponse.UserDTO userDTO = userService.findUserById(id,sessionUser.getId());
         return ResponseEntity.ok(new ApiUtil<>(userDTO));
+    }
+
+
+    // 웹 MULTIPART 형식 으로 받기
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> update(@PathVariable Long id,
+                                    @ModelAttribute UserRequest.UpdateDTO updateDTO,
+                                    @RequestAttribute("sessionUser") SessionUser sessionUser) {
+        UserResponse.UpdateDTO update = userService.update(id,sessionUser.getId(),updateDTO);
+        return ResponseEntity.ok(new ApiUtil<>(update));
+    }
+
+    // 웹에서 JSON 형식으로 받기(base64)
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updateJson(@PathVariable Long id,
+                                        @RequestBody UserRequest.UpdateDTO updateDTO,
+                                        @RequestAttribute("sessionUser") SessionUser sessionUser) {
+        UserResponse.UpdateDTO update = userService.update(id,sessionUser.getId(),updateDTO);
+        return ResponseEntity.ok(new ApiUtil<>(update));
     }
 
     // 임시로 로그아웃 (사실상 필요없음) 서버에서 JWT를 강제로 무효화하려면 블랙리스트 같은 추가 설계 필요

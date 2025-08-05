@@ -70,6 +70,7 @@ public class UserRequest {
         private String username;
         private String phoneNumber;
         private MultipartFile userImage;
+        private String userImageBase64;
         private String address;
         private String addressDefault;
         private String addressDetail;

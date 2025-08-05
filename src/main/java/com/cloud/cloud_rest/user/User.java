@@ -46,13 +46,13 @@ public class User {
     }
 
 
-    // update Dirty Checking
-    public void update(UserRequest.UpdateDTO updateDTO,String userUploadImage){
-        this.username = updateDTO.getUsername();
-        this.phoneNumber = updateDTO.getPhoneNumber();
-        this.userImage = userUploadImage;
-        this.address = updateDTO.getAddress();
-        this.addressDefault = updateDTO.getAddressDefault();
-        this.addressDetail = updateDTO.getAddressDetail();
+    public void update(UserRequest.UpdateDTO updateDTO, String userUploadImage) {
+        if (updateDTO.getUsername() != null) this.username = updateDTO.getUsername();
+        if (updateDTO.getPhoneNumber() != null) this.phoneNumber = updateDTO.getPhoneNumber();
+        if (userUploadImage != null) this.userImage = userUploadImage; // MultipartFile 여부와 무관
+        if (updateDTO.getAddress() != null) this.address = updateDTO.getAddress();
+        if (updateDTO.getAddressDefault() != null) this.addressDefault = updateDTO.getAddressDefault();
+        if (updateDTO.getAddressDetail() != null) this.addressDetail = updateDTO.getAddressDetail();
     }
+
 }
