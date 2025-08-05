@@ -3,6 +3,7 @@ package com.cloud.cloud_rest.resume;
 import com.cloud.cloud_rest._global.SessionUser;
 import com.cloud.cloud_rest._global.exception.Exception403;
 import com.cloud.cloud_rest._global.exception.Exception404;
+import com.cloud.cloud_rest.career.Career;
 import com.cloud.cloud_rest.resumeskill.ResumeSkill;
 import com.cloud.cloud_rest.skill.Skill;
 import com.cloud.cloud_rest.skill.SkillRepository;
@@ -36,6 +37,12 @@ public class ResumeService {
                 .toList();
     }
 
+    // 이력서 단건 조회
+    public Resume findById(Long resumeId) {
+        return resumeJpaRepository.findById(resumeId)
+                .orElseThrow(() -> new Exception404("이력서를 찾을 수 없습니다"));
+    }
+
     // 이력서 상세보기
     public ResumeResponse.DetailDTO detail(Long resumeId, SessionUser sessionUser) {
         Resume resume = resumeJpaRepository.findByIdWithDetail(resumeId).orElseThrow(
@@ -46,7 +53,7 @@ public class ResumeService {
 
     // 이력서 작성
     @Transactional
-    public ResumeResponse.SaveDTO save(ResumeRequest.@Valid ResumeSaveDTO saveDTO, SessionUser sessionUser) {
+    public ResumeResponse.SaveDTO save(ResumeRequest.ResumeSaveDTO saveDTO, SessionUser sessionUser) {
         User user = userService.getUserId(sessionUser.getId());
 
         Resume resume = saveDTO.toEntity(user);
