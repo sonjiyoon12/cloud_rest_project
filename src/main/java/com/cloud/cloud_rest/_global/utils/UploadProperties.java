@@ -10,6 +10,6 @@ import org.springframework.context.annotation.Configuration;
 public class UploadProperties {
     private String rootDir;
     private String corpDir;
-    private String uploadDir;
+    private String userDir;
     private String boardDir;
 }

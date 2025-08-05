@@ -86,7 +86,7 @@ public class UserService {
 
 
             if(targetFile != null){
-                savedFileName = fileUploadUtil.uploadProfileImage(targetFile,uploadPath.getUploadDir());
+                savedFileName = fileUploadUtil.uploadProfileImage(targetFile,uploadPath.getUserDir());
             }
             
             // 이전 이미지 삭제
