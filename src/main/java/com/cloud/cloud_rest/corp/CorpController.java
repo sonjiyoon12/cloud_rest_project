@@ -63,16 +63,18 @@ public class CorpController {
     // 웹 MULTIPART 형식 으로 받기
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> update(@PathVariable Long id,
-                                    @ModelAttribute CorpRequest.UpdateDTO updateDTO) {
-        CorpResponse.UpdateDTO update = corpService.updateDTO(id, updateDTO);
+                                    @ModelAttribute CorpRequest.UpdateDTO updateDTO,
+                                    @RequestAttribute("sessionUser")SessionUser sessionUser) {
+        CorpResponse.UpdateDTO update = corpService.updateDTO(id, updateDTO,sessionUser.getId());
         return ResponseEntity.ok(new ApiUtil<>(update));
     }
 
     // 웹에서 JSON 형식으로 받기(base64)
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateJson(@PathVariable Long id,
-                                        @RequestBody CorpRequest.UpdateDTO updateDTO) {
-        CorpResponse.UpdateDTO update = corpService.updateDTO(id, updateDTO);
+                                        @RequestBody CorpRequest.UpdateDTO updateDTO,
+                                        @RequestAttribute("sessionUser")SessionUser sessionUser) {
+        CorpResponse.UpdateDTO update = corpService.updateDTO(id, updateDTO,sessionUser.getId());
         return ResponseEntity.ok(new ApiUtil<>(update));
     }
 

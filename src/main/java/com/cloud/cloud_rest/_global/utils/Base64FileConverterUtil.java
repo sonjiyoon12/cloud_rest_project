@@ -13,7 +13,7 @@ public class Base64FileConverterUtil {
 
         // "data:image/png;base64,xxxx..." 형태 처리
         String[] parts = base64.split(",");
-        String meta = parts[0];
+        String meta = parts[0]; // data:image/png;base64
         String imageString = parts.length > 1 ? parts[1] : parts[0];
 
         // 확장자 추출
@@ -23,5 +23,11 @@ public class Base64FileConverterUtil {
 
         byte[] decoded = Base64.getDecoder().decode(imageString);
         return new Base64DecodedMultipartFile(decoded, "image." + extension);
+
+        // JSON에서 들어온 userImageBase64 문자열을 받아서
+        //"data:image/png;base64,xxxxxxxx..." 같은 형태를 처리
+        //MIME 정보(png, jpeg) 확인 후 파일 확장자 결정
+        //Base64 문자열 → byte[] 로 변환
+        //MultipartFile을 구현한 Base64DecodedMultipartFile로 감싸 반환
     }
 }

@@ -12,6 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
@@ -63,11 +66,42 @@ public class UserService {
     // 유저의 정보 수정
     @Transactional
     public UserResponse.UpdateDTO update(Long userId,Long sessionUserId,UserRequest.UpdateDTO updateDTO){
-        validateUserUserId(userId,sessionUserId);
-        String userUploadImage = "";
-        User user = getUserId(userId);
-        user.update(updateDTO,userUploadImage);
-        return new UserResponse.UpdateDTO(user,userUploadImage);
+        validateUserUserId(userId,sessionUserId); // 현재 로그인한 유저랑 세션 번호를 비교
+        User user = getUserId(userId); // 현재 유저가 있을경우
+
+        String oldImagePath = user.getUserImage();
+        String savedFileName = null;
+
+        try{
+            MultipartFile targetFile = null;
+            // 웹용
+            if (updateDTO.getUserImage() != null
+                    && !(updateDTO.getUserImage().isEmpty())) {
+                targetFile = updateDTO.getUserImage();
+            }
+            // 앱(base64) 용
+            else if (updateDTO.getUserImageBase64() != null && !updateDTO.getUserImageBase64().isBlank()){
+                targetFile = Base64FileConverterUtil.convert(updateDTO.getUserImageBase64());
+            }
+
+
+            if(targetFile != null){
+                savedFileName = fileUploadUtil.uploadProfileImage(targetFile,uploadPath.getUploadDir());
+            }
+            
+            // 이전 이미지 삭제
+            if(savedFileName != null && oldImagePath != null){
+                fileUploadUtil.deleteProfileImage(oldImagePath);
+            }
+
+
+            user.update(updateDTO,savedFileName);
+
+        }catch (IOException e){
+            throw new RuntimeException(e);
+        }
+
+        return new UserResponse.UpdateDTO(user);
     }
 
     // 유저 정보 찾기(user에 고유번호)

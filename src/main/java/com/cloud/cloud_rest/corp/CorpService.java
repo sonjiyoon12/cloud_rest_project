@@ -52,8 +52,11 @@ public class CorpService {
 
     // 수정 API
     @Transactional
-    public CorpResponse.UpdateDTO updateDTO(Long id, CorpRequest.UpdateDTO dto) {
-        Corp corp = getCorpId(id);
+    public CorpResponse.UpdateDTO updateDTO(Long id, CorpRequest.UpdateDTO dto,Long sessionId) {
+
+        Corp corp = getCorpId(id); // 해당 유저가 있는지
+
+        validateUserUserId(id,sessionId); // 세션 유저 비교하기
 
         String oldImagePath = corp.getCorpImage();
         String savedFileName = null;
@@ -112,4 +115,10 @@ public class CorpService {
                 .orElseThrow(() -> new Exception404("해당 유저를 찾을 수 없습니다"));
     }
 
+    // 권한 검사 (요청 로그인 번호 - 로그인 번호 ) 비교
+    public void validateUserUserId(Long userId,Long sessionUserId){
+        if(!userId.equals(sessionUserId)){
+            throw new Exception403("보인 정보만 조회 가능합니다");
+        }
+    }
 }
