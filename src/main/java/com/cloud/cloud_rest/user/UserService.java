@@ -1,5 +1,6 @@
 package com.cloud.cloud_rest.user;
 
+import com.cloud.cloud_rest._global.SessionUser;
 import com.cloud.cloud_rest._global.exception.Exception400;
 import com.cloud.cloud_rest._global.exception.Exception403;
 import com.cloud.cloud_rest._global.exception.Exception404;
@@ -8,6 +9,10 @@ import com.cloud.cloud_rest._global.utils.Base64FileConverterUtil;
 import com.cloud.cloud_rest._global.utils.FileUploadUtil;
 import com.cloud.cloud_rest._global.utils.JwtUtil;
 import com.cloud.cloud_rest._global.utils.UploadProperties;
+import com.cloud.cloud_rest.skill.Skill;
+import com.cloud.cloud_rest.skill.SkillRepository;
+import com.cloud.cloud_rest.userskill.UserSkill;
+import com.cloud.cloud_rest.userskill.UserSkillRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +30,7 @@ public class UserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final FileUploadUtil fileUploadUtil; // 이미지 저장 및 삭제 기능
     private final UploadProperties uploadPath; // 이미지 저장 경로 설정
-    private final Base64FileConverterUtil base64FileConverterUtil; // json 으로 받는 파일 String64 변환
+    private final SkillRepository skillRepository;
 
     // 회원가입
     @Transactional
@@ -36,6 +42,16 @@ public class UserService {
         }
 
         User user = saveDTO.toEntity(bcyPassword);
+
+
+        if(!saveDTO.getUserSkills().isEmpty()){
+            for(Long skillId : saveDTO.getUserSkills()){
+                Skill skill = skillRepository.findById(skillId)
+                        .orElseThrow(() -> new Exception400("존재하지 않는 스킬입니다."));
+                user.addSkill(skill);
+            }
+        }
+
         userRepository.save(user);
         return new UserResponse.SaveDTO(user);
     }
@@ -102,6 +118,19 @@ public class UserService {
         }
 
         return new UserResponse.UpdateDTO(user);
+    }
+
+    // 유저 정보 삭제
+    public void deleteById(Long id, SessionUser sessionUser){
+
+        if (!"USER".equals(sessionUser.getRole())) {
+            throw new Exception403("일반 유저만 접근 가능합니다.");
+        }
+
+        getUserId(id); // 유저 정보 찾기
+        
+        validateUserUserId(id,sessionUser.getId()); // 회번 번호 = 로그인 번호 비교
+        userRepository.deleteById(id);
     }
 
     // 유저 정보 찾기(user에 고유번호)

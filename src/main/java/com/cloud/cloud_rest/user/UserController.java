@@ -78,6 +78,13 @@ public class UserController {
         return ResponseEntity.ok(new ApiUtil<>(update));
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteById(@PathVariable Long id,
+                                           @RequestAttribute("sessionUser")SessionUser sessionUser){
+        userService.deleteById(id,sessionUser);
+        return ResponseEntity.noContent().build();
+    }
+
     // 임시로 로그아웃 (사실상 필요없음) 서버에서 JWT를 강제로 무효화하려면 블랙리스트 같은 추가 설계 필요
     @GetMapping("/logout")
     public ResponseEntity<SessionUser> logout(@RequestAttribute("sessionUser") SessionUser sessionUser) {

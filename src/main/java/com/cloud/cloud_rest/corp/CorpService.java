@@ -1,5 +1,6 @@
 package com.cloud.cloud_rest.corp;
 
+import com.cloud.cloud_rest._global.SessionUser;
 import com.cloud.cloud_rest._global.exception.Exception400;
 import com.cloud.cloud_rest._global.exception.Exception403;
 import com.cloud.cloud_rest._global.exception.Exception404;
@@ -7,6 +8,9 @@ import com.cloud.cloud_rest._global.utils.Base64FileConverterUtil;
 import com.cloud.cloud_rest._global.utils.FileUploadUtil;
 import com.cloud.cloud_rest._global.utils.JwtUtil;
 import com.cloud.cloud_rest._global.utils.UploadProperties;
+import com.cloud.cloud_rest.corpskill.CorpSkillRepository;
+import com.cloud.cloud_rest.skill.Skill;
+import com.cloud.cloud_rest.skill.SkillRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,7 +28,7 @@ public class CorpService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final FileUploadUtil fileUploadUtil; // 이미지 저장 및 삭제 기능
     private final UploadProperties uploadPath; // 이미지 저장 경로 설정
-    private final Base64FileConverterUtil base64FileConverterUtil;
+    private final SkillRepository skillRepository;
 
     @Transactional
     public CorpResponse.CorpDTO save(CorpRequest.SaveDTO saveDTO){
@@ -35,6 +39,15 @@ public class CorpService {
         }
 
         Corp corp = saveDTO.toEntity(bcyPassword);
+
+        if(!saveDTO.getCorpSkills().isEmpty()){
+            for (Long skillId : saveDTO.getCorpSkills()){
+                Skill skill = skillRepository.findById(skillId)
+                        .orElseThrow(() -> new Exception400("존재하지 않는 스킬입니다"));
+                corp.addSkill(skill);
+            }
+        }
+
         corpRepository.save(corp);
         return new CorpResponse.CorpDTO(corp);
     }
@@ -93,8 +106,19 @@ public class CorpService {
         return new CorpResponse.UpdateDTO(corp);
     }
 
+    @Transactional
+    public void deleteById(Long id, SessionUser sessionUser){
 
+        if (!"CORP".equals(sessionUser.getRole())) {
+            throw new Exception403("기업 유저만 접근 가능합니다.");
+        }
 
+        getCorpId(id);
+
+        validateUserUserId(id,sessionUser.getId());
+
+        corpRepository.deleteById(id);
+    }
 
     public CorpResponse.CorpDTO getCorpInfo(Long id, Long sessionUserId){
         if(!id.equals(sessionUserId)){
@@ -121,4 +145,6 @@ public class CorpService {
             throw new Exception403("보인 정보만 조회 가능합니다");
         }
     }
+
+
 }

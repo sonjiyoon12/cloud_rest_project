@@ -1,5 +1,7 @@
 package com.cloud.cloud_rest.corp;
 
+import com.cloud.cloud_rest.corpskill.CorpSkill;
+import com.cloud.cloud_rest.skill.Skill;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,6 +10,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -41,6 +45,15 @@ public class Corp {
         if (imagePath != null) {
             this.corpImage = imagePath;
         }
+    }
+    // JPA에서 연관된 자식 엔티티를 자동으로 삭제하는 옵션
+    @Builder.Default
+    @OneToMany(mappedBy = "corp",cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<CorpSkill> corpSkills = new ArrayList<>();
+
+    public void addSkill(Skill skill){
+        CorpSkill corpSkill = new CorpSkill(this,skill);
+        corpSkills.add(corpSkill);
     }
 
 }

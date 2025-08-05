@@ -15,18 +15,24 @@ import org.apache.commons.lang3.builder.ToStringExclude;
 @NoArgsConstructor
 @Builder
 @Table(name = "user_skill_tb")
-@IdClass(UserSkill.class) // 복합키 클래스
 public class UserSkill {
 
-    @Id
+    @EmbeddedId
+    private UserSkillId id;
+
     @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("userId") // EmbeddedId의 userId 매핑
     @JoinColumn(name = "user_id")
-    @ToStringExclude
     private User user;
 
-    @Id
     @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("skillId") // EmbeddedId의 skillId 매핑
     @JoinColumn(name = "skill_id")
-    @ToStringExclude
     private Skill skill;
+
+    public UserSkill(User user, Skill skill) {
+        this.user = user;
+        this.skill = skill;
+        this.id = new UserSkillId(user.getUserId(), skill.getSkillId());
+    }
 }
