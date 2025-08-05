@@ -46,8 +46,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "/api/recruits/**",
                         // 스킬
                         "/api/skills/**",
-                        // 이력서
-                        "/api/resumes",
                         // 에러
                         "/api/**/err/**"
                 );
