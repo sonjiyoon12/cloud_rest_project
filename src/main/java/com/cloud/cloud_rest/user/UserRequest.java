@@ -1,11 +1,15 @@
 package com.cloud.cloud_rest.user;
 
+import com.cloud.cloud_rest.userskill.UserSkill;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserRequest {
 
@@ -40,6 +44,8 @@ public class UserRequest {
 
         @NotBlank(message = "비밀번호를 재 입력해주세요")
         private String rePassword; // 비밀번호 재 입력
+
+        private List<Long> userSkills = new ArrayList<>();
 
         public User toEntity(String encodePassword){
             return User.builder()

@@ -4,6 +4,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CorpRequest {
 
     @Schema(name = "corpRequestSaveDTO")
@@ -14,6 +17,7 @@ public class CorpRequest {
         private String password;
         private String rePassword;
         private String email;
+        private List<Long> corpSkills = new ArrayList<>();
 
         public Corp toEntity(String encoderPassword){
             return Corp.builder()

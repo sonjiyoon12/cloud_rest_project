@@ -77,6 +77,13 @@ public class CorpController {
         return ResponseEntity.ok(new ApiUtil<>(update));
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteById(@PathVariable Long id,
+                           @RequestAttribute("sessionUser")SessionUser sessionUser){
+        corpService.deleteById(id,sessionUser);
+        return ResponseEntity.noContent().build();
+    }
+
     // 임시로 로그아웃 (사실상 필요없음)
     @GetMapping("/logout")
     public ResponseEntity<SessionUser> logout(@RequestAttribute("sessionUser") SessionUser sessionUser) {
