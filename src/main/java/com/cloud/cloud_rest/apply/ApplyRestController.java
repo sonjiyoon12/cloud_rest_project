@@ -35,14 +35,14 @@ public class ApplyRestController {
 
     // 특정 공고 지원 내역 조회
     @GetMapping("/{id}")
-    public ResponseEntity<?> findById(@PathVariable(name = "applyId") Long applyId) {
+    public ResponseEntity<?> findById(@PathVariable(name = "id") Long applyId) {
         ApplyResponse.DetailDTO apply = applyService.findById(applyId);
         return ResponseEntity.ok().body(new ApiUtil<>(apply));
     }
 
     // 특정 공고 지원 내역 삭제
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteById(@PathVariable(name = "applyId") Long applyId) {
+    public ResponseEntity<?> deleteById(@PathVariable(name = "id") Long applyId) {
         applyService.deleteById(applyId);
         return ResponseEntity.ok().body(new ApiUtil<>("삭제 성공"));
     }
