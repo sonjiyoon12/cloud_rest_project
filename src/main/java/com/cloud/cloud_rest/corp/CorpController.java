@@ -41,7 +41,7 @@ public class CorpController {
         CorpResponse.LoginDTO login = new CorpResponse.LoginDTO(corp);
 
         return ResponseEntity.ok()
-                .header("Authorization","Bearer" + jwtToken)
+                .header("Authorization","Bearer " + jwtToken)
                 .body(new ApiUtil<>(login));
     }
 

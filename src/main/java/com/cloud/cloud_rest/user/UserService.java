@@ -1,9 +1,13 @@
 package com.cloud.cloud_rest.user;
 
+import com.cloud.cloud_rest._global.exception.Exception400;
 import com.cloud.cloud_rest._global.exception.Exception403;
 import com.cloud.cloud_rest._global.exception.Exception404;
 import com.cloud.cloud_rest._global.exception.Exception500;
+import com.cloud.cloud_rest._global.utils.Base64FileConverterUtil;
+import com.cloud.cloud_rest._global.utils.FileUploadUtil;
 import com.cloud.cloud_rest._global.utils.JwtUtil;
+import com.cloud.cloud_rest._global.utils.UploadProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,12 +19,19 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-
+    private final FileUploadUtil fileUploadUtil; // 이미지 저장 및 삭제 기능
+    private final UploadProperties uploadPath; // 이미지 저장 경로 설정
+    private final Base64FileConverterUtil base64FileConverterUtil; // json 으로 받는 파일 String64 변환
 
     // 회원가입
     @Transactional
     public UserResponse.SaveDTO save(UserRequest.SaveDTO saveDTO) {
         String bcyPassword = bCryptPasswordEncoder.encode(saveDTO.getPassword());
+
+        if(userRepository.existsLoginId(saveDTO.getLoginId())){
+            throw new Exception400("이미 사용 중인 아이디입니다.");
+        }
+
         User user = saveDTO.toEntity(bcyPassword);
         userRepository.save(user);
         return new UserResponse.SaveDTO(user);
@@ -30,7 +41,7 @@ public class UserService {
     public String login(UserRequest.LoginDTO loginDTO) {
         User user = getLoginId(loginDTO.getLoginId());
 
-        if (!bCryptPasswordEncoder.matches(loginDTO.getPassword(), user.getPassword())) {
+        if (!bCryptPasswordEncoder.matches(loginDTO.getPassword(),user.getPassword())) {
             throw new Exception500("아이디 또는 비밀번호 틀립니다");
         }
 

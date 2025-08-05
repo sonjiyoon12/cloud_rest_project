@@ -2,6 +2,7 @@ package com.cloud.cloud_rest.resume;
 
 import com.cloud.cloud_rest._global.utils.DateUtil;
 import com.cloud.cloud_rest.resumeskill.ResumeSkill;
+import com.cloud.cloud_rest.skill.Skill;
 import com.cloud.cloud_rest.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -55,10 +56,10 @@ public class Resume {
     public void update(ResumeRequest.UpdateDTO updateDTO) {
         this.title = updateDTO.getTitle();
         this.content = updateDTO.getContent();
+
     }
 
     @Builder.Default
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "resume", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ResumeSkill> resumeSkills = new ArrayList<>();
-
 }

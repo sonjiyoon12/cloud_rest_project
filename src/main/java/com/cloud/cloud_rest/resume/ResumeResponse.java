@@ -5,6 +5,8 @@ import com.cloud.cloud_rest.user.User;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
+
 public class ResumeResponse {
 
     // 이력서 전체보기 응답
@@ -36,6 +38,7 @@ public class ResumeResponse {
         private String writerName;
         private String createdAt;
         private boolean isResumeOwner;
+        private List<String> skills;
 
         public DetailDTO(Resume resume, SessionUser sessionUser) {
             this.resumeId = resume.getResumeId();
@@ -43,7 +46,10 @@ public class ResumeResponse {
             this.content = resume.getContent();
             this.writerName = resume.getUser().getUsername();
             this.createdAt = resume.getCreatedAt().toString();
-             this.isResumeOwner = sessionUser != null && resume.isOwner(sessionUser.getId());
+            this.isResumeOwner = sessionUser != null && resume.isOwner(sessionUser.getId());
+            this.skills = resume.getResumeSkills().stream()
+                    .map(resumeSkill -> resumeSkill.getSkill().getName())
+                    .toList();
         }
     }
 

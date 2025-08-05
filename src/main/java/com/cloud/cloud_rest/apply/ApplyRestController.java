@@ -12,12 +12,13 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
+@RequestMapping("/api/applies")
 public class ApplyRestController {
 
     private final ApplyService applyService;
 
     // 공고 지원
-    @PostMapping("/applies")
+    @PostMapping
     public ResponseEntity<?> save(@RequestParam(name = "resumeId") Long resumeId,
                                   @RequestParam(name = "recruitId") Long recruitId) {
 
@@ -26,21 +27,21 @@ public class ApplyRestController {
     }
 
     // 전체 공고 지원 내역 조회
-    @GetMapping("/applies")
+    @GetMapping
     public ResponseEntity<?> findAll() {
         List<ApplyResponse.DetailDTO> applies = applyService.findAll();
         return ResponseEntity.ok().body(new ApiUtil<>(applies));
     }
 
     // 특정 공고 지원 내역 조회
-    @GetMapping("/applies/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable(name = "applyId") Long applyId) {
         ApplyResponse.DetailDTO apply = applyService.findById(applyId);
         return ResponseEntity.ok().body(new ApiUtil<>(apply));
     }
 
     // 특정 공고 지원 내역 삭제
-    @DeleteMapping("/applies/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteById(@PathVariable(name = "applyId") Long applyId) {
         applyService.deleteById(applyId);
         return ResponseEntity.ok().body(new ApiUtil<>("삭제 성공"));
