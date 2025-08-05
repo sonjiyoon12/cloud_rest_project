@@ -1,11 +1,12 @@
 package com.cloud.cloud_rest.corp;
 
-import com.cloud.cloud_rest.user.User;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
 public class CorpRequest {
 
+    @Schema(name = "corpRequestSaveDTO")
     @Data
     public static class SaveDTO{
         private String corpName;
