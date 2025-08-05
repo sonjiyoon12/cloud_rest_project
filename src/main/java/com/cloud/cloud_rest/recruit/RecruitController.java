@@ -1,8 +1,8 @@
 package com.cloud.cloud_rest.recruit;
 
 import com.cloud.cloud_rest._global.SessionUser;
+import com.cloud.cloud_rest._global.auth.Auth;
 import com.cloud.cloud_rest._global._core.common.ApiUtil;
-import com.cloud.cloud_rest._global.exception.Exception403;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,13 +30,10 @@ public class RecruitController {
 
     // 공고 저장
     @PostMapping
+    @Auth(role = "CORP") // 기업 회원만 접근 가능하도록 역할 지정
     public ResponseEntity<ApiUtil<RecruitResponse.RecruitListDTO>> save(@RequestBody RecruitRequest.SaveDTO dto,
                                                                         @RequestAttribute SessionUser sessionUser) {
-
-        if (!"CORP".equals(sessionUser.getRole())) {
-            throw new Exception403("기업회원만 할수 있습니다.");
-        }
-
+        // AuthInterceptor가 역할 검사를 대신하므로, 수동 검증 로직을 제거합니다.
         Long authenticatedCorpId = sessionUser.getId();
 
         RecruitResponse.RecruitListDTO responseDTO = recruitService.save(dto, authenticatedCorpId);
@@ -45,13 +42,11 @@ public class RecruitController {
 
     // 공고 수정
     @PutMapping("/{id}")
+    @Auth(role = "CORP") // 기업 회원만 접근 가능하도록 역할 지정
     public ResponseEntity<ApiUtil<RecruitResponse.RecruitListDTO>> update(@PathVariable Long id,
                                                                           @RequestBody RecruitRequest.UpdateDTO dto,
                                                                           @RequestAttribute SessionUser sessionUser) throws AccessDeniedException {
-        if (!"CORP".equals(sessionUser.getRole())) {
-            throw new Exception403("기업회원만 할수 있습니다.");
-        }
-
+        // AuthInterceptor가 역할 검사를 대신하므로, 수동 검증 로직을 제거합니다.
         Long authenticatedCorpId = sessionUser.getId();
 
         RecruitResponse.RecruitListDTO responseDTO = recruitService.update(id, dto, authenticatedCorpId);
@@ -67,13 +62,10 @@ public class RecruitController {
 
     //공고 삭제
     @DeleteMapping("/{id}")
+    @Auth(role = "CORP") // 기업 회원만 접근 가능하도록 역할 지정
     public ResponseEntity<ApiUtil<String>> delete(@PathVariable Long id,
                                                   @RequestAttribute SessionUser sessionUser) throws AccessDeniedException {
-
-        if (!"CORP".equals(sessionUser.getRole())) {
-            throw new Exception403("기업회원만 할수 있습니다.");
-        }
-
+        // AuthInterceptor가 역할 검사를 대신하므로, 수동 검증 로직을 제거합니다.
         Long authenticatedCorpId = sessionUser.getId();
 
         recruitService.recruitDelete(id, authenticatedCorpId);
