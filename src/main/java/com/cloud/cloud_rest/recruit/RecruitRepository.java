@@ -17,7 +17,7 @@ public interface RecruitRepository extends JpaRepository<Recruit, Long> {
     @Query("SELECT COUNT(r) FROM Recruit r WHERE r.corp.corpId = :corpId")
     long countByCorpId(@Param("corpId") Long corpId);
 
-    // [추가] 채용공고 ID와 기업 ID로 공고를 찾는 메소드
-    @Query("SELECT r FROM Recruit r WHERE r.id = :recruitId AND r.corp.corpId = :corpId")
+    // [수정] 채용공고 ID와 기업 ID로 공고를 찾는 메소드 (r.id -> r.recruitId)
+    @Query("SELECT r FROM Recruit r WHERE r.recruitId = :recruitId AND r.corp.corpId = :corpId")
     Optional<Recruit> findByIdAndCorpId(@Param("recruitId") Long recruitId, @Param("corpId") Long corpId);
 }

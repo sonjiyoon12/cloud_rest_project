@@ -1,5 +1,6 @@
 package com.cloud.cloud_rest.recruit;
 
+import com.cloud.cloud_rest._global.SessionUser;
 import com.cloud.cloud_rest._global.exception.Exception403;
 import com.cloud.cloud_rest._global.exception.Exception404;
 import com.cloud.cloud_rest.corp.Corp;
@@ -31,8 +32,12 @@ public class RecruitService {
 
     //공고 저장
     @Transactional
-    public RecruitResponse.RecruitListDTO save(RecruitRequest.RecruitSaveDTO dto, Long corpId) {
+    public RecruitResponse.RecruitListDTO save(RecruitRequest.RecruitSaveDTO dto, Long corpId, SessionUser sessionUser) {
         log.info("공고 등록 요청 - corpId: {}, title: {}", corpId, dto.getTitle());
+
+        if (!corpId.equals(sessionUser.getId())) {
+            throw new Exception403("공고를 등록할 권한이 없습니다.");
+        }
 
         Corp corp = corpRepository.findById(corpId)
                 .orElseThrow(() -> new Exception404(RecruitErr.CORP_NOT_FOUND.getMessage()));
@@ -47,8 +52,12 @@ public class RecruitService {
 
     //공고 수정
     @Transactional
-    public RecruitResponse.RecruitListDTO update(Long recruitId, RecruitRequest.RecruitUpdateDTO dto, Long corpId) {
+    public RecruitResponse.RecruitListDTO update(Long recruitId, RecruitRequest.RecruitUpdateDTO dto, Long corpId, SessionUser sessionUser) {
         log.info("공고 수정 요청 - recruitId: {}, corpId: {}, title: {}", recruitId, corpId, dto.getTitle());
+
+        if (!corpId.equals(sessionUser.getId())) {
+            throw new Exception403("공고를 수정할 권한이 없습니다.");
+        }
 
         // [개선] ID와 소유주 ID로 한번에 조회 및 검증. 실패 시, 공고가 없거나 남의 공고이므로 403 예외를 던집니다.
         Recruit recruit = recruitRepository.findByIdAndCorpId(recruitId, corpId)
@@ -65,8 +74,12 @@ public class RecruitService {
 
     // 공고 삭제
     @Transactional
-    public void recruitDelete(Long recruitId, Long corpId) {
+    public void recruitDelete(Long recruitId, Long corpId, SessionUser sessionUser) {
         log.info("공고 삭제 요청 - recruitId: {}, corpId: {}", recruitId, corpId);
+
+        if (!corpId.equals(sessionUser.getId())) {
+            throw new Exception403("공고를 삭제할 권한이 없습니다.");
+        }
 
         // [개선] ID와 소유주 ID로 한번에 조회 및 검증. 실패 시 403 예외를 던집니다.
         Recruit recruit = recruitRepository.findByIdAndCorpId(recruitId, corpId)
