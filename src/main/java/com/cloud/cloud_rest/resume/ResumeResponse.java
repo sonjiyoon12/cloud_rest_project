@@ -17,7 +17,7 @@ public class ResumeResponse {
         private String content;
         private String writerName;
         private String createdAt;
-        private boolean isRep;
+        private List<String> skills;
 
         public ListDTO(Resume resume) {
             this.resumeId = resume.getResumeId();
@@ -25,7 +25,9 @@ public class ResumeResponse {
             this.content = resume.getContent();
             this.writerName = resume.getUser().getUsername();
             this.createdAt = resume.getCreatedAt().toString();
-            this.isRep = resume.getIsRep();
+            this.skills = resume.getResumeSkills().stream()
+                    .map(resumeSkill -> resumeSkill.getSkill().getName())
+                    .toList();
         }
     }
 
@@ -38,6 +40,7 @@ public class ResumeResponse {
         private String writerName;
         private String createdAt;
         private boolean isResumeOwner;
+        private boolean isRep;
         private List<String> skills;
 
         public DetailDTO(Resume resume, SessionUser sessionUser) {
@@ -47,6 +50,7 @@ public class ResumeResponse {
             this.writerName = resume.getUser().getUsername();
             this.createdAt = resume.getCreatedAt().toString();
             this.isResumeOwner = sessionUser != null && resume.isOwner(sessionUser.getId());
+            this.isRep = resume.getIsRep();
             this.skills = resume.getResumeSkills().stream()
                     .map(resumeSkill -> resumeSkill.getSkill().getName())
                     .toList();
@@ -61,6 +65,8 @@ public class ResumeResponse {
         private String content;
         private String writerName;
         private String createdAt;
+        private boolean isRep;
+        private List<String> skills;
 
         @Builder
         public SaveDTO(Resume resume) {
@@ -69,6 +75,10 @@ public class ResumeResponse {
             this.content = resume.getContent();
             this.writerName = resume.getUser().getUsername();
             this.createdAt = resume.getCreatedAt().toString();
+            this.isRep = resume.getIsRep();
+            this.skills = resume.getResumeSkills().stream()
+                    .map(resumeSkill -> resumeSkill.getSkill().getName())
+                    .toList();
         }
     }
 
@@ -80,6 +90,8 @@ public class ResumeResponse {
         private String content;
         private String writerName;
         private String createdAt;
+        private boolean isRep;
+        private List<String> skills;
 
         @Builder
         public UpdateDTO(Resume resume) {
@@ -88,6 +100,10 @@ public class ResumeResponse {
             this.content = resume.getContent();
             this.writerName = resume.getUser().getUsername();
             this.createdAt = resume.getCreatedAt().toString();
+            this.isRep = resume.getIsRep();
+            this.skills = resume.getResumeSkills().stream()
+                    .map(resumeSkill -> resumeSkill.getSkill().getName())
+                    .toList();
         }
     }
 }

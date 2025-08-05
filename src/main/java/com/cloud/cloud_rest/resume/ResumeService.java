@@ -8,6 +8,7 @@ import com.cloud.cloud_rest.skill.Skill;
 import com.cloud.cloud_rest.skill.SkillRepository;
 import com.cloud.cloud_rest.user.User;
 import com.cloud.cloud_rest.user.UserRepository;
+import com.cloud.cloud_rest.user.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +24,7 @@ import java.util.List;
 public class ResumeService {
 
     private final ResumeJpaRepository resumeJpaRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final SkillRepository skillRepository;
 
     // 이력서 전체 조회
@@ -46,26 +47,21 @@ public class ResumeService {
     // 이력서 작성
     @Transactional
     public ResumeResponse.SaveDTO save(ResumeRequest.@Valid ResumeSaveDTO saveDTO, SessionUser sessionUser) {
-        User user = userRepository.findById(sessionUser.getId()).orElseThrow(
-                () -> new Exception404("유저를 찾을 수 없습니다"));
+        User user = userService.getUserId(sessionUser.getId());
 
         Resume resume = saveDTO.toEntity(user);
-
-        // 스킬 태그 연결
-        List<ResumeSkill> resumeSkills = saveDTO.getSkillIdList().stream()
-                .map(skillId -> {
-                    Skill skill = skillRepository.findById(skillId).orElseThrow(() ->
-                            new Exception404("스킬을 찾을 수 없습니다"));
-                    return ResumeSkill.builder()
-                            .resume(resume)
-                            .skill(skill)
-                            .build();
-                })
-                .toList();
-
-        resume.setResumeSkills(resumeSkills);
-
         Resume savedResume = resumeJpaRepository.save(resume);
+
+        for (Long skillId : saveDTO.getSkillIds()) {
+            Skill skill = skillRepository.findById(skillId)
+                    .orElseThrow(() -> new Exception404("스킬을 찾을 수 없습니다"));
+
+            ResumeSkill resumeSkill = new ResumeSkill(resume, skill);
+            savedResume.addResumeSkill(resumeSkill);
+        }
+
+        resumeJpaRepository.save(savedResume);
+
         return new ResumeResponse.SaveDTO(savedResume);
     }
 
@@ -83,7 +79,7 @@ public class ResumeService {
 
     // 이력서 수정
     @Transactional
-    public ResumeResponse.UpdateDTO update(Long resumeId, ResumeRequest.UpdateDTO updateDTO,
+    public ResumeResponse.UpdateDTO update(Long resumeId, ResumeRequest.ResumeUpdateDTO updateDTO,
                                            SessionUser sessionUser) {
         Resume resume = resumeJpaRepository.findById(resumeId).orElseThrow(() ->
                 new Exception404("해당 이력서가 존재하지 않습니다"));
@@ -95,19 +91,16 @@ public class ResumeService {
         resume.update(updateDTO);
 
         resume.getResumeSkills().clear();
-        if(updateDTO.getSkillIdList() != null && !updateDTO.getSkillIdList().isEmpty()) {
-            List<ResumeSkill> newSkills = updateDTO.getSkillIdList().stream()
-                    .map(skillId -> {
-                        Skill skill = skillRepository.findById(skillId).orElseThrow(() ->
-                                new Exception404("스킬을 찾을 수 없습니다"));
-                        return ResumeSkill.builder()
-                                .resume(resume)
-                                .skill(skill)
-                                .build();
-                    })
-                    .toList();
-            resume.getResumeSkills().addAll(newSkills);
+        for (Long skillId : updateDTO.getSkillIds()) {
+            Skill skill = skillRepository.findById(skillId)
+                    .orElseThrow(() -> new Exception404("스킬을 찾을 수 없습니다"));
+
+            ResumeSkill resumeSkill = new ResumeSkill(resume, skill);
+            resume.addResumeSkill(resumeSkill);
         }
+
+        Resume updatedResume = resumeJpaRepository.save(resume);
+
         return new ResumeResponse.UpdateDTO(resume);
     }
 }

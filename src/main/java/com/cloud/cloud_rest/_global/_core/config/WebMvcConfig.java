@@ -45,7 +45,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         // 구인공고 @Auth로 관리
                         "/api/recruits",
                         // 이력서
-                        "/api/resumes",
                         // 에러
                         "/api/**/err/**"
                 );

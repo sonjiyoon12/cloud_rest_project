@@ -45,7 +45,7 @@ public class ResumeRestController {
     // 이력서 수정
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable(name = "id") Long resumeId,
-                                    @Valid @RequestBody ResumeRequest.UpdateDTO updateDTO,
+                                    @Valid @RequestBody ResumeRequest.ResumeUpdateDTO updateDTO,
                                     @RequestAttribute("sessionUser")SessionUser sessionUser){
 
         ResumeResponse.UpdateDTO updateResume = resumeService.update(resumeId, updateDTO, sessionUser);
