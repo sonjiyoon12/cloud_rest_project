@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User,Long> {
@@ -14,4 +15,12 @@ public interface UserRepository extends JpaRepository<User,Long> {
 
     @Query("select count(c) > 0 from User c where c.loginId = :loginId")
     boolean existsLoginId(@Param("loginId") String loginId);
+
+    @Query("""
+        select distinct u
+        from User u
+        join u.userSkills cs
+        where cs.skill.name in :skillNames
+    """)
+    List<User> findByMatchingSkills(@Param("skillNames") List<String> skillNames);
 }

@@ -113,15 +113,20 @@ public class CorpService {
             throw new Exception403("기업 유저만 접근 가능합니다.");
         }
 
-        getCorpId(id);
+        Corp corp = getCorpId(id);
 
         validateUserUserId(id,sessionUser.getId());
 
-        corpRepository.deleteById(id);
+        corpRepository.delete(corp);
     }
 
-    public CorpResponse.CorpDTO getCorpInfo(Long id, Long sessionUserId){
-        if(!id.equals(sessionUserId)){
+    public CorpResponse.CorpDTO getCorpInfo(Long id, SessionUser sessionUser){
+
+        if (!"CORP".equals(sessionUser.getRole())) {
+            throw new Exception403("기업 유저만 볼 수 있습니다.");
+        }
+
+        if(!id.equals(sessionUser.getId())){
             throw new Exception403("자신의 기업 정보만 확인 가능합니다");
         }
         Corp corp = getCorpId(id);

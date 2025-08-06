@@ -2,6 +2,7 @@ package com.cloud.cloud_rest.user;
 
 import com.cloud.cloud_rest._global.SessionUser;
 import com.cloud.cloud_rest._global._core.common.ApiUtil;
+import com.cloud.cloud_rest._global.auth.Auth;
 import com.cloud.cloud_rest._global.exception.Exception401;
 import com.cloud.cloud_rest._global.exception.Exception403;
 import com.cloud.cloud_rest.corp.CorpRequest;
@@ -47,20 +48,18 @@ public class UserController {
     }
 
     // 유저 회원 정보 가져오기
+    @Auth
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserInfo(@PathVariable(name = "id")Long id,
                                          @RequestAttribute("sessionUser") SessionUser sessionUser){
 
-        if(!sessionUser.getRole().equals("USER")){
-            throw new Exception403("일반 유저만 볼수있습니다");
-        }
-
-        UserResponse.UserDTO userDTO = userService.findUserById(id,sessionUser.getId());
+        UserResponse.UserDTO userDTO = userService.findUserById(id,sessionUser);
         return ResponseEntity.ok(new ApiUtil<>(userDTO));
     }
 
 
     // 웹 MULTIPART 형식 으로 받기
+    @Auth
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> update(@PathVariable Long id,
                                     @ModelAttribute UserRequest.UpdateDTO updateDTO,
@@ -70,6 +69,7 @@ public class UserController {
     }
 
     // 웹에서 JSON 형식으로 받기(base64)
+    @Auth
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateJson(@PathVariable Long id,
                                         @RequestBody UserRequest.UpdateDTO updateDTO,
@@ -78,6 +78,7 @@ public class UserController {
         return ResponseEntity.ok(new ApiUtil<>(update));
     }
 
+    @Auth
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable Long id,
                                            @RequestAttribute("sessionUser")SessionUser sessionUser){

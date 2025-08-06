@@ -68,9 +68,10 @@ public class UserService {
     }
 
     // 유저의 상세 정보
-    public UserResponse.UserDTO findUserById(Long userId,Long sessionUserId) {
+    public UserResponse.UserDTO findUserById(Long userId,SessionUser sessionUser) {
 
-        if(!userId.equals(sessionUserId)){
+
+        if(!userId.equals(sessionUser.getId())){
             throw new Exception403("보인 정보만 조회 가능합니다");
         }
 
@@ -121,21 +122,22 @@ public class UserService {
     }
 
     // 유저 정보 삭제
+    @Transactional
     public void deleteById(Long id, SessionUser sessionUser){
 
         if (!"USER".equals(sessionUser.getRole())) {
             throw new Exception403("일반 유저만 접근 가능합니다.");
         }
 
-        getUserId(id); // 유저 정보 찾기
+        User user = getUserId(id); // 유저 정보 찾기
         
         validateUserUserId(id,sessionUser.getId()); // 회번 번호 = 로그인 번호 비교
-        userRepository.deleteById(id);
+        userRepository.delete(user);
     }
 
     // 유저 정보 찾기(user에 고유번호)
-    public User getUserId(Long userId){
-        return userRepository.findById(userId).orElseThrow(() -> new Exception404("해당 유저를 찾을수없습니다"));
+    public User getUserId(Long loginId){
+        return userRepository.findById(loginId).orElseThrow(() -> new Exception404("해당 유저를 찾을수없습니다"));
     }
 
     // 유저 정보 찾기(user에 고유번호)
