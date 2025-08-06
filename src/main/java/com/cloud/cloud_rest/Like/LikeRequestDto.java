@@ -1,30 +1,24 @@
 package com.cloud.cloud_rest.Like;
 
-import com.cloud.cloud_rest.board.Board;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
-@Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class LikeRequestDto {
 
-    // 좋아요를 누를 게시글 ID
-    @NotNull(message = "게시글 ID는 필수입니다.")
-    private Long boardId;
-
-    // 좋아요를 누른 사용자 ID
+    // 좋아요를 누른 사용자 ID (필수)
+    @NotNull(message = "사용자 ID는 필수입니다.")
     private Long userId;
 
+    // 좋아요를 누를 게시글 ID (게시글 또는 댓글 중 하나만 필수)
+    private Long boardId;
 
-    public Like toEntity(Board board) {
-        return Like.builder()
-                .board(board)
-                .userId(userId)
-                .build();
-    }
+    // 좋아요를 누를 댓글 ID (게시글 또는 댓글 중 하나만 필수)
+    private Long commentId;
 }

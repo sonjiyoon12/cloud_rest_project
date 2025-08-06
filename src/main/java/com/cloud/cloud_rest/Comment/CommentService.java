@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -25,23 +26,31 @@ public class CommentService {
      * @param pageable 페이징 정보
      * @return 댓글 목록 페이지
      */
-    public Page<Comment> getCommentsByBoardId(Long boardId, Pageable pageable) {
-        return commentRepository.findByBoardBoardId(boardId, pageable);
+    public Page<CommentResponseDto> getCommentsByBoardId(Long boardId, Pageable pageable) {
+         Page<Comment> commentPage = commentRepository.findByBoardBoardId(boardId, pageable);
+         return commentPage.map(CommentResponseDto::new);
     }
 
     /**
      * 댓글 등록 메서드
      *
-     * @param requestDto 댓글 내용, 게시글 ID, 비밀 댓글 여부를 담은 DTO
+     * @param boardId 게시글 ID (URL 경로 변수로부터 전달됨)
+     * @param requestDto 댓글 내용, 비밀 댓글 여부를 담은 DTO
      * @param userId     댓글 작성자의 ID
      * @return 등록된 댓글 정보를 담은 응답 DTO
      */
     @Transactional
-    public CommentResponseDto writeComment(CommentRequestDto requestDto, Long userId) {
-        Board board = boardRepository.findById(requestDto.getBoardId())
-                .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
-        Comment newComment = requestDto.toEntity(board);
-        newComment.setUserId(userId);
+    public CommentResponseDto writeComment(Long boardId, CommentRequestDto requestDto, Long userId) {
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new NoSuchElementException("게시글을 찾을 수 없습니다."));
+
+        Comment newComment = Comment.builder()
+                .board(board)
+                .userId(userId)
+                .content(requestDto.getContent())
+                .isSecret(requestDto.getIsSecret())
+                .build();
+
         commentRepository.save(newComment);
         return new CommentResponseDto(newComment);
     }

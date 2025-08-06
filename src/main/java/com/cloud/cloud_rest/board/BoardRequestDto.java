@@ -1,37 +1,60 @@
 package com.cloud.cloud_rest.board;
 
+import com.cloud.cloud_rest.user.User;
 import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 public class BoardRequestDto {
 
+    // 게시글 작성 요청 DTO
     @Data
     public static class SaveDto {
         private String title;
         private String content;
         private Long userId;
         private String base64Image;
-        private String imagePath;
+        private List<String> boardTags;
 
-        public Board toEntity(String imagePath) {
+        public Board toEntity(User user, String imagePath) {
             return Board.builder()
                     .title(title)
                     .content(content)
-                    .userId(userId)
-                    .views(0) // 새 게시물이니까 조회수를 0 으로 초기 설정
-                    .likeCount(0) // 새 게시물이니까 좋아요 수 0 으로 초기 설정
+                    .user(user)
+                    .views(0)
+                    .likeCount(0)
                     .imagePath(imagePath)
                     .build();
         }
     }
 
+    // 게시글 수정 요청 DTO
     @Data
     public static class UpdateDto {
         private String title;
         private String content;
-        private String imagePathBase64; // JSON 형식으로 파일 받기
-        private MultipartFile imagePath; // Multipart 로 파일 받기
+        private Long userId;
+        private String imagePathBase64;
     }
 
+    // 태그 검색용 DTO
+    @Data
+    public static class SearchDTO {
+        private String keyword; // 기존의 'search' 파라미터를 여기로 통합
+        private List<String> boardTags;
 
+        // --- Helper Methods ---
+        public boolean hasKeyword() {
+            return keyword != null && !keyword.trim().isEmpty();
+        }
+        public boolean hasTags() {
+            return boardTags != null && !boardTags.isEmpty();
+        }
+    }
+
+    @Data
+    public static class FilterOptionDTO {
+        private String name;    // 옵션의 이름
+        private boolean checked; // 현재 선택되었는지 여부
+    }
 }

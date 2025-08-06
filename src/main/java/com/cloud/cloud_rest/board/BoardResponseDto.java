@@ -1,11 +1,13 @@
 package com.cloud.cloud_rest.board;
 
+import com.cloud.cloud_rest.Comment.CommentResponseDto;
+import com.cloud.cloud_rest.board.board_tag.BoardTag;
 import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class BoardResponseDto {
 
@@ -19,17 +21,22 @@ public class BoardResponseDto {
         private LocalDateTime createdAt;
         private Integer views;
         private String imagePath;
+        private List<CommentResponseDto> comments;
+
+
 
         @Builder
         public DetailDto(Board board) {
             this.boardId = board.getBoardId();
             this.title = board.getTitle();
             this.content = board.getContent();
-            this.userId = board.getUserId();
+            this.userId = board.getUser().getUserId();
             this.createdAt = board.getCreatedAt();
             this.views = board.getViews();
             this.imagePath = board.getImagePath();
         }
+
+
     }
 
     // 게시글 목록을 응답하는 Dto
@@ -41,21 +48,39 @@ public class BoardResponseDto {
         private LocalDateTime createdAt;
         private Integer views;
         private String imagePath;
+        private List<TagDTO> tags = new ArrayList<>();
 
         public ListDto(Board board) {
             this.boardId = board.getBoardId();
             this.title = board.getTitle();
-            this.userId = board.getUserId();
+            this.userId = board.getUser().getUserId();
             this.createdAt = board.getCreatedAt();
             this.views = board.getViews();
             this.imagePath = board.getImagePath();
+
+            for (BoardTag tag : board.getTags()) {
+                this.tags.add(new TagDTO(tag));
+            }
         }
 
         // board 엔티티 리스트를 ListDto로 변환하는 정적 메서드
         public static List<ListDto> toList(List<Board> boards) {
             return boards.stream()
                     .map(ListDto::new)
-                    .collect(Collectors.toUnmodifiableList());
+                    .toList();
+        }
+
+        @Data
+        public static class TagDTO {
+            private Long id;
+            private Long boardId;
+            private String tagName;
+
+            public TagDTO(BoardTag boardTag) {
+                this.id = boardTag.getBoardTagId();
+                this.boardId = boardTag.getBoard().getBoardId();
+                this.tagName = boardTag.getTagName();
+            }
         }
     }
 
@@ -76,10 +101,9 @@ public class BoardResponseDto {
             this.boardId = board.getBoardId();
             this.title = board.getTitle();
             this.content = board.getContent();
-            this.userId = board.getUserId();
+            this.userId = board.getUser().getUserId();
             this.createAt = board.getCreatedAt();
             this.views = board.getViews();
-            this.likeCount = board.getLikeCount();
             this.imagePath = board.getImagePath();
         }
     }
