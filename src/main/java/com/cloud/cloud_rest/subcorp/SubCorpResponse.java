@@ -1,35 +1,40 @@
 package com.cloud.cloud_rest.subcorp;
 
 
-import com.cloud.cloud_rest.corp.Corp;
-import com.cloud.cloud_rest.user.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 public class SubCorpResponse {
 
+    @Schema(name = "SubCorpSaveDTO")
     @Data
-    public static class SubCorpResponseDTO {
-
+    public static class SaveDTO {
+        private Long subCorpId;
         private Long corpId;
-        private String corpName;
-        private String corpImage;
+        private Long userId;
+        private String createdAt;
 
-        public SubCorpResponseDTO(Corp corp) {
-            this.corpId = corp.getCorpId();
-            this.corpName = corp.getCorpName();
-            this.corpImage = corp.getCorpImage();
+        public SaveDTO(SubCorp subCorp) {
+            this.subCorpId = subCorp.getSubCorpId();
+            this.corpId = subCorp.getCorp().getCorpId();
+            this.userId = subCorp.getUser().getUserId();
+            this.createdAt = subCorp.getTime();
         }
-
-
     }
 
+    @Schema(name = "SubCorpDetailDTO")
+    @Data
+    public static class DetailDTO {
+        private Long subCorpId;
+        private Long corpId;
+        private Long userId;
+        private String createdAt;
 
-    public static class SubCorpCheckDTO {
-        private boolean isSubscribed;
+        public DetailDTO(SubCorp subCorp) {
+            this.subCorpId = subCorp.getSubCorpId();
+            this.corpId = subCorp.getCorp().getCorpId();
+            this.userId = subCorp.getUser().getUserId();
+            this.createdAt = subCorp.getTime();
+        }
     }
-
-
 }
 
