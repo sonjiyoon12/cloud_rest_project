@@ -16,12 +16,12 @@ public class CareerResponse {
         private LocalDate endAt;
 
         public InfoDTO(Career career) {
-            this.careerId = careerId;
-            this.corpName = corpName;
-            this.position = position;
-            this.content = content;
-            this.startAt = startAt;
-            this.endAt = endAt;
+            this.careerId = career.getCareerId();
+            this.corpName = career.getCorpName();
+            this.position = career.getPosition();
+            this.content = career.getContent();
+            this.startAt = career.getStartAt();
+            this.endAt = career.getEndAt();
         }
     }
 }
