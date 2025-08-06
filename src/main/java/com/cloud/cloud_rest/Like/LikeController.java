@@ -19,11 +19,7 @@ public class LikeController {
     @PostMapping("/toggle")
     public ResponseEntity<LikeResponseDto> toggleLike(
             @Valid @RequestBody LikeRequestDto requestDto) {
-        try {
-            LikeResponseDto responseDto = likeService.toggleLike(requestDto);
-            return new ResponseEntity<>(responseDto, HttpStatus.OK);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        }
+        LikeResponseDto responseDto = likeService.toggleLike(requestDto);
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 }

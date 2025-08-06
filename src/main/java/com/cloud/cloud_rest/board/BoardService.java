@@ -2,17 +2,25 @@ package com.cloud.cloud_rest.board;
 
 import com.cloud.cloud_rest.Comment.Comment;
 import com.cloud.cloud_rest.Comment.CommentRepository;
+import com.cloud.cloud_rest.Comment.CommentResponseDto;
 import com.cloud.cloud_rest._global.utils.Base64FileConverterUtil;
 import com.cloud.cloud_rest._global.utils.FileUploadUtil;
 import com.cloud.cloud_rest._global.utils.UploadProperties;
+import com.cloud.cloud_rest.board.board_tag.BoardTag;
+import com.cloud.cloud_rest.board.board_tag.BoardTagRepository;
+import com.cloud.cloud_rest.user.User;
+import com.cloud.cloud_rest.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,100 +31,115 @@ public class BoardService {
     private final FileUploadUtil fileUploadUtil;
     private final UploadProperties uploadProperties;
     private final Base64FileConverterUtil base64FileConverterUtil;
+    private final UserRepository userRepository;
+    private final BoardTagRepository boardTagRepository;
 
-    // 이미지 경로를 파라미터로 받아 게시글을 저장
+
+    // 게시글을 저장하고 DTO를 반환
     @Transactional
-    public Board saveBoard(BoardRequestDto.SaveDto saveDto, Long userId, String imagePath) {
-        Board board = saveDto.toEntity(imagePath);
-        return boardRepository.save(board);
-    }
+    public BoardResponseDto.DetailDto saveBoard(BoardRequestDto.SaveDto saveDto) throws IOException {
+        String savedImagePath = null;
+        String base64Image = saveDto.getBase64Image();
 
-    @Transactional(readOnly = true)
-    public Page<Board> getBoardList(Pageable pageable, String search) {
-        if (search != null && !search.trim().isEmpty()) {
-            return boardRepository.searchByKeyword(search, pageable);
+        if (base64Image != null && !base64Image.isBlank()) {
+            MultipartFile convertedFile = base64FileConverterUtil.convert(base64Image);
+            savedImagePath = fileUploadUtil.uploadProfileImage(convertedFile, uploadProperties.getCorpDir());
         }
-        return boardRepository.findAll(pageable);
+
+        User user = userRepository.findById(saveDto.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자 ID 입니다: " + saveDto.getUserId()));
+
+        Board board = saveDto.toEntity(user, savedImagePath);
+        Board savedBoard = boardRepository.save(board);
+
+        saveDto.getBoardTags().forEach(
+                tag -> {
+                    BoardTag boardTag = BoardTag.builder()
+                            .board(board)
+                            .tagName(tag)
+                            .build();
+                    boardTagRepository.save(boardTag);
+                }
+        );
+
+        return new BoardResponseDto.DetailDto(savedBoard);
     }
 
+    // 게시글 목록을 페이징하여 DTO로 반환
     @Transactional(readOnly = true)
-    public Board getBoard(Long boardId) {
-        return boardRepository.findById(boardId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시물 ID 입니다: " + boardId));
+    public Page<BoardResponseDto.ListDto> getBoardList(Pageable pageable, BoardRequestDto.SearchDTO searchDTO) {
+        // 이제 서비스는 그냥 Repository에 그대로 전달만 해주면 됨!
+        Page<Board> boardPage = boardRepository.findBySearchOption(pageable, searchDTO);
+        return boardPage.map(BoardResponseDto.ListDto::new);
     }
 
+    // 특정 게시글을 조회하고 조회수를 증가시킨 후 DTO를 반환
     @Transactional
-    public void increaseViews(Long boardId) {
+    public BoardResponseDto.DetailDto getBoardWithIncreaseViews(Long boardId) {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시물 ID 입니다: " + boardId));
         board.setViews(board.getViews() + 1);
+
+
+        return new BoardResponseDto.DetailDto(board);
     }
 
-    // 이미지 경로 업데이트
+
+    // Base64 이미지를 포함한 DTO로 게시글을 수정하고 수정된 DTO를 반환
     @Transactional
-    public Board updateBoard(Long boardId, BoardRequestDto.UpdateDto updateDto, Long userId) {
+    public BoardResponseDto.UpdateDto updateBoard(Long boardId, BoardRequestDto.UpdateDto updateDto) throws IOException {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시물 ID 입니다: " + boardId));
 
-        if (!board.getUserId().equals(userId)) {
+        if (!board.getUser().getUserId().equals(updateDto.getUserId())) {
             throw new IllegalArgumentException("게시물 수정 권한이 없습니다.");
         }
 
-        String oldFileName = board.getImagePath();
-        String savedFileName = null;
+        String oldImagePath = board.getImagePath();
+        String savedImagePath = oldImagePath;
+        String base64Image = updateDto.getImagePathBase64();
 
-        try {
-            MultipartFile multipartFile = null;
-
-            // 웹 (MultipartFile) 용
-            if (updateDto.getImagePath() != null && !updateDto.getImagePath().isEmpty()) {
-                multipartFile = updateDto.getImagePath();
+        if (base64Image != null && !base64Image.isBlank()) {
+            if (oldImagePath != null) {
+                fileUploadUtil.deleteProfileImage(oldImagePath);
             }
-
-            // 앱(Base64) 용
-            else if (updateDto.getImagePathBase64() != null && !updateDto.getImagePathBase64().isBlank()) {
-                multipartFile = Base64FileConverterUtil.convert(updateDto.getImagePathBase64());
-            }
-
-            // 해당 파일이 없으면 savedFileName에 저장
-            if (multipartFile != null) {
-                savedFileName = fileUploadUtil.uploadProfileImage(multipartFile, uploadProperties.getCorpDir());
-            }
-
-            // 이전 이미지 삭제
-            if (savedFileName != null && oldFileName != null) {
-                fileUploadUtil.deleteProfileImage(oldFileName);
-            }
-
-            // 해당 파일을 저장
-            board.update(updateDto, savedFileName);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-
+            MultipartFile convertedFile = base64FileConverterUtil.convert(base64Image);
+            savedImagePath = fileUploadUtil.uploadProfileImage(convertedFile, uploadProperties.getBoardDir());
+        } else if ((base64Image == null || base64Image.isBlank()) && oldImagePath != null) {
+            fileUploadUtil.deleteProfileImage(oldImagePath);
+            savedImagePath = null;
         }
 
-        return board;
+        board.update(updateDto, savedImagePath);
+        return new BoardResponseDto.UpdateDto(board);
     }
 
+    // 게시글을 삭제
     @Transactional
     public void deleteBoard(Long boardId, Long userId) {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시물 ID 입니다: " + boardId));
 
-        if (!board.getUserId().equals(userId)) {
+        if (!board.getUser().getUserId().equals(userId)) {
             throw new IllegalArgumentException("게시물 삭제 권한이 없습니다.");
         }
 
+        if (board.getImagePath() != null) {
+            fileUploadUtil.deleteProfileImage(board.getImagePath());
+        }
         boardRepository.delete(board);
     }
 
     // 게시글별 댓글 목록을 페이징하여 조회
     @Transactional(readOnly = true)
-    public Page<Comment> getCommentsByBoardId(Long boardId, Pageable pageable) {
+    public Page<CommentResponseDto> getCommentsByBoardId(Long boardId, Pageable pageable) {
+        Page<Comment> commentsPage = commentRepository.findByBoardBoardId(boardId, pageable);
 
-        return commentRepository.findByBoardBoardId(boardId, pageable);
+        List<CommentResponseDto> commentDtoList = commentsPage.getContent().stream()
+                .map(CommentResponseDto::new)
+                .collect(Collectors.toList());
 
-
+        return new PageImpl<>(commentDtoList, pageable, commentsPage.getTotalElements());
     }
 
     // 특정 사용자가 댓글을 작성한 모든 게시글을 조회

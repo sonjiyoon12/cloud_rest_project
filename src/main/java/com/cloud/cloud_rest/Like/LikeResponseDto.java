@@ -10,8 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LikeResponseDto {
-    private boolean isLiked;
-    private int likeCount;
-
+    private boolean isLiked; // 좋아요 상태
+    private int newLikeCount; // 변경된 좋아요 수
 }
-

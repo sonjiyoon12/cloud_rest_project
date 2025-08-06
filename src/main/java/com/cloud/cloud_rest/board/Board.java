@@ -1,53 +1,75 @@
 package com.cloud.cloud_rest.board;
 
+import com.cloud.cloud_rest.Comment.Comment;
+import com.cloud.cloud_rest.board.board_tag.BoardTag;
+import com.cloud.cloud_rest.user.User;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
-
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "board_tb")
 @Builder
 public class Board {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "board_id")
-    private Long boardId; // 게시글 고유 Id
+    private Long boardId;
 
     @Column(name = "title", nullable = false, length = 255)
-    private String title; // 게시글 제목
+    private String title;
 
     @Lob
     @Column(name = "content")
-    private String content; // 게시글 내용
+    private String content;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId; // 작성자 Id
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    @ToString.Exclude
+    private User user;
 
-    @Column(name = "created_at", columnDefinition = "datetime(6) default current_timestamp")
-    private LocalDateTime createdAt; // 게시글 작성일
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
 
     @Column(name = "views", columnDefinition = "int default 0")
-    private Integer views; // 조회수
+    private Integer views;
+
 
     @Column(name = "like_count", columnDefinition = "int default 0")
     private Integer likeCount;
 
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    @ToString.Exclude
+    private List<Comment> comments;
+
     private String imagePath;
 
-    public void update(BoardRequestDto.UpdateDto updateDTO,String imagePath) {
-        // userId는 게시글 생성시에만 필요 --> 수정시에는 변경하지않음
-        // board.setUserId(this.userId);
+    /**
+     * 게시글의 제목, 내용, 이미지 경로를 업데이트하는 메서드
+     *
+     * @param updateDTO 수정에 필요한 데이터가 담긴 DTO
+     * @param imagePath 수정된 이미지의 경로
+     */
+    public void update(BoardRequestDto.UpdateDto updateDTO, String imagePath) {
         this.title = updateDTO.getTitle();
         this.content = updateDTO.getContent();
         this.imagePath = imagePath;
-
     }
 
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
+    @ToString.Exclude
+    private List<BoardTag> tags = new ArrayList<>();
 }

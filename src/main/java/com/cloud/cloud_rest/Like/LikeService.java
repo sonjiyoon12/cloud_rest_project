@@ -1,41 +1,102 @@
 package com.cloud.cloud_rest.Like;
 
+import com.cloud.cloud_rest.Comment.Comment;
+import com.cloud.cloud_rest.CommentLike.CommentLike;
+import com.cloud.cloud_rest.Comment.CommentRepository;
 import com.cloud.cloud_rest.board.Board;
 import com.cloud.cloud_rest.board.BoardRepository;
-import lombok.AllArgsConstructor;
+import com.cloud.cloud_rest.user.User;
+import com.cloud.cloud_rest.user.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.cloud.cloud_rest.CommentLike.CommentLikeRepository;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class LikeService {
 
-    private final LikeRepository likeRepository;
-    private final BoardRepository boardrepository;
+    private final BoardLikeRepository likeRepository;
+    private final CommentLikeRepository commentLikeRepository;
+    private final BoardRepository boardRepository;
+    private final CommentRepository commentRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     public LikeResponseDto toggleLike(LikeRequestDto requestDto) {
-        // 1. 게시글 존재 여부 확인
-        Board board = boardrepository.findById(requestDto.getBoardId())
-                .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
+        if ((requestDto.getBoardId() == null && requestDto.getCommentId() == null) ||
+                (requestDto.getBoardId() != null && requestDto.getCommentId() != null)) {
+            throw new IllegalArgumentException("게시글 ID 또는 댓글 ID 중 하나만 필수입니다.");
+        }
 
-        // 2. 사용자가 이미 좋아요를 눌렀는지 확인
-        Optional<Like> existingLike = likeRepository.findByBoardAndUserId(board, requestDto.getUserId());
+        User user = userRepository.findById(requestDto.getUserId())
+                .orElseThrow(() -> new NoSuchElementException("ID " + requestDto.getUserId() + "를 가진 사용자를 찾을 수 없습니다."));
+
+        if (requestDto.getBoardId() != null) {
+            return toggleBoardLike(requestDto.getBoardId(), user);
+        } else {
+            return toggleCommentLike(requestDto.getCommentId(), user);
+        }
+    }
+
+    private LikeResponseDto toggleBoardLike(Long boardId, User user) {
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new NoSuchElementException("ID " + boardId + "를 가진 게시글을 찾을 수 없습니다."));
+
+        Optional<BoardLike> existingLike = likeRepository.findByBoardAndUser(board, user);
 
         if (existingLike.isPresent()) {
-            // 3.1 이미 좋아요를 눌렀다면, 좋아요 취소 (삭제)
             likeRepository.delete(existingLike.get());
             board.setLikeCount(board.getLikeCount() - 1);
-            return new LikeResponseDto(false, board.getLikeCount());
+            return LikeResponseDto.builder()
+                    .isLiked(false)
+                    .newLikeCount(board.getLikeCount())
+                    .build();
         } else {
-            // 3.2 좋아요를 누르지 않았다면, 좋아요 추가
-            Like newLike = requestDto.toEntity(board);
+            boolean isOwner = board.getUser() != null && board.getUser().getUserId().equals(user.getUserId());
+
+            BoardLike newLike = BoardLike.builder()
+                    .board(board)
+                    .user(user)
+                    .isOwner(isOwner)
+                    .build();
             likeRepository.save(newLike);
             board.setLikeCount(board.getLikeCount() + 1);
-            return new LikeResponseDto(true, board.getLikeCount());
+            return LikeResponseDto.builder()
+                    .isLiked(true)
+                    .newLikeCount(board.getLikeCount())
+                    .build();
+        }
+    }
+
+    private LikeResponseDto toggleCommentLike(Long commentId, User user) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new NoSuchElementException("ID " + commentId + "를 가진 댓글을 찾을 수 없습니다."));
+
+        Optional<CommentLike> existingLike = commentLikeRepository.findByCommentAndUser(comment, user);
+
+        if (existingLike.isPresent()) {
+            commentLikeRepository.delete(existingLike.get());
+            comment.setLikeCount(comment.getLikeCount() - 1);
+            return LikeResponseDto.builder()
+                    .isLiked(false)
+                    .newLikeCount(comment.getLikeCount())
+                    .build();
+        } else {
+            CommentLike newLike = CommentLike.builder()
+                    .comment(comment)
+                    .user(user)
+                    .build();
+            commentLikeRepository.save(newLike);
+            comment.setLikeCount(comment.getLikeCount() + 1);
+            return LikeResponseDto.builder()
+                    .isLiked(true)
+                    .newLikeCount(comment.getLikeCount())
+                    .build();
         }
     }
 }
