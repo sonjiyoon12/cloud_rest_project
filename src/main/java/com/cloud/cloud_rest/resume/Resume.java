@@ -57,7 +57,6 @@ public class Resume {
         this.title = updateDTO.getTitle();
         this.content = updateDTO.getContent();
         this.isRep = updateDTO.isRep();
-
     }
 
     @Builder.Default

@@ -3,7 +3,6 @@ package com.cloud.cloud_rest.resumeskill;
 import com.cloud.cloud_rest.resume.Resume;
 import com.cloud.cloud_rest.skill.Skill;
 import jakarta.persistence.*;
-import jdk.jfr.Enabled;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

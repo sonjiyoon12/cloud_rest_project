@@ -1,6 +1,8 @@
 package com.cloud.cloud_rest.resume;
 
 import com.cloud.cloud_rest._global.SessionUser;
+import com.cloud.cloud_rest.career.Career;
+import com.cloud.cloud_rest.career.CareerResponse;
 import com.cloud.cloud_rest.user.User;
 import lombok.Builder;
 import lombok.Data;
@@ -9,12 +11,11 @@ import java.util.List;
 
 public class ResumeResponse {
 
-    // 이력서 전체보기 응답
+    // 이력서 전체조회 응답
     @Data
     public static class ListDTO {
         private Long resumeId;
         private String title;
-        private String content;
         private String writerName;
         private String createdAt;
         private List<String> skills;
@@ -22,7 +23,6 @@ public class ResumeResponse {
         public ListDTO(Resume resume) {
             this.resumeId = resume.getResumeId();
             this.title = resume.getTitle();
-            this.content = resume.getContent();
             this.writerName = resume.getUser().getUsername();
             this.createdAt = resume.getCreatedAt().toString();
             this.skills = resume.getResumeSkills().stream()
@@ -42,6 +42,7 @@ public class ResumeResponse {
         private boolean isResumeOwner;
         private boolean isRep;
         private List<String> skills;
+        private List<CareerResponse.InfoDTO> careers;
 
         public DetailDTO(Resume resume, SessionUser sessionUser) {
             this.resumeId = resume.getResumeId();
@@ -53,6 +54,9 @@ public class ResumeResponse {
             this.isRep = resume.getIsRep();
             this.skills = resume.getResumeSkills().stream()
                     .map(resumeSkill -> resumeSkill.getSkill().getName())
+                    .toList();
+            this.careers = resume.getCareers().stream()
+                    .map(CareerResponse.InfoDTO::new)
                     .toList();
         }
     }
@@ -67,6 +71,7 @@ public class ResumeResponse {
         private String createdAt;
         private boolean isRep;
         private List<String> skills;
+        private List<CareerResponse.InfoDTO> careers;
 
         @Builder
         public SaveDTO(Resume resume) {
@@ -78,6 +83,9 @@ public class ResumeResponse {
             this.isRep = resume.getIsRep();
             this.skills = resume.getResumeSkills().stream()
                     .map(resumeSkill -> resumeSkill.getSkill().getName())
+                    .toList();
+            this.careers = resume.getCareers().stream()
+                    .map(CareerResponse.InfoDTO::new)
                     .toList();
         }
     }
@@ -92,6 +100,7 @@ public class ResumeResponse {
         private String createdAt;
         private boolean isRep;
         private List<String> skills;
+        private List<CareerResponse.InfoDTO> careers;
 
         @Builder
         public UpdateDTO(Resume resume) {
@@ -103,6 +112,9 @@ public class ResumeResponse {
             this.isRep = resume.getIsRep();
             this.skills = resume.getResumeSkills().stream()
                     .map(resumeSkill -> resumeSkill.getSkill().getName())
+                    .toList();
+            this.careers = resume.getCareers().stream()
+                    .map(CareerResponse.InfoDTO::new)
                     .toList();
         }
     }
