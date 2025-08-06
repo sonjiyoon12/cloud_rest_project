@@ -8,9 +8,9 @@ import com.cloud.cloud_rest._global.utils.Base64FileConverterUtil;
 import com.cloud.cloud_rest._global.utils.FileUploadUtil;
 import com.cloud.cloud_rest._global.utils.JwtUtil;
 import com.cloud.cloud_rest._global.utils.UploadProperties;
-import com.cloud.cloud_rest.corpskill.CorpSkillRepository;
 import com.cloud.cloud_rest.skill.Skill;
 import com.cloud.cloud_rest.skill.SkillRepository;
+import com.cloud.cloud_rest.user.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -31,17 +31,17 @@ public class CorpService {
     private final SkillRepository skillRepository;
 
     @Transactional
-    public CorpResponse.CorpDTO save(CorpRequest.SaveDTO saveDTO){
+    public CorpResponse.CorpDTO save(CorpRequest.SaveDTO saveDTO) {
         String bcyPassword = bCryptPasswordEncoder.encode(saveDTO.getPassword());
 
-        if(corpRepository.existsLoginId(saveDTO.getLoginId())){
+        if (corpRepository.existsLoginId(saveDTO.getLoginId())) {
             throw new Exception400("이미 사용 중인 아이디입니다.");
         }
 
         Corp corp = saveDTO.toEntity(bcyPassword);
 
-        if(!saveDTO.getCorpSkills().isEmpty()){
-            for (Long skillId : saveDTO.getCorpSkills()){
+        if (!saveDTO.getCorpSkills().isEmpty()) {
+            for (Long skillId : saveDTO.getCorpSkills()) {
                 Skill skill = skillRepository.findById(skillId)
                         .orElseThrow(() -> new Exception400("존재하지 않는 스킬입니다"));
                 corp.addSkill(skill);
@@ -53,23 +53,32 @@ public class CorpService {
     }
 
     // 로그인 API 
-    public String login(CorpRequest.LoginDTO loginDTO){
+    public String login(CorpRequest.LoginDTO loginDTO) {
 
         Corp corp = getLoginId(loginDTO.getLoginId());
 
-        if(!bCryptPasswordEncoder.matches(loginDTO.getPassword(),corp.getPassword())){
+        if (!bCryptPasswordEncoder.matches(loginDTO.getPassword(), corp.getPassword())) {
             throw new Exception400("비밀번호가 일치 하지 않습니다");
         }
-        return JwtUtil.createForCorp(corp);
+
+        if(corp.getRole() != Role.CORP){
+            throw  new Exception403("기업 유저가 아닙니다");
+        }
+
+        return JwtUtil.createToken(corp);
     }
 
     // 수정 API
     @Transactional
-    public CorpResponse.UpdateDTO updateDTO(Long id, CorpRequest.UpdateDTO dto,Long sessionId) {
+    public CorpResponse.UpdateDTO updateDTO(Long id, CorpRequest.UpdateDTO dto,SessionUser sessionUser) {
+
+        if (sessionUser.getRole() != Role.CORP) {
+            throw new Exception403("기업 유저만 접근 가능합니다.");
+        }
 
         Corp corp = getCorpId(id); // 해당 유저가 있는지
 
-        validateUserUserId(id,sessionId); // 세션 유저 비교하기
+        validateUserUserId(id, sessionUser.getId()); // 세션 유저 비교하기
 
         String oldImagePath = corp.getCorpImage();
         String savedFileName = null;
@@ -107,26 +116,26 @@ public class CorpService {
     }
 
     @Transactional
-    public void deleteById(Long id, SessionUser sessionUser){
+    public void deleteById(Long id, SessionUser sessionUser) {
 
-        if (!"CORP".equals(sessionUser.getRole())) {
+        if (sessionUser.getRole() != Role.CORP) {
             throw new Exception403("기업 유저만 접근 가능합니다.");
         }
 
         Corp corp = getCorpId(id);
 
-        validateUserUserId(id,sessionUser.getId());
+        validateUserUserId(id, sessionUser.getId());
 
         corpRepository.delete(corp);
     }
 
-    public CorpResponse.CorpDTO getCorpInfo(Long id, SessionUser sessionUser){
+    public CorpResponse.CorpDTO getCorpInfo(Long id, SessionUser sessionUser) {
 
-        if (!"CORP".equals(sessionUser.getRole())) {
+        if (sessionUser.getRole() != Role.CORP) {
             throw new Exception403("기업 유저만 볼 수 있습니다.");
         }
 
-        if(!id.equals(sessionUser.getId())){
+        if (!id.equals(sessionUser.getId())) {
             throw new Exception403("자신의 기업 정보만 확인 가능합니다");
         }
         Corp corp = getCorpId(id);
@@ -134,19 +143,20 @@ public class CorpService {
     }
 
     // Corp Login ID로 해당 유저 찾기
-    public Corp getLoginId(String loginId){
+    public Corp getLoginId(String loginId) {
         return corpRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new Exception404("해당 유저를 찾을 수 없습니다"));
     }
+
     // Corp Id로 해당 유저 찾기
-    public Corp getCorpId(Long id){
+    public Corp getCorpId(Long id) {
         return corpRepository.findById(id)
                 .orElseThrow(() -> new Exception404("해당 유저를 찾을 수 없습니다"));
     }
 
     // 권한 검사 (요청 로그인 번호 - 로그인 번호 ) 비교
-    public void validateUserUserId(Long userId,Long sessionUserId){
-        if(!userId.equals(sessionUserId)){
+    public void validateUserUserId(Long userId, Long sessionUserId) {
+        if (!userId.equals(sessionUserId)) {
             throw new Exception403("보인 정보만 조회 가능합니다");
         }
     }

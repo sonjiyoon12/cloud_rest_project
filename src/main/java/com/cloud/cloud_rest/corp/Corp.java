@@ -2,6 +2,7 @@ package com.cloud.cloud_rest.corp;
 
 import com.cloud.cloud_rest.corpskill.CorpSkill;
 import com.cloud.cloud_rest.skill.Skill;
+import com.cloud.cloud_rest.user.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,6 +35,10 @@ public class Corp {
 
     @CreationTimestamp
     private Timestamp createdAt;
+
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private Role role = Role.CORP;
 
     public void update(CorpRequest.UpdateDTO updateDTO, String imagePath) {
         if (updateDTO.getCorpName() != null) {

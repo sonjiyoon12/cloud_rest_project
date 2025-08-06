@@ -37,8 +37,8 @@ public class CorpController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody CorpRequest.LoginDTO loginDTO){
         String jwtToken = corpService.login(loginDTO);
-
         Corp corp = corpService.getLoginId(loginDTO.getLoginId());
+
         CorpResponse.LoginDTO login = new CorpResponse.LoginDTO(corp);
 
         return ResponseEntity.ok()
@@ -63,7 +63,7 @@ public class CorpController {
     public ResponseEntity<?> update(@PathVariable Long id,
                                     @ModelAttribute CorpRequest.UpdateDTO updateDTO,
                                     @RequestAttribute("sessionUser")SessionUser sessionUser) {
-        CorpResponse.UpdateDTO update = corpService.updateDTO(id, updateDTO,sessionUser.getId());
+        CorpResponse.UpdateDTO update = corpService.updateDTO(id, updateDTO,sessionUser);
         return ResponseEntity.ok(new ApiUtil<>(update));
     }
 
@@ -73,7 +73,7 @@ public class CorpController {
     public ResponseEntity<?> updateJson(@PathVariable Long id,
                                         @RequestBody CorpRequest.UpdateDTO updateDTO,
                                         @RequestAttribute("sessionUser")SessionUser sessionUser) {
-        CorpResponse.UpdateDTO update = corpService.updateDTO(id, updateDTO,sessionUser.getId());
+        CorpResponse.UpdateDTO update = corpService.updateDTO(id, updateDTO,sessionUser);
         return ResponseEntity.ok(new ApiUtil<>(update));
     }
 

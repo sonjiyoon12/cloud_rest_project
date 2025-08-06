@@ -39,9 +39,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         // 회원가입
                         "/api/corp/save",
                         "/api/users/save",
+                        "/api/admin/save",
                         // 로그인
                         "/api/corp/login",
                         "/api/users/login",
+                        "/api/admin/login",
                         // 구인공고
                         "/api/recruits/**",
                         // 스킬

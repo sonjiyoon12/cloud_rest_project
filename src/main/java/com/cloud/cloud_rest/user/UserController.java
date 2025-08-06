@@ -39,8 +39,9 @@ public class UserController {
     // 유저 로그인 API
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody UserRequest.LoginDTO loginDTO){
-        String jwtToken = userService.login(loginDTO);
         User login = userService.getLoginId(loginDTO.getLoginId());
+        String jwtToken = userService.login(loginDTO);
+
         UserResponse.LoginDTO DTO = new UserResponse.LoginDTO(login);
         return ResponseEntity.ok()
                 .header("Authorization","Bearer " + jwtToken)
@@ -64,7 +65,7 @@ public class UserController {
     public ResponseEntity<?> update(@PathVariable Long id,
                                     @ModelAttribute UserRequest.UpdateDTO updateDTO,
                                     @RequestAttribute("sessionUser") SessionUser sessionUser) {
-        UserResponse.UpdateDTO update = userService.update(id,sessionUser.getId(),updateDTO);
+        UserResponse.UpdateDTO update = userService.update(id,sessionUser,updateDTO);
         return ResponseEntity.ok(new ApiUtil<>(update));
     }
 
@@ -74,7 +75,7 @@ public class UserController {
     public ResponseEntity<?> updateJson(@PathVariable Long id,
                                         @RequestBody UserRequest.UpdateDTO updateDTO,
                                         @RequestAttribute("sessionUser") SessionUser sessionUser) {
-        UserResponse.UpdateDTO update = userService.update(id,sessionUser.getId(),updateDTO);
+        UserResponse.UpdateDTO update = userService.update(id,sessionUser,updateDTO);
         return ResponseEntity.ok(new ApiUtil<>(update));
     }
 
