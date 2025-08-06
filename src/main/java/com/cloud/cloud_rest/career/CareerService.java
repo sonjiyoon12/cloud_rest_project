@@ -9,8 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.file.AccessDeniedException;
-
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
@@ -26,8 +24,9 @@ public class CareerService {
         Resume resume = resumeJpaRepository.findById(resumeId)
                 .orElseThrow(() -> new Exception404("이력서를 찾을 수 없습니다"));
 
+
         if (!resume.isOwner(sessionUser.getId())) {
-            throw new Exception403("본인이 작성한 이력서만 수정할 수 있습니다");
+            throw new Exception403("본인이 작성한 이력서만 작성할 수 있습니다");
         }
 
         Career career = saveDTO.toEntity(resume);
