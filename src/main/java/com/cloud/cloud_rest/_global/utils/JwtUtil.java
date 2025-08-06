@@ -5,13 +5,14 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.cloud.cloud_rest._global.SessionUser;
 import com.cloud.cloud_rest.corp.Corp;
+import com.cloud.cloud_rest.user.Role;
 import com.cloud.cloud_rest.user.User;
 
 import java.util.Date;
 
 /**
  * JWT 토큰 생성 및 검증을 담당하는 유틸 클래스
- *
+ * <p>
  * JWT 구조 :
  * - Header : 토큰 타입과 암호화 알고리즘 정보
  * - Payload : 사용자 정보와 토큰 메타데이터
@@ -26,28 +27,44 @@ public class JwtUtil {
     // 토큰 주세 (이 애플리케이션을 식별하는 값)
     private static final String SUBJECT = "Cloud_rest_blog";
 
-    public static String createForUser(User user) {
-        return createToken(user.getUserId(), user.getUsername(), user.getEmail(), "USER");
-    }
-
-    public static String createForCorp(Corp corp) {
-        return createToken(corp.getCorpId(), corp.getLoginId(), corp.getEmail(), "CORP");
-    }
 
     /**
      * JWT 토큰을 생성하는 메서드
      */
-    private static String createToken(Long id, String username, String email, String role) {
+    public static String createToken(Long id, String loginId, String username, String email, Role role) {
         Date expiresAt = new Date(System.currentTimeMillis() + EXPIRATION_TIME);
         return JWT.create()
                 .withSubject(SUBJECT)
                 .withExpiresAt(expiresAt)
                 .withClaim("id", id)
+                .withClaim("loginId", loginId)
                 .withClaim("username", username)
                 .withClaim("email", email)
-                .withClaim("role", role)
+                .withClaim("role", role.name())
                 .withIssuedAt(new Date())
                 .sign(Algorithm.HMAC512(SECRET_KEY));
+    }
+
+    // User 전용
+    public static String createToken(User user) {
+        return createToken(
+                user.getUserId(),
+                user.getLoginId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getRole()
+        );
+    }
+
+    // Corp 전용
+    public static String createToken(Corp corp) {
+        return createToken(
+                corp.getCorpId(),
+                corp.getLoginId(),
+                corp.getCorpName(),
+                corp.getEmail(),
+                corp.getRole()
+        );
     }
 
     /**
@@ -71,7 +88,7 @@ public class JwtUtil {
                 .id(id)
                 .userId(userId)
                 .username(username)
-                .role(role)
+                .role(Role.valueOf(role))
                 .build();
     }
 
@@ -81,7 +98,7 @@ public class JwtUtil {
                 .withSubject(SUBJECT)
                 .build()
                 .verify(jwt);
-        return  decodedJWT.getClaim("id").asLong();
+        return decodedJWT.getClaim("id").asLong();
     }
 
     // JWT 토큰의 유성만 검사하는 메서드
