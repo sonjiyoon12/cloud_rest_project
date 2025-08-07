@@ -22,7 +22,7 @@ public class Bulletin {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "bulletin_id")
-    private Long id;
+    private Long bulletinId;
 
     @Column(nullable = false)
     private String title;

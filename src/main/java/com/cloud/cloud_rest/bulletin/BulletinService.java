@@ -50,7 +50,7 @@ public class BulletinService {
             savedImagePath = fileUploadUtil.uploadProfileImage(convertedFile, "bulletin");
         }
 
-        User user = userRepository.findById(sessionUser.getUserId())
+        User user = userRepository.findById(sessionUser.getId())
                 .orElseThrow(() -> new Exception404("존재하지 않는 사용자 ID 입니다: " + sessionUser.getUserId()));
 
         Bulletin bulletin = saveDTO.toEntity(user, savedImagePath);
@@ -64,7 +64,7 @@ public class BulletinService {
         Bulletin bulletin = bulletinRepository.findById(id)
                 .orElseThrow(() -> new Exception404("게시글을 찾을 수 없습니다."));
 
-        if (!bulletin.isOwner(sessionUser.getUserId())) {
+        if (!bulletin.isOwner(sessionUser.getId())) {
             throw new Exception403("게시글을 수정할 권한이 없습니다.");
         }
 
@@ -80,7 +80,7 @@ public class BulletinService {
         Bulletin bulletin = bulletinRepository.findById(id)
                 .orElseThrow(() -> new Exception404("게시글을 찾을 수 없습니다."));
 
-        if (!bulletin.isOwner(sessionUser.getUserId())) {
+        if (!bulletin.isOwner(sessionUser.getId())) {
             throw new Exception403("게시글을 삭제할 권한이 없습니다.");
         }
 
