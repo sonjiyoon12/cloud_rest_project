@@ -1,5 +1,8 @@
 package com.cloud.cloud_rest.recruitpaid;
 
+import com.cloud.cloud_rest.corp.Corp;
+import com.cloud.cloud_rest.recruit.Recruit;
+import com.cloud.cloud_rest.user.User;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -40,6 +43,28 @@ public class RecruitPaidResponse {
             this.isPaid = false;
             this.recruitId = recruitId;
             this.expiryDate = null;
+        }
+    }
+
+    // [관리자] 전체 유료 공고 조회 DTO
+    @Getter
+    @Setter
+    public static class PaidListDTO {
+        private Long recruitId;
+        private String title;
+        private String corpName;
+        private LocalDate paymentDate;
+        private LocalDate expiryDate;
+
+        public PaidListDTO(RecruitPaid recruitPaid) {
+            Recruit recruit = recruitPaid.getRecruit();
+            Corp corp = recruit.getCorp();
+
+            this.recruitId = recruit.getRecruitId();
+            this.title = recruit.getTitle();
+            this.corpName = corp.getCorpName();
+            this.paymentDate = recruitPaid.getPaymentDate();
+            this.expiryDate = recruitPaid.getExpiryDate();
         }
     }
 }
