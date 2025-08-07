@@ -1,5 +1,6 @@
 package com.cloud.cloud_rest.CommentLike;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -11,6 +12,7 @@ public class CommentLikeResponseDto {
     private Long userId;
     private LocalDateTime likeAt;
 
+    @Builder
     public CommentLikeResponseDto(CommentLike commentLike) {
         this.id = commentLike.getId();
         this.commentId = commentLike.getComment().getCommentId();

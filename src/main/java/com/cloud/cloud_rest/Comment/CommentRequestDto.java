@@ -3,15 +3,9 @@ package com.cloud.cloud_rest.Comment;
 import com.cloud.cloud_rest.board.Board;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
+@Data
 public class CommentRequestDto {
 
     // 댓글 수정 및 삭제 시 필요한 댓글 고유 ID

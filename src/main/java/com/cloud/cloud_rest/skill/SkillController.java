@@ -3,6 +3,7 @@ package com.cloud.cloud_rest.skill;
 import com.cloud.cloud_rest._global._core.common.ApiUtil;
 import com.cloud.cloud_rest._global.auth.Auth;
 import com.cloud.cloud_rest._global.SessionUser;
+import com.cloud.cloud_rest.user.Role;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,7 @@ public class SkillController {
 
     // 스킬 저장
     @PostMapping("/skills")
-    @Auth
+    @Auth(roles = {Role.ADMIN})
     public ResponseEntity<?> save(@RequestBody @Valid SkillRequest.SkillSaveDTO reqDTO, @RequestAttribute("sessionUser") SessionUser sessionUser) {
         SkillResponse.SkillDetailDTO respDTO = skillService.save(reqDTO, sessionUser);
         return ResponseEntity.ok(new ApiUtil<>(respDTO));
@@ -35,7 +36,7 @@ public class SkillController {
 
     // 스킬 수정
     @PutMapping("/skills")
-    @Auth
+    @Auth(roles = {Role.ADMIN})
     public ResponseEntity<?> update(@RequestParam Long id, @RequestBody @Valid SkillRequest.SkillUpdateDTO reqDTO, @RequestAttribute("sessionUser") SessionUser sessionUser) {
         SkillResponse.SkillDetailDTO respDTO = skillService.update(id, reqDTO, sessionUser);
         return ResponseEntity.ok(new ApiUtil<>(respDTO));
@@ -43,7 +44,7 @@ public class SkillController {
 
     // 스킬 삭제
     @DeleteMapping("/skills")
-    @Auth
+    @Auth(roles = {Role.ADMIN})
     public ResponseEntity<?> delete(@RequestParam Long id, @RequestAttribute("sessionUser") SessionUser sessionUser) {
         skillService.delete(id, sessionUser);
         return ResponseEntity.ok(new ApiUtil<>(null));
