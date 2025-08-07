@@ -2,6 +2,7 @@ package com.cloud.cloud_rest.recruit;
 
 import com.cloud.cloud_rest.corp.Corp;
 import com.cloud.cloud_rest.noti.Noti;
+import com.cloud.cloud_rest.recruitpaid.RecruitPaid;
 import com.cloud.cloud_rest.recruitskill.RecruitSkill;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -36,7 +37,6 @@ public class Recruit {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    // Corp 엔티티와 다대일 연관관계 설정
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "corp_id", nullable = false)
     @ToStringExclude
@@ -49,6 +49,9 @@ public class Recruit {
             cascade = CascadeType.ALL,
             orphanRemoval = true)
     private List<RecruitSkill> recruitSkills = new ArrayList<>();
+
+    @OneToOne(mappedBy = "recruit", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private RecruitPaid recruitPaid;
 
     @Builder
     public Recruit(String title, String content, LocalDate deadline, Corp corp) {
