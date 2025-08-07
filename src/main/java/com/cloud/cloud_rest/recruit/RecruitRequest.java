@@ -16,6 +16,7 @@ public class RecruitRequest {
 
         private String title;
         private String content;
+        private String message;
         private LocalDate deadline;
         private List<Long> skillIds;
 

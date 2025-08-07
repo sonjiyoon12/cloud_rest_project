@@ -1,8 +1,10 @@
 package com.cloud.cloud_rest.noti;
 
-import com.cloud.cloud_rest.corp.Corp;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface NotiJpaRepository extends JpaRepository<Corp, Long> {
+public interface NotiJpaRepository extends JpaRepository<Noti, Long> {
 
+    Page<Noti> findByUserUserId(Long userId, Pageable pageable);
 }
