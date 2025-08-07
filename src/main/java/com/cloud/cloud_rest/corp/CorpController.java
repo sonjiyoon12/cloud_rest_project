@@ -5,6 +5,7 @@ import com.cloud.cloud_rest._global._core.common.ApiUtil;
 import com.cloud.cloud_rest._global.auth.Auth;
 import com.cloud.cloud_rest._global.exception.Exception401;
 import com.cloud.cloud_rest._global.exception.Exception403;
+import com.cloud.cloud_rest.user.Role;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -47,7 +48,7 @@ public class CorpController {
     }
 
     // 기업 정보 알아보기
-    @Auth
+    @Auth(roles = {Role.ADMIN, Role.CORP})
     @GetMapping("/{id}")
     public ResponseEntity<?> getCropInfo(@PathVariable(name = "id")Long id,
                                            @RequestAttribute("sessionUser") SessionUser sessionUser){
@@ -58,7 +59,7 @@ public class CorpController {
     }
 
     // 웹 MULTIPART 형식 으로 받기
-    @Auth
+    @Auth(roles = {Role.ADMIN, Role.CORP})
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> update(@PathVariable Long id,
                                     @ModelAttribute CorpRequest.UpdateDTO updateDTO,
@@ -68,7 +69,7 @@ public class CorpController {
     }
 
     // 웹에서 JSON 형식으로 받기(base64)
-    @Auth
+    @Auth(roles = {Role.ADMIN, Role.CORP})
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateJson(@PathVariable Long id,
                                         @RequestBody CorpRequest.UpdateDTO updateDTO,
@@ -77,7 +78,7 @@ public class CorpController {
         return ResponseEntity.ok(new ApiUtil<>(update));
     }
 
-    @Auth
+    @Auth(roles = {Role.ADMIN, Role.CORP})
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable Long id,
                            @RequestAttribute("sessionUser")SessionUser sessionUser){

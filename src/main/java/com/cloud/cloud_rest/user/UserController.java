@@ -49,7 +49,7 @@ public class UserController {
     }
 
     // 유저 회원 정보 가져오기
-    @Auth
+    @Auth(roles = {Role.ADMIN,Role.USER})
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserInfo(@PathVariable(name = "id")Long id,
                                          @RequestAttribute("sessionUser") SessionUser sessionUser){
@@ -60,7 +60,7 @@ public class UserController {
 
 
     // 웹 MULTIPART 형식 으로 받기
-    @Auth
+    @Auth(roles = {Role.ADMIN,Role.USER})
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> update(@PathVariable Long id,
                                     @ModelAttribute UserRequest.UpdateDTO updateDTO,
@@ -70,7 +70,7 @@ public class UserController {
     }
 
     // 웹에서 JSON 형식으로 받기(base64)
-    @Auth
+    @Auth(roles = {Role.ADMIN,Role.USER})
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateJson(@PathVariable Long id,
                                         @RequestBody UserRequest.UpdateDTO updateDTO,
@@ -79,7 +79,7 @@ public class UserController {
         return ResponseEntity.ok(new ApiUtil<>(update));
     }
 
-    @Auth
+    @Auth(roles = {Role.ADMIN,Role.USER})
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable Long id,
                                            @RequestAttribute("sessionUser")SessionUser sessionUser){
