@@ -1,6 +1,10 @@
 package com.cloud.cloud_rest.noti;
 
+import com.cloud.cloud_rest._global.utils.DateUtil;
+import com.cloud.cloud_rest.recruit.Recruit;
+import com.cloud.cloud_rest.user.User;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,34 +13,32 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.sql.Timestamp;
 
 @Data
-@NoArgsConstructor
 @Table(name = "notification_tb")
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Noti {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long notificationId;
-    /*
-    @OneToMany
-    private Long corpId;
 
-    @OneToMany
-    private Long userId;
-    */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "recruit_id")
+    private Recruit recruit;
+
     private String message;
     private boolean isRead;
 
     @CreationTimestamp
-    private Timestamp creatdAt;
+    private Timestamp createdAt;
 
-    @Builder
-    public Noti(Long notificationId, Long corpId, Long userId, String message, boolean isRead, Timestamp creatdAt) {
-        this.notificationId = notificationId;
-        //this.corpId = corpId;
-        //this.userId = userId;
-        this.message = message;
-        this.isRead = isRead;
-        this.creatdAt = creatdAt;
+    public String getTime() {
+        return DateUtil.timestampFormat(createdAt);
     }
 }

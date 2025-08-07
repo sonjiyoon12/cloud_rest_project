@@ -12,4 +12,5 @@ public class UploadProperties {
     private String corpDir;
     private String userDir;
     private String boardDir;
+    private String resumeDir;
 }

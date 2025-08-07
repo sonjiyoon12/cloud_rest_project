@@ -31,7 +31,7 @@ public class SubCorpService {
             throw new Exception400(Define.SaveDTO.ERROR_400);
         });
 
-        Corp corp = corpRepository.findById(saveDTO.getCorp().getCorpId())
+        Corp corp = corpRepository.findById(saveDTO.getCorpId())
                 .orElseThrow(() -> new Exception404("존재하지 않는 기업입니다."));
 
         SubCorp subCorp = subCorpJpaRepository.findByUserUserIdAndCorpCorpId(user.getUserId(), corp.getCorpId());
