@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.builder.ToStringExclude;
 
 @Entity
-@Table(name = "recruitskill_tb")
+@Table(name = "recruit_Skill_tb")
 @Getter
 @NoArgsConstructor
 public class RecruitSkill {

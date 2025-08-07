@@ -47,6 +47,7 @@ public class RecruitService {
         Recruit recruit = dto.toEntity(corp);
         recruitRepository.save(recruit);
 
+        //알람 저장
         notiService.save(recruit, dto.getMessage());
 
         updateRecruitSkills(recruit, dto.getSkillIds());
