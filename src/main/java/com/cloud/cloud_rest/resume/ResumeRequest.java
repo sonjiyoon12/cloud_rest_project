@@ -20,14 +20,16 @@ public class ResumeRequest {
         @Size(max = 2000, message = "내용은 2000자 이내로 작성해주세요")
         private String content;
         private boolean isRep = false;
+        private String image;
         private List<Long> skillIds = new ArrayList<>();
         private List<CareerRequest.CareerSaveDTO> careers = new ArrayList<>();
 
-        public Resume toEntity(User user) {
+        public Resume toEntity(User user, String image) {
             return Resume.builder()
                     .title(this.title)
                     .content(this.content)
                     .isRep(this.isRep)
+                    .image(image)
                     .user(user)
                     .build();
         }
@@ -43,6 +45,7 @@ public class ResumeRequest {
         @Size(max = 2000, message = "내용은 2000자 이내로 작성해주세요")
         private String content;
         private boolean isRep = false;
+        private String image;
         private List<Long> skillIds = new ArrayList<>();
         private List<CareerRequest.CareerUpdateDTO> careers = new ArrayList<>();
     }
