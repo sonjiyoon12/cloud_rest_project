@@ -2,6 +2,7 @@ package com.cloud.cloud_rest.userskill;
 
 import com.cloud.cloud_rest._global.SessionUser;
 import com.cloud.cloud_rest._global.exception.Exception403;
+import com.cloud.cloud_rest._global.utils.AuthorizationUtil;
 import com.cloud.cloud_rest.corp.Corp;
 import com.cloud.cloud_rest.corp.CorpRepository;
 import com.cloud.cloud_rest.corp.CorpResponse;
@@ -24,9 +25,7 @@ public class UserSkillService {
     public List<UserSkillResponse.UserSkillDTO> getMatchedUserSkills(SessionUser sessionUser){
         User user = userService.getUserId(sessionUser.getId());
 
-        if(!sessionUser.getRole().equals("USER")){
-            throw new Exception403("유저만 접근 가능합니다");
-        }
+        AuthorizationUtil.validateUserAccess(user.getUserId(),sessionUser);
         
         List<String> skillNames = userSkillRepository.findByUserMatch(user);
 
