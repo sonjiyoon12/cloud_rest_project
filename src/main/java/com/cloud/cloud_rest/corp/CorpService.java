@@ -4,10 +4,7 @@ import com.cloud.cloud_rest._global.SessionUser;
 import com.cloud.cloud_rest._global.exception.Exception400;
 import com.cloud.cloud_rest._global.exception.Exception403;
 import com.cloud.cloud_rest._global.exception.Exception404;
-import com.cloud.cloud_rest._global.utils.Base64FileConverterUtil;
-import com.cloud.cloud_rest._global.utils.FileUploadUtil;
-import com.cloud.cloud_rest._global.utils.JwtUtil;
-import com.cloud.cloud_rest._global.utils.UploadProperties;
+import com.cloud.cloud_rest._global.utils.*;
 import com.cloud.cloud_rest.skill.Skill;
 import com.cloud.cloud_rest.skill.SkillRepository;
 import com.cloud.cloud_rest.user.Role;
@@ -71,14 +68,9 @@ public class CorpService {
     // 수정 API
     @Transactional
     public CorpResponse.UpdateDTO updateDTO(Long id, CorpRequest.UpdateDTO dto,SessionUser sessionUser) {
-
-        if (sessionUser.getRole() != Role.CORP) {
-            throw new Exception403("기업 유저만 접근 가능합니다.");
-        }
-
         Corp corp = getCorpId(id); // 해당 유저가 있는지
 
-        validateUserUserId(id, sessionUser.getId()); // 세션 유저 비교하기
+        AuthorizationUtil.validateCorpAccess(id, sessionUser); // 어드민 유저 및 본인 권한 검사
 
         String oldImagePath = corp.getCorpImage();
         String savedFileName = null;
@@ -118,27 +110,19 @@ public class CorpService {
     @Transactional
     public void deleteById(Long id, SessionUser sessionUser) {
 
-        if (sessionUser.getRole() != Role.CORP) {
-            throw new Exception403("기업 유저만 접근 가능합니다.");
-        }
-
         Corp corp = getCorpId(id);
 
-        validateUserUserId(id, sessionUser.getId());
+        AuthorizationUtil.validateCorpAccess(id, sessionUser); // 어드민 유저 및 본인 권한 검사
 
         corpRepository.delete(corp);
     }
 
     public CorpResponse.CorpDTO getCorpInfo(Long id, SessionUser sessionUser) {
 
-        if (sessionUser.getRole() != Role.CORP) {
-            throw new Exception403("기업 유저만 볼 수 있습니다.");
-        }
-
-        if (!id.equals(sessionUser.getId())) {
-            throw new Exception403("자신의 기업 정보만 확인 가능합니다");
-        }
         Corp corp = getCorpId(id);
+
+        AuthorizationUtil.validateCorpAccess(id,sessionUser);
+
         return new CorpResponse.CorpDTO(corp);
     }
 
@@ -154,12 +138,7 @@ public class CorpService {
                 .orElseThrow(() -> new Exception404("해당 유저를 찾을 수 없습니다"));
     }
 
-    // 권한 검사 (요청 로그인 번호 - 로그인 번호 ) 비교
-    public void validateUserUserId(Long userId, Long sessionUserId) {
-        if (!userId.equals(sessionUserId)) {
-            throw new Exception403("보인 정보만 조회 가능합니다");
-        }
-    }
+
 
 
 }

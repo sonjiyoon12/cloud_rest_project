@@ -1,14 +1,8 @@
 package com.cloud.cloud_rest.user;
 
 import com.cloud.cloud_rest._global.SessionUser;
-import com.cloud.cloud_rest._global.exception.Exception400;
-import com.cloud.cloud_rest._global.exception.Exception403;
-import com.cloud.cloud_rest._global.exception.Exception404;
-import com.cloud.cloud_rest._global.exception.Exception500;
-import com.cloud.cloud_rest._global.utils.Base64FileConverterUtil;
-import com.cloud.cloud_rest._global.utils.FileUploadUtil;
-import com.cloud.cloud_rest._global.utils.JwtUtil;
-import com.cloud.cloud_rest._global.utils.UploadProperties;
+import com.cloud.cloud_rest._global.exception.*;
+import com.cloud.cloud_rest._global.utils.*;
 import com.cloud.cloud_rest.skill.Skill;
 import com.cloud.cloud_rest.skill.SkillRepository;
 import com.cloud.cloud_rest.userskill.UserSkill;
@@ -51,7 +45,6 @@ public class UserService {
                 user.addSkill(skill);
             }
         }
-
         userRepository.save(user);
         return new UserResponse.SaveDTO(user);
     }
@@ -61,12 +54,12 @@ public class UserService {
         User user = getLoginId(loginDTO.getLoginId());
 
         if (!bCryptPasswordEncoder.matches(loginDTO.getPassword(),user.getPassword())) {
-            throw new Exception500("아이디 또는 비밀번호 틀립니다");
+            throw new Exception401("아이디 또는 비밀번호 틀립니다");
         }
 
-        if(user.getRole() != Role.USER){
-            throw  new Exception403("일반 유저가 아닙니다");
-        }
+        if (user.getRole() != Role.USER && user.getRole() != Role.ADMIN) {
+            throw new Exception403("로그인 권한이 없습니다.");
+        } // jwt 인증 토큰이 아님 (회원가입 Session 여부 토큰임)
 
         return JwtUtil.createToken(user);
     }
@@ -74,15 +67,9 @@ public class UserService {
     // 유저의 상세 정보
     public UserResponse.UserDTO findUserById(Long userId,SessionUser sessionUser) {
 
-        if (sessionUser.getRole() != Role.USER) {
-            throw new Exception403("일반 유저만 접근 가능합니다.");
-        }
+        User user = getUserId(userId); // 유저가 있는 체크
 
-        if(!userId.equals(sessionUser.getId())){
-            throw new Exception403("보인 정보만 조회 가능합니다");
-        }
-
-        User user = getUserId(userId);
+        AuthorizationUtil.validateUserAccess(userId,sessionUser); // 수정에 관한 권한 여부
 
         return new UserResponse.UserDTO(user);
     }
@@ -91,12 +78,10 @@ public class UserService {
     @Transactional
     public UserResponse.UpdateDTO update(Long userId,SessionUser sessionUser,UserRequest.UpdateDTO updateDTO){
 
-        if (sessionUser.getRole() != Role.USER) {
-            throw new Exception403("일반 유저만 접근 가능합니다.");
-        }
-
-        validateUserUserId(userId,sessionUser.getId()); // 현재 로그인한 유저랑 세션 번호를 비교
         User user = getUserId(userId); // 현재 유저가 있을경우
+
+        AuthorizationUtil.validateUserAccess(userId,sessionUser); // 수정에 관한 권한 여부
+
 
         String oldImagePath = user.getUserImage();
         String savedFileName = null;
@@ -137,13 +122,9 @@ public class UserService {
     @Transactional
     public void deleteById(Long id, SessionUser sessionUser){
 
-        if (sessionUser.getRole() != Role.USER) {
-            throw new Exception403("일반 유저만 접근 가능합니다.");
-        }
-
         User user = getUserId(id); // 유저 정보 찾기
-        
-        validateUserUserId(id,sessionUser.getId()); // 회번 번호 = 로그인 번호 비교
+        AuthorizationUtil.validateUserAccess(id,sessionUser);
+
         userRepository.delete(user);
     }
 
@@ -155,13 +136,6 @@ public class UserService {
     // 유저 정보 찾기(user에 고유번호)
     public User getLoginId(String loginId){
         return userRepository.findByUserId(loginId).orElseThrow(() -> new Exception404("해당 유저를 찾을수없습니다"));
-    }
-
-    // 권한 검사 (요청 로그인 번호 - 로그인 번호 ) 비교
-    public void validateUserUserId(Long userId,Long sessionUserId){
-        if(!userId.equals(sessionUserId)){
-          throw new Exception403("보인 정보만 조회 가능합니다");
-        }
     }
 
 }

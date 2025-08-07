@@ -6,12 +6,16 @@ import com.cloud.cloud_rest._global.SessionUser;
 import com.cloud.cloud_rest._global.exception.Exception401;
 import com.cloud.cloud_rest._global.exception.Exception500;
 import com.cloud.cloud_rest._global.utils.JwtUtil;
+import com.cloud.cloud_rest.user.Role;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
+
+import java.lang.reflect.Array;
+import java.util.Arrays;
 
 @Slf4j
 @Component
@@ -41,12 +45,25 @@ public class AuthInterceptor implements HandlerInterceptor {
         if (jwt == null || !jwt.startsWith("Bearer ")) {
             throw new Exception401("@Auth: 토큰이 없습니다. 로그인이 필요합니다.");
         }
+
         jwt = jwt.replace("Bearer ", "");
 
         try {
             SessionUser sessionUser = JwtUtil.verify(jwt);
 
             request.setAttribute("sessionUser", sessionUser);
+
+            Role[] allowedRoles = auth.roles();
+            if (allowedRoles.length > 0) {
+                Role userRole = sessionUser.getRole();
+                boolean authorized = Arrays.stream(allowedRoles)
+                        .anyMatch(role -> role == userRole);
+                if (!authorized) {
+                    throw new Exception401("@Auth: 해당 권한이 없습니다.");
+                }
+            }
+
+
             return true;
 
         } catch (TokenExpiredException e) {
