@@ -1,5 +1,6 @@
 package com.cloud.cloud_rest.subcorp;
 
+import com.cloud.cloud_rest._global.utils.DateUtil;
 import com.cloud.cloud_rest.corp.Corp;
 import com.cloud.cloud_rest.user.User;
 import jakarta.persistence.*;
@@ -7,6 +8,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.builder.ToStringExclude;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.sql.Timestamp;
 
 @Data
 @NoArgsConstructor
@@ -18,7 +22,7 @@ public class SubCorp {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int subCorpId;
+    private Long subCorpId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -30,10 +34,17 @@ public class SubCorp {
     @ToStringExclude
     private Corp corp;
 
+    @CreationTimestamp
+    private Timestamp createdAt;
+
     @Builder
-    public SubCorp(int subCorpId, User user, Corp corp) {
+    public SubCorp(Long subCorpId, User user, Corp corp) {
         this.subCorpId = subCorpId;
         this.user = user;
         this.corp = corp;
+    }
+
+    public String getTime() {
+        return DateUtil.timestampFormat(createdAt);
     }
 }

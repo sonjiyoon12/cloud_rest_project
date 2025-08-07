@@ -45,6 +45,11 @@ public class User {
     @CreationTimestamp
     private Timestamp createdAt;
 
+
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private Role role = Role.USER;
+
     public String getFormatTime(){
         return DateUtil.timestampFormat(createdAt);
     }

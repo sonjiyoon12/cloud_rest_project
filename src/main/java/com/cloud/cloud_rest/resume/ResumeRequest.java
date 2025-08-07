@@ -1,10 +1,10 @@
 package com.cloud.cloud_rest.resume;
 
+import com.cloud.cloud_rest.career.CareerRequest;
 import com.cloud.cloud_rest.user.User;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +21,7 @@ public class ResumeRequest {
         private String content;
         private boolean isRep = false;
         private List<Long> skillIds = new ArrayList<>();
+        private List<CareerRequest.CareerSaveDTO> careers = new ArrayList<>();
 
         public Resume toEntity(User user) {
             return Resume.builder()
@@ -43,6 +44,6 @@ public class ResumeRequest {
         private String content;
         private boolean isRep = false;
         private List<Long> skillIds = new ArrayList<>();
-
+        private List<CareerRequest.CareerUpdateDTO> careers = new ArrayList<>();
     }
 }

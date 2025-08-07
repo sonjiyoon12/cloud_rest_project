@@ -40,10 +40,22 @@ public class CareerRequest {
     // 경력 수정
     @Data
     public static class CareerUpdateDTO {
+        private Long careerId;
         private String corpName;
         private String position;
         private String content;
         private LocalDate startAt;
         private LocalDate endAt;
+
+        public Career toEntity(Resume resume) {
+            return Career.builder()
+                    .corpName(this.corpName)
+                    .position(this.position)
+                    .content(this.content)
+                    .startAt(this.startAt)
+                    .endAt(this.endAt)
+                    .resume(resume)
+                    .build();
+        }
     }
 }

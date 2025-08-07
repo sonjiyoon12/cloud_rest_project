@@ -64,12 +64,19 @@ public class UserService {
             throw new Exception500("아이디 또는 비밀번호 틀립니다");
         }
 
-        return JwtUtil.createForUser(user);
+        if(user.getRole() != Role.USER){
+            throw  new Exception403("일반 유저가 아닙니다");
+        }
+
+        return JwtUtil.createToken(user);
     }
 
     // 유저의 상세 정보
     public UserResponse.UserDTO findUserById(Long userId,SessionUser sessionUser) {
 
+        if (sessionUser.getRole() != Role.USER) {
+            throw new Exception403("일반 유저만 접근 가능합니다.");
+        }
 
         if(!userId.equals(sessionUser.getId())){
             throw new Exception403("보인 정보만 조회 가능합니다");
@@ -82,8 +89,13 @@ public class UserService {
 
     // 유저의 정보 수정
     @Transactional
-    public UserResponse.UpdateDTO update(Long userId,Long sessionUserId,UserRequest.UpdateDTO updateDTO){
-        validateUserUserId(userId,sessionUserId); // 현재 로그인한 유저랑 세션 번호를 비교
+    public UserResponse.UpdateDTO update(Long userId,SessionUser sessionUser,UserRequest.UpdateDTO updateDTO){
+
+        if (sessionUser.getRole() != Role.USER) {
+            throw new Exception403("일반 유저만 접근 가능합니다.");
+        }
+
+        validateUserUserId(userId,sessionUser.getId()); // 현재 로그인한 유저랑 세션 번호를 비교
         User user = getUserId(userId); // 현재 유저가 있을경우
 
         String oldImagePath = user.getUserImage();
@@ -125,7 +137,7 @@ public class UserService {
     @Transactional
     public void deleteById(Long id, SessionUser sessionUser){
 
-        if (!"USER".equals(sessionUser.getRole())) {
+        if (sessionUser.getRole() != Role.USER) {
             throw new Exception403("일반 유저만 접근 가능합니다.");
         }
 

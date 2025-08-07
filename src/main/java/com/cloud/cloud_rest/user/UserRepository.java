@@ -23,4 +23,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
         where cs.skill.name in :skillNames
     """)
     List<User> findByMatchingSkills(@Param("skillNames") List<String> skillNames);
+
+    @Query("select u from User u where u.role = :role")
+    List<User> findAllByRole(@Param("role") Role role);
 }
