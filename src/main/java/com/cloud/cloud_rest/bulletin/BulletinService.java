@@ -9,14 +9,13 @@ import com.cloud.cloud_rest._global.utils.UploadProperties;
 import com.cloud.cloud_rest.user.User;
 import com.cloud.cloud_rest.user.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -28,9 +27,9 @@ public class BulletinService {
     private final Base64FileConverterUtil base64FileConverterUtil;
     private final UploadProperties uploadProperties;
 
-    public List<BulletinResponse.DTO> findAll() {
-        List<Bulletin> bulletins = bulletinRepository.findAll(Sort.by(Sort.Direction.DESC, "bulletinId"));
-        return bulletins.stream().map(BulletinResponse.DTO::new).collect(Collectors.toList());
+    public Page<BulletinResponse.DTO> findAll(Pageable pageable) {
+        Page<Bulletin> bulletins = bulletinRepository.findAll(pageable);
+        return bulletins.map(BulletinResponse.DTO::new);
     }
 
     public BulletinResponse.DetailDTO findById(Long id) {
