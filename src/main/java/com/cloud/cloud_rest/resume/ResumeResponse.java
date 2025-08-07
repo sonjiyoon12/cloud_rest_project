@@ -1,9 +1,7 @@
 package com.cloud.cloud_rest.resume;
 
 import com.cloud.cloud_rest._global.SessionUser;
-import com.cloud.cloud_rest.career.Career;
 import com.cloud.cloud_rest.career.CareerResponse;
-import com.cloud.cloud_rest.user.User;
 import lombok.Builder;
 import lombok.Data;
 
@@ -41,6 +39,7 @@ public class ResumeResponse {
         private String createdAt;
         private boolean isResumeOwner;
         private boolean isRep;
+        private String image;
         private List<String> skills;
         private List<CareerResponse.InfoDTO> careers;
 
@@ -52,6 +51,7 @@ public class ResumeResponse {
             this.createdAt = resume.getCreatedAt().toString();
             this.isResumeOwner = sessionUser != null && resume.isOwner(sessionUser.getId());
             this.isRep = resume.getIsRep();
+            this.image = resume.getImage();
             this.skills = resume.getResumeSkills().stream()
                     .map(resumeSkill -> resumeSkill.getSkill().getName())
                     .toList();
@@ -70,6 +70,7 @@ public class ResumeResponse {
         private String writerName;
         private String createdAt;
         private boolean isRep;
+        private String image;
         private List<String> skills;
         private List<CareerResponse.InfoDTO> careers;
 
@@ -81,6 +82,7 @@ public class ResumeResponse {
             this.writerName = resume.getUser().getUsername();
             this.createdAt = resume.getCreatedAt().toString();
             this.isRep = resume.getIsRep();
+            this.image = resume.getImage();
             this.skills = resume.getResumeSkills().stream()
                     .map(resumeSkill -> resumeSkill.getSkill().getName())
                     .toList();
@@ -99,6 +101,7 @@ public class ResumeResponse {
         private String writerName;
         private String createdAt;
         private boolean isRep;
+        private String image;
         private List<String> skills;
         private List<CareerResponse.InfoDTO> careers;
 
@@ -110,6 +113,7 @@ public class ResumeResponse {
             this.writerName = resume.getUser().getUsername();
             this.createdAt = resume.getCreatedAt().toString();
             this.isRep = resume.getIsRep();
+            this.image = resume.getImage();
             this.skills = resume.getResumeSkills().stream()
                     .map(resumeSkill -> resumeSkill.getSkill().getName())
                     .toList();
