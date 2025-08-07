@@ -15,7 +15,7 @@ import java.io.IOException;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/bulletins")
+@RequestMapping("/api/bulletins")
 public class BulletinController {
 
     private final BulletinService bulletinService;
