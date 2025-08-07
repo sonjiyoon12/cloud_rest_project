@@ -3,6 +3,9 @@ package com.cloud.cloud_rest.resume;
 import com.cloud.cloud_rest._global.SessionUser;
 import com.cloud.cloud_rest._global.exception.Exception403;
 import com.cloud.cloud_rest._global.exception.Exception404;
+import com.cloud.cloud_rest._global.utils.Base64FileConverterUtil;
+import com.cloud.cloud_rest._global.utils.FileUploadUtil;
+import com.cloud.cloud_rest._global.utils.UploadProperties;
 import com.cloud.cloud_rest.career.Career;
 import com.cloud.cloud_rest.career.CareerRequest;
 import com.cloud.cloud_rest.resumeskill.ResumeSkill;
@@ -10,16 +13,18 @@ import com.cloud.cloud_rest.skill.Skill;
 import com.cloud.cloud_rest.skill.SkillRepository;
 import com.cloud.cloud_rest.user.User;
 import com.cloud.cloud_rest.user.UserService;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor
@@ -30,6 +35,11 @@ public class ResumeService {
     private final ResumeJpaRepository resumeJpaRepository;
     private final UserService userService;
     private final SkillRepository skillRepository;
+    private final FileUploadUtil fileUploadUtil; // 이미지 저장 및 삭제 기능
+    private final UploadProperties uploadPath; // 이미지 저장 경로 설정
+
+    @Autowired
+    private EntityManager entityManager;
 
     // 이력서 전체 조회
     public List<ResumeResponse.ListDTO> findAllResumeAndSkills() {
@@ -59,15 +69,22 @@ public class ResumeService {
     public ResumeResponse.SaveDTO save(ResumeRequest.ResumeSaveDTO saveDTO, SessionUser sessionUser) {
         User user = userService.getUserId(sessionUser.getId());
 
-        Resume resume = saveDTO.toEntity(user);
-        Resume savedResume = resumeJpaRepository.save(resume);
+        String savedFileName = null;
+        try {
+            MultipartFile targetFile = Base64FileConverterUtil.convert(saveDTO.getImage());
+            savedFileName = fileUploadUtil.uploadProfileImage(targetFile,uploadPath.getResumeDir());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        Resume resume = saveDTO.toEntity(user, savedFileName);
 
         for (Long skillId : saveDTO.getSkillIds()) {
             Skill skill = skillRepository.findById(skillId)
                     .orElseThrow(() -> new Exception404("스킬을 찾을 수 없습니다"));
 
             ResumeSkill resumeSkill = new ResumeSkill(resume, skill);
-            savedResume.addResumeSkill(resumeSkill);
+            resume.addResumeSkill(resumeSkill);
         }
 
         // 경력 추가
@@ -76,22 +93,8 @@ public class ResumeService {
             resume.addCareer(career);
         }
 
-        resumeJpaRepository.save(savedResume);
-
-        return new ResumeResponse.SaveDTO(savedResume);
-    }
-
-    // 이력서 삭제
-    @Transactional
-    public void deleteById(Long resumeId, SessionUser sessionUser) {
-        Resume resume = resumeJpaRepository.findById(resumeId).orElseThrow(() ->
-                new Exception404("삭제하려는 이력서가 없습니다"));
-
-        if(!resume.isOwner(sessionUser.getId())){
-            throw new Exception403("본인이 작성한 게시글만 삭제할 수 있습니다");
-        }
-
-        resumeJpaRepository.deleteById(resumeId);
+        Resume savedResume = resumeJpaRepository.save(resume);
+            return new ResumeResponse.SaveDTO(savedResume);
     }
 
     // 이력서 수정
@@ -105,11 +108,30 @@ public class ResumeService {
             throw new Exception403("본인이 작성한 이력서만 수정할 수 있습니다");
         }
 
+        String oldImagePath = resume.getImage();
+        String savedFileName = null;
+
+        try {
+            if (updateDTO.getImage() != null && !updateDTO.getImage().isBlank()) {
+                MultipartFile targetFile = Base64FileConverterUtil.convert(updateDTO.getImage());
+                savedFileName = fileUploadUtil.uploadProfileImage(targetFile, uploadPath.getResumeDir());
+
+                if (savedFileName != null && oldImagePath != null) {
+                    fileUploadUtil.deleteProfileImage(oldImagePath);
+                }
+            } else {
+                savedFileName = oldImagePath; // 기존 이미지 유지
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         // 1 기본 정보 수정
-        resume.update(updateDTO);
+        resume.update(updateDTO, savedFileName);
 
         // 2 스킬 교체 (기존 제거 후 새로 추가)
         resume.getResumeSkills().clear();
+        entityManager.flush();
         for (Long skillId : updateDTO.getSkillIds()) {
             Skill skill = skillRepository.findById(skillId)
                     .orElseThrow(() -> new Exception404("스킬을 찾을 수 없습니다"));
@@ -118,9 +140,6 @@ public class ResumeService {
         }
 
         // 3 경력 개별 수정 처리
-//        Map<Long, Career> existingCareerMap = resume.getCareers().stream()
-//                .collect(Collectors.toMap(Career::getCareerId, Function.identity()));
-
         Map<Long, Career> existingCareerMap = new HashMap<>();
         for (Career career : resume.getCareers()) {
             existingCareerMap.put(career.getCareerId(), career);
@@ -165,5 +184,18 @@ public class ResumeService {
         }
 
         return new ResumeResponse.UpdateDTO(resume);
+    }
+
+    // 이력서 삭제
+    @Transactional
+    public void deleteById(Long resumeId, SessionUser sessionUser) {
+        Resume resume = resumeJpaRepository.findById(resumeId).orElseThrow(() ->
+                new Exception404("삭제하려는 이력서가 없습니다"));
+
+        if(!resume.isOwner(sessionUser.getId())){
+            throw new Exception403("본인이 작성한 게시글만 삭제할 수 있습니다");
+        }
+
+        resumeJpaRepository.deleteById(resumeId);
     }
 }

@@ -31,6 +31,7 @@ public class Resume {
 
     private String title;
     private String content;
+    private String image;
 
     @Builder.Default
     private Boolean isRep = false;
@@ -53,10 +54,11 @@ public class Resume {
     }
 
     // 수정 기능 추가
-    public void update(ResumeRequest.ResumeUpdateDTO updateDTO) {
+    public void update(ResumeRequest.ResumeUpdateDTO updateDTO, String image) {
         this.title = updateDTO.getTitle();
         this.content = updateDTO.getContent();
         this.isRep = updateDTO.isRep();
+        this.image = image;
     }
 
     @Builder.Default
