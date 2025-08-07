@@ -24,4 +24,6 @@ public interface CorpRepository extends JpaRepository<Corp, Long> {
         where cs.skill.name in :skillNames
     """)
     List<Corp> findByMatchingSkills(@Param("skillNames") List<String> skillNames);
+
+
 }

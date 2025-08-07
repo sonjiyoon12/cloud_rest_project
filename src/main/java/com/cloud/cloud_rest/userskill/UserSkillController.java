@@ -19,9 +19,16 @@ public class UserSkillController {
     private final UserSkillService userSkillService;
 
     @Auth
-    @GetMapping("/match")
+    @GetMapping("/corp-match")
     public ResponseEntity<?> getMatchedUserSkills(@RequestAttribute("sessionUser")SessionUser sessionUser){
         List<UserSkillResponse.UserSkillDTO> matchedUserSkills = userSkillService.getMatchedUserSkills(sessionUser);
+        return ResponseEntity.ok(new ApiUtil<>(matchedUserSkills));
+    }
+
+    @Auth
+    @GetMapping("/recruit-match")
+    public ResponseEntity<?> getMatchedRecruitSkills(@RequestAttribute("sessionUser")SessionUser sessionUser){
+        List<UserSkillResponse.RecruitSkillDTO> matchedUserSkills = userSkillService.getMatchedRecruitSkills(sessionUser);
         return ResponseEntity.ok(new ApiUtil<>(matchedUserSkills));
     }
 }

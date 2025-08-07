@@ -1,5 +1,6 @@
 package com.cloud.cloud_rest.recruit;
 
+import com.cloud.cloud_rest.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,4 +21,12 @@ public interface RecruitRepository extends JpaRepository<Recruit, Long> {
     // [수정] 채용공고 ID와 기업 ID로 공고를 찾는 메소드 (r.id -> r.recruitId)
     @Query("SELECT r FROM Recruit r WHERE r.recruitId = :recruitId AND r.corp.corpId = :corpId")
     Optional<Recruit> findByIdAndCorpId(@Param("recruitId") Long recruitId, @Param("corpId") Long corpId);
+
+    @Query("""
+        select distinct r
+        from Recruit r
+        join r.recruitSkills cs
+        where cs.skill.name in :skillNames
+    """)
+    List<Recruit> findByMatchingSkills(@Param("skillNames") List<String> skillNames);
 }
