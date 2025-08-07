@@ -3,15 +3,15 @@ package com.cloud.cloud_rest.Comment;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Getter
+@Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class CommentResponseDto {
 
     private Long commentId; // 댓글 고유 Id
