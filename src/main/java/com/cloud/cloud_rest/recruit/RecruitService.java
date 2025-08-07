@@ -5,6 +5,7 @@ import com.cloud.cloud_rest._global.exception.Exception403;
 import com.cloud.cloud_rest._global.exception.Exception404;
 import com.cloud.cloud_rest.corp.Corp;
 import com.cloud.cloud_rest.corp.CorpRepository;
+import com.cloud.cloud_rest.noti.NotiService;
 import com.cloud.cloud_rest.recruitskill.RecruitSkill;
 import com.cloud.cloud_rest.skill.Skill;
 import com.cloud.cloud_rest.skill.SkillErr;
@@ -28,6 +29,7 @@ public class RecruitService {
     private final RecruitRepository recruitRepository;
     private final CorpRepository corpRepository;
     private final SkillRepository skillRepository;
+    private final NotiService notiService;
 
 
     //공고 저장
@@ -44,6 +46,8 @@ public class RecruitService {
 
         Recruit recruit = dto.toEntity(corp);
         recruitRepository.save(recruit);
+
+        notiService.save(recruit, dto.getMessage());
 
         updateRecruitSkills(recruit, dto.getSkillIds());
 
