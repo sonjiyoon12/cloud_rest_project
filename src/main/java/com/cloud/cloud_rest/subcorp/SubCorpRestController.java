@@ -18,7 +18,7 @@ public class SubCorpRestController {
 
     // 구독기능
     @PostMapping
-    public ResponseEntity<?> subscribe(SubCorpRequest.SaveDTO saveDTO,
+    public ResponseEntity<?> subscribe(@RequestBody SubCorpRequest.SaveDTO saveDTO,
                                        @RequestAttribute("sessionUser")SessionUser sessionUser) {
 
         SubCorpResponse.SaveDTO savedSubCorp = subCorpService.saveSubCorp(saveDTO, sessionUser);
