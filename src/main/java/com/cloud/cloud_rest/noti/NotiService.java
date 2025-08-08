@@ -61,16 +61,6 @@ public class NotiService {
         }
     }
 
-    /**
-     * 관리자가 만들어지면?
-    public Page<NotiResponse.DetailDTO> findAll(SessionUser sessionUser, Pageable pageable) {
-        User user = userRepository.findById(sessionUser.getId())
-                .orElseThrow(() -> new Exception404("해당 유저를 찾을 수 없습니다."));
-
-        if (user.getRole())
-    }
-     */
-
     public List<NotiResponse.DetailDTO> findAllByUserId(SessionUser sessionUser, Long userId, Pageable pageable) {
         User user = userRepository.findById(sessionUser.getId())
                 .orElse(userRepository.findById(userId)
@@ -82,6 +72,20 @@ public class NotiService {
 
         Page<Noti> notis = notiJpaRepository.findByUserUserId(user.getUserId(), pageable);
         return notis.stream().map(NotiResponse.DetailDTO::new).toList();
+    }
+
+    @Transactional
+    public void readAllByUserId(SessionUser sessionUser, Long userId) {
+        User user = userRepository.findById(sessionUser.getId())
+                .orElseThrow(() -> new Exception404("존재하지 않는 유저입니다."));
+
+        if (!sessionUser.getId().equals(userId)) {
+            throw new Exception403("접근 권한이 없습니다.");
+        }
+
+        notiJpaRepository.findByUserUserId(user.getUserId()).forEach(noti -> {
+            noti.update(true);
+        });
     }
 
     @Transactional
