@@ -13,6 +13,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @NoArgsConstructor
@@ -50,9 +52,10 @@ public class User {
     @Builder.Default
     private Role role = Role.USER;
 
-    public String getFormatTime(){
-        return DateUtil.timestampFormat(createdAt);
-    }
+    // 양방향 (USerSkill 저장)
+    @Builder.Default
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserSkill> userSkills = new ArrayList<>();
 
 
     public void update(UserRequest.UpdateDTO updateDTO, String userUploadImage) {
@@ -64,14 +67,34 @@ public class User {
         if (updateDTO.getAddressDetail() != null) this.addressDetail = updateDTO.getAddressDetail();
     }
 
-    // 양방향 (USerSkill 저장)
-    @Builder.Default
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<UserSkill> userSkills = new ArrayList<>();
 
     public void addSkill(Skill skill) {
         UserSkill userSkill = new UserSkill(this, skill);
         userSkills.add(userSkill);  // 양방향 동기화
+    }
+
+    public void updateSkills(List<Skill> newSkills) {
+        // 기존 UserSkill 목록에서 유지할 ID를 추출
+        Set<Long> newSkillIds = newSkills.stream()
+                .map(Skill::getSkillId)
+                .collect(Collectors.toSet());
+
+        userSkills.removeIf(us -> !newSkillIds.contains(us.getSkill().getSkillId()));
+
+        Set<Long> currentSkillIds = userSkills.stream()
+                .map(us -> us.getSkill().getSkillId())
+                .collect(Collectors.toSet());
+
+        for (Skill skill : newSkills) {
+            if (!currentSkillIds.contains(skill.getSkillId())) {
+                this.userSkills.add(new UserSkill(this, skill));
+            }
+        }
+    }
+
+
+    public String getTime(){
+        return DateUtil.timestampFormat(createdAt);
     }
 
 }

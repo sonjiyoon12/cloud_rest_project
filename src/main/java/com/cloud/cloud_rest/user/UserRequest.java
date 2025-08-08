@@ -1,5 +1,6 @@
 package com.cloud.cloud_rest.user;
 
+import com.cloud.cloud_rest.userskill.UserSkillId;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -80,6 +81,7 @@ public class UserRequest {
         private String address;
         private String addressDefault;
         private String addressDetail;
+        private List<Long> userSkillIds = new ArrayList<>();
     }
 
 

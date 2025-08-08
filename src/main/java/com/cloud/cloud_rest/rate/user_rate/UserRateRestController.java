@@ -4,9 +4,11 @@ import com.cloud.cloud_rest._global.SessionUser;
 import com.cloud.cloud_rest._global._core.common.ApiUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,9 +24,14 @@ public class UserRateRestController {
     // 평점 남기기
     @Operation(summary = "기업 평점 남기기")
     @PostMapping
-    public ResponseEntity<?> save(UserRateRequest.SaveDTO saveDTO,
+    public ResponseEntity<?> save(@RequestBody @Valid UserRateRequest.SaveDTO saveDTO,
+                                  BindingResult result,
                                   @RequestAttribute("sessionUser")SessionUser sessionUser,
                                   @RequestParam("corpId") Long corpId) {
+
+        if (result.hasErrors()) {
+            return ResponseEntity.badRequest().build();
+        }
 
         UserRateResponse.SaveDTO savedRate = userRateService.save(saveDTO, sessionUser, corpId);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiUtil<>(savedRate));

@@ -1,0 +1,68 @@
+package com.cloud.cloud_rest.corporate;
+
+import com.cloud.cloud_rest._global._core.common.Timestamped;
+import com.cloud.cloud_rest.corporateComment.CorporatePostComment;
+import com.cloud.cloud_rest.corporatePostLike.CorporatePostLike;
+import com.cloud.cloud_rest.user.User;
+import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Getter
+@Table(name = "corporate_post_tb")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class CorporatePost extends Timestamped {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "corporate_post_id")
+    private Long id;
+
+    @Column(nullable = false, length = 100)
+    private String title;
+
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String content;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User author;
+
+    @Column(columnDefinition = "integer default 0", nullable = false)
+    private int viewCount;
+
+    @Column(columnDefinition = "integer default 0", nullable = false)
+    private int likeCount;
+
+    @OneToMany(mappedBy = "corporatePost", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CorporatePostLike> likes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "corporatePost", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CorporatePostComment> comments = new ArrayList<>();
+
+    @Builder
+    public CorporatePost(String title, String content, User author) {
+        this.title = title;
+        this.content = content;
+        this.author = author;
+    }
+
+    public void update(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
+
+    public void increaseViewCount() {
+        this.viewCount++;
+    }
+
+    public void updateLikeCount(int count) {
+        this.likeCount = count;
+    }
+}

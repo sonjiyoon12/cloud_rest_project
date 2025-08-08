@@ -18,7 +18,7 @@ public class UserRateResponse {
             this.id = userRate.getUserRateId();
             this.userId = userRate.getUser().getUserId();
             this.corpId = userRate.getCorp().getCorpId();
-            this.rating = userRate.getRating();
+            this.rating = userRate.getRating() == null ? 1 : userRate.getRating();
             this.createdAt = userRate.getTime();
         }
     }
@@ -36,7 +36,7 @@ public class UserRateResponse {
             this.id = userRate.getUserRateId();
             this.userId = userRate.getUser().getUserId();
             this.corpId = userRate.getCorp().getCorpId();
-            this.rating = userRate.getRating();
+            this.rating = userRate.getRating() == null ? 1 : userRate.getRating();
             this.createdAt = userRate.getTime();
         }
     }

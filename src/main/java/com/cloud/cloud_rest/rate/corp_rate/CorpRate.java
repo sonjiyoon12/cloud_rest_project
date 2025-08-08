@@ -33,7 +33,6 @@ public class CorpRate {
     private User user;
 
     private Long rating;
-    private Boolean isBlocked;
 
     @CreationTimestamp
     private Timestamp createdAt;

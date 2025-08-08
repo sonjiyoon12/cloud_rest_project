@@ -42,10 +42,8 @@ public class Board {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-
     @Column(name = "views", columnDefinition = "int default 0")
     private Integer views;
-
 
     @Column(name = "like_count", columnDefinition = "int default 0")
     private Integer likeCount;
@@ -57,12 +55,6 @@ public class Board {
 
     private String imagePath;
 
-    /**
-     * 게시글의 제목, 내용, 이미지 경로를 업데이트하는 메서드
-     *
-     * @param updateDTO 수정에 필요한 데이터가 담긴 DTO
-     * @param imagePath 수정된 이미지의 경로
-     */
     public void update(BoardRequestDto.UpdateDto updateDTO, String imagePath) {
         this.title = updateDTO.getTitle();
         this.content = updateDTO.getContent();
