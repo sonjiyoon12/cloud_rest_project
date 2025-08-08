@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,4 +27,9 @@ public interface UserRepository extends JpaRepository<User,Long> {
 
     @Query("select u from User u where u.role = :role")
     List<User> findAllByRole(@Param("role") Role role);
+
+    // 오늘 로그인한 유저들의 목록
+    @Query("SELECT u FROM User u WHERE u.createdAt >= :todayStart")
+    List<User> findAllByCreatedAtAfter(@Param("todayStart") Timestamp todayStart);
+
 }
