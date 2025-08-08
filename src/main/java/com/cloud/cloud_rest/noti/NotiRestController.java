@@ -20,18 +20,6 @@ public class NotiRestController {
 
     private final NotiService notiService;
 
-    /* 모든 알림 불러오기(모든 사용자)
-    * 관리자가 만들어지면?
-    @Operation(summary = "모든 알림 불러오기")
-    @GetMapping("/all")
-    public ResponseEntity<?> findAll(@RequestAttribute("sessionUser")SessionUser sessionUser,
-                                     @PageableDefault(size = 10, page = 0) Pageable pageable) {
-
-        Page<Noti> notification = notiService.findAll(sessionUser, pageable);
-        return ResponseEntity.ok().body(new ApiUtil<>());
-    }
-    */
-
     // 모든 알림 불러오기(특정 사용자)
     @Operation(summary = "특정 사용자의 모든 알림 불러오기")
     @GetMapping("/{userId}/all")
@@ -41,6 +29,15 @@ public class NotiRestController {
 
         List<NotiResponse.DetailDTO> notis = notiService.findAllByUserId(sessionUser, userId, pageable);
         return ResponseEntity.ok().body(new ApiUtil<>(notis));
+    }
+
+    // 모든 알림 읽기(특정 사용자)
+    @Operation(summary = "특정 사용자의 모든 알림 읽기")
+    @GetMapping("/{userId}/all/read")
+    public ResponseEntity<?> readAllByUserId(@RequestAttribute("sessionUser")SessionUser sessionUser,
+                                             @PathVariable("userId") Long userId) {
+        notiService.readAllByUserId(sessionUser, userId);
+        return ResponseEntity.ok().build();
     }
 
     // 특정 알림 불러오기
