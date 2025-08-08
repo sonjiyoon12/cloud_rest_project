@@ -46,4 +46,5 @@ public class CommentLike {
         this.comment = comment;
         this.user = user;
     }
+
 }
