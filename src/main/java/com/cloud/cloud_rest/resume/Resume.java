@@ -54,7 +54,7 @@ public class Resume {
     }
 
     // 수정 기능 추가
-    public void update(ResumeRequest.ResumeUpdateDTO updateDTO, String image) {
+    public void update(ResumeRequest.UpdateDTO updateDTO, String image) {
         this.title = updateDTO.getTitle();
         this.content = updateDTO.getContent();
         this.isRep = updateDTO.isRep();

@@ -5,6 +5,8 @@ import com.cloud.cloud_rest._global.SessionUser;
 import com.cloud.cloud_rest._global._core.common.ApiUtil;
 import com.cloud.cloud_rest.resume.Resume;
 import com.cloud.cloud_rest.resume.ResumeService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/careers")
+@Tag(name = "Career", description = "경력 사항 관리를 위한 API")
 public class CareerRestController {
 
     private final CareerService careerService;
@@ -21,7 +24,8 @@ public class CareerRestController {
 
     // 경력 작성
     @PostMapping("/resume/{id}")
-    public ResponseEntity<?> save(@Valid @RequestBody CareerRequest.CareerSaveDTO saveDTO,
+    @Operation(summary = "경력 사항 작성하기")
+    public ResponseEntity<?> save(@Valid @RequestBody CareerRequest.SaveDTO saveDTO,
                                   @PathVariable(name = "id") Long resumeId,
                                   @RequestAttribute("sessionUser")SessionUser sessionUser) {
 
@@ -32,7 +36,8 @@ public class CareerRestController {
 
     // 경력 수정
     @PutMapping("/{id}")
-    public ResponseEntity<?> update (@Valid @RequestBody CareerRequest.CareerUpdateDTO updateDTO,
+    @Operation(summary = "경력 사항 수정하기")
+    public ResponseEntity<?> update (@Valid @RequestBody CareerRequest.UpdateDTO updateDTO,
                                      @PathVariable(name = "id") Long careerId,
                                      @RequestAttribute("sessionUser") SessionUser sessionUser) {
 
@@ -42,6 +47,7 @@ public class CareerRestController {
 
     // 경력 삭제
     @DeleteMapping("/{id}")
+    @Operation(summary = "경력 사항 삭제하기")
     public ResponseEntity<ApiUtil<String>> delete(@PathVariable(name = "id") Long careerId,
                                                   @RequestAttribute("sessionUser") SessionUser sessionUser) {
         careerService.delete(careerId, sessionUser);

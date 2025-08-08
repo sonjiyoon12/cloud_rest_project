@@ -42,7 +42,7 @@ public class ResumeService {
     private EntityManager entityManager;
 
     // 이력서 전체 조회
-    public List<ResumeResponse.ListDTO> findAllResumeAndSkills() {
+    public List<ResumeResponse.ListDTO> findAllResumes() {
         List<Resume> resumes = resumeJpaRepository.findAllResumeAndSkillsAndCareers();
 
         return resumes.stream()
@@ -66,7 +66,7 @@ public class ResumeService {
 
     // 이력서 작성
     @Transactional
-    public ResumeResponse.SaveDTO save(ResumeRequest.ResumeSaveDTO saveDTO, SessionUser sessionUser) {
+    public ResumeResponse.SaveDTO save(ResumeRequest.SaveDTO saveDTO, SessionUser sessionUser) {
         User user = userService.getUserId(sessionUser.getId());
 
         String savedFileName = null;
@@ -88,7 +88,7 @@ public class ResumeService {
         }
 
         // 경력 추가
-        for (CareerRequest.CareerSaveDTO careerSaveDTO : saveDTO.getCareers()) {
+        for (CareerRequest.SaveDTO careerSaveDTO : saveDTO.getCareers()) {
             Career career = careerSaveDTO.toEntity(resume);
             resume.addCareer(career);
         }
@@ -99,7 +99,7 @@ public class ResumeService {
 
     // 이력서 수정
     @Transactional
-    public ResumeResponse.UpdateDTO update(Long resumeId, ResumeRequest.ResumeUpdateDTO updateDTO,
+    public ResumeResponse.UpdateDTO update(Long resumeId, ResumeRequest.UpdateDTO updateDTO,
                                            SessionUser sessionUser) {
         Resume resume = resumeJpaRepository.findById(resumeId)
                 .orElseThrow(() -> new Exception404("해당 이력서가 존재하지 않습니다"));
@@ -147,7 +147,7 @@ public class ResumeService {
 
         List<Career> updatedCareers = new ArrayList<>();
 
-        for (CareerRequest.CareerUpdateDTO dto : updateDTO.getCareers()) {
+        for (CareerRequest.UpdateDTO dto : updateDTO.getCareers()) {
             if (dto.getCareerId() == null) {
                 // 신규 경력
                 Career newCareer = Career.builder()
