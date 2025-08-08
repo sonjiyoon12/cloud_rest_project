@@ -37,7 +37,7 @@ public class Career {
     }
 
     // 수정 기능 추가
-    public void update(CareerRequest.CareerUpdateDTO updateDTO) {
+    public void update(CareerRequest.UpdateDTO updateDTO) {
         this.corpName = updateDTO.getCorpName();
         this.position = updateDTO.getPosition();
         this.content = updateDTO.getContent();
