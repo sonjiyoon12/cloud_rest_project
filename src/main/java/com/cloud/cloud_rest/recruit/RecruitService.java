@@ -108,10 +108,10 @@ public class RecruitService {
         recruitRepository.delete(recruit);
     }
 
-    // 전체 공고 목록 조회 (페이징)
+    // 전체 공고 목록 조회 (유료 공고 우선, 페이징)
     public Page<RecruitResponse.RecruitListDTO> findAll(Pageable pageable) {
         log.info("전체 공고 목록 조회 요청 - page: {}, size: {}", pageable.getPageNumber(), pageable.getPageSize());
-        Page<Recruit> recruitPage = recruitRepository.findAll(pageable);
+        Page<Recruit> recruitPage = recruitRepository.findAllWithPaidPriority(pageable);
         return recruitPage.map(RecruitResponse.RecruitListDTO::of);
     }
 

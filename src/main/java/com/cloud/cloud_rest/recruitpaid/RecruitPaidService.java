@@ -5,13 +5,11 @@ import com.cloud.cloud_rest._global.exception.Exception400;
 import com.cloud.cloud_rest._global.exception.Exception403;
 import com.cloud.cloud_rest._global.exception.Exception404;
 import com.cloud.cloud_rest.recruit.Recruit;
-import com.cloud.cloud_rest.recruit.RecruitErr;
 import com.cloud.cloud_rest.recruit.RecruitRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,17 +39,11 @@ public class RecruitPaidService {
             throw new Exception400(RecruitPaidErr.BAD_REQUEST.getMessage());
         }
 
-        // 만료일 계산
-        LocalDate expiryDate = LocalDate.now().plusDays(requestDTO.getDurationInDays());
-
-        // 유료 공고 엔티티 생성 및 저장
-        RecruitPaid recruitPaid = RecruitPaid.builder()
-                .recruit(recruit)
-                .expiryDate(expiryDate)
-                .build();
+        // 4. 유료 공고 엔티티 생성 및 저장 (정적 팩토리 메소드 사용)
+        RecruitPaid recruitPaid = RecruitPaid.create(recruit, requestDTO.getDurationInDays());
         recruitPaidRepository.save(recruitPaid);
 
-        // 응답 DTO 변환 후 반환
+        // 5. 응답 DTO 변환 후 반환
         return new RecruitPaidResponse.PaidSaveDTO(recruitPaid);
     }
 
