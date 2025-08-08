@@ -10,6 +10,7 @@ public class NotiResponse {
     @Data
     public static class DetailDTO {
         private Long notiId;
+        private Boolean isRead;
         private Long userId;
         private String message;
         private String createdAt;
@@ -17,6 +18,7 @@ public class NotiResponse {
 
         public DetailDTO(Noti noti) {
             this.notiId = noti.getNotificationId();
+            this.isRead = noti.getIsRead();
             this.userId = noti.getUser().getUserId();
             this.message = noti.getMessage();
             this.createdAt = noti.getTime();
