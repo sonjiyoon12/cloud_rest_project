@@ -20,7 +20,7 @@ public class CorpResponse {
             this.corpName = corp.getCorpName();
             this.email = corp.getEmail();
             this.corpImage = corp.getCorpImage();
-            this.createdAt = corp.getCreatedAt().toString();
+            this.createdAt = corp.getTime();
         }
     }
 

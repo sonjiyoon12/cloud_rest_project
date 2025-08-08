@@ -42,4 +42,14 @@ public class NotiRestController {
         List<NotiResponse.DetailDTO> notis = notiService.findAllByUserId(sessionUser, userId, pageable);
         return ResponseEntity.ok().body(new ApiUtil<>(notis));
     }
+
+    // 특정 알림 불러오기
+    @Operation(summary = "특정 알림 불러오기")
+    @GetMapping("/{notiId}")
+    public ResponseEntity<?> findByNotiId(@RequestAttribute("sessionUser") SessionUser sessionUser,
+                                          @PathVariable("notiId") Long notiId) {
+
+        NotiResponse.DetailDTO noti = notiService.findByNotiId(sessionUser, notiId);
+        return ResponseEntity.ok().body(new ApiUtil<>(noti));
+    }
 }

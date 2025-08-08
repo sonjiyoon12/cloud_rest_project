@@ -83,4 +83,20 @@ public class NotiService {
         Page<Noti> notis = notiJpaRepository.findByUserUserId(user.getUserId(), pageable);
         return notis.stream().map(NotiResponse.DetailDTO::new).toList();
     }
+
+    @Transactional
+    public NotiResponse.DetailDTO findByNotiId(SessionUser sessionUser, Long notiId) {
+        User user = userRepository.findById(sessionUser.getId())
+                .orElseThrow(() -> new Exception404("존재하지 않는 유저입니다."));
+
+        Noti noti = notiJpaRepository.findById(notiId)
+                .orElseThrow(() -> new Exception404("존재하지 않는 알림입니다."));
+
+        if (!noti.getUser().getUserId().equals(user.getUserId())) {
+            throw new Exception403("확인할 권한이 없습니다.");
+        }
+
+        noti.update(true);
+        return new NotiResponse.DetailDTO(noti);
+    }
 }

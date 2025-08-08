@@ -16,4 +16,10 @@ public class AuthorizationUtil {
             throw new Exception403("본인 정보만 조회 가능합니다.");
         }
     }
+
+    public static void validateAdminAccess(SessionUser sessionUser){
+        if(sessionUser.getRole() != Role.ADMIN){
+            throw new Exception403("관리자 유저만 접근 가능합니다.");
+        }
+    }
 }

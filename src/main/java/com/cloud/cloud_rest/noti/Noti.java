@@ -33,12 +33,16 @@ public class Noti {
     private Recruit recruit;
 
     private String message;
-    private boolean isRead;
+    private Boolean isRead;
 
     @CreationTimestamp
     private Timestamp createdAt;
 
     public String getTime() {
         return DateUtil.timestampFormat(createdAt);
+    }
+
+    public void update(Boolean isRead) {
+        this.isRead = isRead;
     }
 }

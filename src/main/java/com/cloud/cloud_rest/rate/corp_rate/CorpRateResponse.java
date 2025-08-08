@@ -11,7 +11,6 @@ public class CorpRateResponse {
         private Long userId;
         private Long corpId;
         private Long rating;
-        private Boolean isBlocked;
         private String createdAt;
 
         @Builder
@@ -19,8 +18,7 @@ public class CorpRateResponse {
             this.id = corpRate.getCorpRateId();
             this.userId = corpRate.getUser().getUserId();
             this.corpId = corpRate.getCorp().getCorpId();
-            this.rating = corpRate.getRating();
-            this.isBlocked = corpRate.getIsBlocked();
+            this.rating = corpRate.getRating() == null ? 1 : corpRate.getRating();
             this.createdAt = corpRate.getTime();
         }
     }
@@ -31,7 +29,6 @@ public class CorpRateResponse {
         private Long userId;
         private Long corpId;
         private Long rating;
-        private Boolean isBlocked;
         private String createdAt;
 
         @Builder
@@ -39,8 +36,7 @@ public class CorpRateResponse {
             this.id = corpRate.getCorpRateId();
             this.userId = corpRate.getUser().getUserId();
             this.corpId = corpRate.getCorp().getCorpId();
-            this.rating = corpRate.getRating();
-            this.isBlocked = corpRate.getIsBlocked();
+            this.rating = corpRate.getRating() == null ? 1 : corpRate.getRating();
             this.createdAt = corpRate.getTime();
         }
     }

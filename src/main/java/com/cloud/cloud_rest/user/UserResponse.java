@@ -1,12 +1,15 @@
 package com.cloud.cloud_rest.user;
 
+import com.cloud.cloud_rest.userskill.UserSkill;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 
 public class UserResponse {
 
@@ -40,7 +43,7 @@ public class UserResponse {
             this.address = user.getAddress();
             this.addressDefault = user.getAddressDefault();
             this.addressDetail = user.getAddressDetail();
-            this.createdAt = user.getCreatedAt().toString();
+            this.createdAt = user.getTime();
         }
     }
 
@@ -87,6 +90,7 @@ public class UserResponse {
         private String address;
         private String addressDefault;
         private String addressDetail;
+        private List<String> userSkills;
 
         @Builder
         public UpdateDTO(User user) {
@@ -96,6 +100,9 @@ public class UserResponse {
             this.address = user.getAddress();
             this.addressDefault = user.getAddressDefault();
             this.addressDetail = user.getAddressDetail();
+            this.userSkills = user.getUserSkills().stream()
+                    .map(userSkill -> userSkill.getSkill().getName())
+                    .toList();
         }
     }
 
