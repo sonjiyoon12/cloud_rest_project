@@ -4,6 +4,7 @@ import com.cloud.cloud_rest.corp.Corp;
 import com.cloud.cloud_rest.noti.Noti;
 import com.cloud.cloud_rest.recruitpaid.RecruitPaid;
 import com.cloud.cloud_rest.recruitskill.RecruitSkill;
+import com.cloud.cloud_rest.skill.Skill;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,6 +16,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "recruit_tb")
@@ -67,9 +70,33 @@ public class Recruit {
     }
 
     //업데이트 메서드
-    public void update(String title, String content, LocalDate deadline) {
-        this.title = title;
-        this.content = content;
-        this.deadline = deadline;
+    public void update(RecruitRequest.RecruitUpdateDTO dto, List<Skill> newSkills) {
+        this.title = dto.getTitle();
+        this.content = dto.getContent();
+        this.deadline = dto.getDeadline();
+        updateSkills(newSkills);
+    }
+
+    // 스킬 업데이트
+    public void updateSkills(List<Skill> newSkills) {
+        // 새로운 스킬ID 목록을 Set으로 만든다
+        Set<Long> newSkillIds = newSkills.stream()
+                .map(Skill::getSkillId)
+                .collect(Collectors.toSet());
+
+        // 기존 스킬 목록에서, 새로운 목록에 없는 스킬들을 제거
+        this.recruitSkills.removeIf(recruitSkill -> !newSkillIds.contains(recruitSkill.getSkill().getSkillId()));
+
+        // 현재 스킬 ID 목록을 다시 만듬
+        Set<Long> currentSkillIds = this.recruitSkills.stream()
+                .map(recruitSkill -> recruitSkill.getSkill().getSkillId())
+                .collect(Collectors.toSet());
+
+        // 새로운 스킬 목록을 순회하며, 현재 목록에 없는 스킬만 추가
+        for (Skill skill : newSkills) {
+            if (!currentSkillIds.contains(skill.getSkillId())) {
+                this.recruitSkills.add(new RecruitSkill(this, skill));
+            }
+        }
     }
 }
