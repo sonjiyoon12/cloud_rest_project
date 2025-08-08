@@ -1,5 +1,6 @@
 package com.cloud.cloud_rest.corp;
 
+import com.cloud.cloud_rest._global.utils.DateUtil;
 import com.cloud.cloud_rest.corpskill.CorpSkill;
 import com.cloud.cloud_rest.skill.Skill;
 import com.cloud.cloud_rest.user.Role;
@@ -61,4 +62,7 @@ public class Corp {
         corpSkills.add(corpSkill);
     }
 
+    public String getTime(){
+        return DateUtil.timestampFormat(createdAt);
+    }
 }
