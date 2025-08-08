@@ -19,7 +19,7 @@ public class CareerService {
 
     // 경력 저장
     @Transactional
-    public CareerResponse.InfoDTO save(Long resumeId, CareerRequest.CareerSaveDTO saveDTO, SessionUser sessionUser) {
+    public CareerResponse.InfoDTO save(Long resumeId, CareerRequest.SaveDTO saveDTO, SessionUser sessionUser) {
 
         Resume resume = resumeJpaRepository.findById(resumeId)
                 .orElseThrow(() -> new Exception404("이력서를 찾을 수 없습니다"));
@@ -37,7 +37,7 @@ public class CareerService {
 
     // 경력 수정
     @Transactional
-    public CareerResponse.InfoDTO update(Long careerId, CareerRequest.CareerUpdateDTO updateDTO,
+    public CareerResponse.InfoDTO update(Long careerId, CareerRequest.UpdateDTO updateDTO,
                                          SessionUser sessionUser) {
         Career career = careerJpaRepository.findById(careerId)
                 .orElseThrow(() -> new Exception404("해당 경력을 찾을 수 없습니다"));
