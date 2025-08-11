@@ -46,14 +46,11 @@ public class NotiService {
         // 3. 실제 유저인지 확인 후, Noti 테이블에 저장
         if (!users.isEmpty()) {
             users.forEach(user -> {
-                List<User> userList = userRepository.findByUserUserId(user.getUserId());
+                User user1 = userRepository.findById(user.getUserId())
+                        .orElseThrow(() -> new Exception404("없는 유저입니다."));
 
-                if (!users.isEmpty()) {
-                    for (int i = 0; i < users.size(); i++) {
-                        Noti noti = notiRequest.toEntity(recruit, userList.get(i), message);
-                        notiJpaRepository.save(noti);
-                    }
-                }
+                Noti noti = notiRequest.toEntity(recruit, user1, message);
+                notiJpaRepository.save(noti);
             });
             return "알림 전송 완료!";
         } else {
