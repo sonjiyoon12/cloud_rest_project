@@ -3,6 +3,7 @@ package com.cloud.cloud_rest.board;
 import com.cloud.cloud_rest.user.User;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BoardRequestDto {
@@ -14,7 +15,7 @@ public class BoardRequestDto {
         private String content;
         private Long userId;
         private String base64Image;
-        private List<String> boardTags;
+        private List<String> boardTags = new ArrayList<>();
 
         public Board toEntity(User user, String imagePath) {
             return Board.builder()
@@ -40,13 +41,14 @@ public class BoardRequestDto {
     // 태그 검색용 DTO
     @Data
     public static class SearchDTO {
-        private String keyword; // 기존의 'search' 파라미터를 여기로 통합
+        private String keyword;
         private List<String> boardTags;
 
         // --- Helper Methods ---
         public boolean hasKeyword() {
             return keyword != null && !keyword.trim().isEmpty();
         }
+
         public boolean hasTags() {
             return boardTags != null && !boardTags.isEmpty();
         }

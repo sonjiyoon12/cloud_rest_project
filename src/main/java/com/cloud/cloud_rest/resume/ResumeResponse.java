@@ -22,7 +22,7 @@ public class ResumeResponse {
             this.resumeId = resume.getResumeId();
             this.title = resume.getTitle();
             this.writerName = resume.getUser().getUsername();
-            this.createdAt = resume.getFormatTime();
+            this.createdAt = resume.getTime();
             this.skills = resume.getResumeSkills().stream()
                     .map(resumeSkill -> resumeSkill.getSkill().getName())
                     .toList();
@@ -48,7 +48,7 @@ public class ResumeResponse {
             this.title = resume.getTitle();
             this.content = resume.getContent();
             this.writerName = resume.getUser().getUsername();
-            this.createdAt = resume.getFormatTime();
+            this.createdAt = resume.getTime();
             this.isResumeOwner = sessionUser != null && resume.isOwner(sessionUser.getId());
             this.isRep = resume.getIsRep();
             this.image = resume.getImage();
@@ -80,7 +80,7 @@ public class ResumeResponse {
             this.title = resume.getTitle();
             this.content = resume.getContent();
             this.writerName = resume.getUser().getUsername();
-            this.createdAt = resume.getFormatTime();
+            this.createdAt = resume.getTime();
             this.isRep = resume.getIsRep();
             this.image = resume.getImage();
             this.skills = resume.getResumeSkills().stream()
@@ -111,7 +111,7 @@ public class ResumeResponse {
             this.title = resume.getTitle();
             this.content = resume.getContent();
             this.writerName = resume.getUser().getUsername();
-            this.createdAt = resume.getFormatTime();
+            this.createdAt = resume.getTime();
             this.isRep = resume.getIsRep();
             this.image = resume.getImage();
             this.skills = resume.getResumeSkills().stream()

@@ -88,11 +88,11 @@ public class BoardController {
         }
     }
 
-    // 특정 사용자가 댓글을 작성한 모든 게시글 조회 (GET /api/boards/commented-by-user/{userId})
-    @GetMapping("/commented-by-user/{userId}")
+    // 특정 사용자가 댓글을 작성한 모든 게시글 조회 (GET "/users/{userId}/commented-boards")
+    @GetMapping("/users/{userId}/commented-boards")
     public ResponseEntity<Page<BoardResponseDto.ListDto>> getBoardsCommentedByUser(
             @PathVariable Long userId,
-            @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         try {
             Page<Board> boardPage = boardService.getBoardsCommentedByUser(userId, pageable);
             Page<BoardResponseDto.ListDto> responseDtoPage = boardPage.map(BoardResponseDto.ListDto::new);

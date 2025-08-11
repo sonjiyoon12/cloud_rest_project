@@ -1,14 +1,12 @@
 package com.cloud.cloud_rest.corporate;
 
 import com.cloud.cloud_rest._global._core.common.Timestamped;
+import com.cloud.cloud_rest.corporate.corporate_tag.CorporateTag;
 import com.cloud.cloud_rest.corporateComment.CorporatePostComment;
 import com.cloud.cloud_rest.corporatePostLike.CorporatePostLike;
 import com.cloud.cloud_rest.user.User;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,4 +63,7 @@ public class CorporatePost extends Timestamped {
     public void updateLikeCount(int count) {
         this.likeCount = count;
     }
+    @OneToMany(mappedBy = "corporatePost", cascade = CascadeType.ALL)
+    @ToString.Exclude
+    private List<CorporateTag> tags = new ArrayList<>();
 }

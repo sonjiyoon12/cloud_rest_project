@@ -7,7 +7,6 @@ import com.cloud.cloud_rest.user.User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,14 +18,18 @@ public class CorporatePostController {
 
     private final CorporatePostService corporatePostService;
 
-    @Auth(roles = {Role.COMPANY})
+    @Auth(roles = {Role.CORP})
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<Void> savePost(@Valid @RequestBody CorporatePostRequestDto.SaveDto saveDTO,
-                                      @AuthenticationPrincipal User sessionUser) {
+                                       @RequestAttribute User sessionUser) {
         corporatePostService.savePost(saveDTO, sessionUser);
         return ApiResponse.success();
     }
+
+
+
+
 
     @GetMapping
     public ApiResponse<List<CorporatePostResponseDto.ListDto>> getPostList() {
@@ -40,28 +43,28 @@ public class CorporatePostController {
         return ApiResponse.success(postDetail);
     }
 
-    @Auth(roles = {Role.COMPANY})
+    @Auth(roles = {Role.CORP})
     @PutMapping("/{id}")
     public ApiResponse<Void> updatePost(@PathVariable Long id,
                                         @Valid @RequestBody CorporatePostRequestDto.UpdateDto updateDTO,
-                                        @AuthenticationPrincipal User sessionUser) {
+                                        @RequestAttribute User sessionUser) {
         corporatePostService.updatePost(id, updateDTO, sessionUser);
         return ApiResponse.success();
     }
 
-    @Auth(roles = {Role.COMPANY})
+    @Auth(roles = {Role.CORP})
     @DeleteMapping("/{id}")
     public ApiResponse<Void> deletePost(@PathVariable Long id,
-                                        @AuthenticationPrincipal User sessionUser) {
+                                        @RequestAttribute User sessionUser) {
         corporatePostService.deletePost(id, sessionUser);
         return ApiResponse.success();
     }
 
-    @Auth(roles = {Role.COMPANY}) //
+    @Auth(roles = {Role.CORP}) //
     @PostMapping("/{id}/likes")
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<Void> toggleLike(@PathVariable Long id,
-                                        @AuthenticationPrincipal User sessionUser) {
+                                        @RequestAttribute User sessionUser) {
         corporatePostService.togglePostLike(id, sessionUser);
         return ApiResponse.success();
     }

@@ -1,4 +1,4 @@
-package com.cloud.cloud_rest.faqBoard;
+package com.cloud.cloud_rest.qnaBoard;
 
 import com.cloud.cloud_rest.user.User;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -6,10 +6,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
-public class FAQBoardRequest {
+public class QnaBoardRequest {
 
-    // faq 저장
-    @Schema(name = "faqSaveRequest")
+    // qna 문의 저장
+    @Schema(name = "qnaBoardSaveRequest")
     @Data
     public static class SaveDTO {
         @NotBlank(message = "제목을 입력해주세요")
@@ -19,8 +19,8 @@ public class FAQBoardRequest {
         @Size(max = 2000, message = "내용은 2000자 이내로 작성해주세요")
         private String content;
 
-        public FAQBoard toEntity(User user){
-            return FAQBoard.builder()
+        public QnaBoard toEntity(User user){
+            return QnaBoard.builder()
                     .title(this.title)
                     .content(this.content)
                     .user(user)
@@ -28,8 +28,8 @@ public class FAQBoardRequest {
         }
     }
 
-    // faq 수정
-    @Schema(name = "faqUpdateRequest" )
+    // qna 문의 수정
+    @Schema(name = "qnaBoardUpdateRequest" )
     @Data
     public static class UpdateDTO{
         @NotBlank(message = "제목을 입력해주세요")
@@ -39,5 +39,4 @@ public class FAQBoardRequest {
         @Size(max = 2000, message = "내용은 2000자 이내로 작성해주세요")
         private String content;
     }
-
 }

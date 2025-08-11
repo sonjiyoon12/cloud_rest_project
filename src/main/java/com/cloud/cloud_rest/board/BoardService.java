@@ -52,15 +52,18 @@ public class BoardService {
         Board board = saveDto.toEntity(user, savedImagePath);
         Board savedBoard = boardRepository.save(board);
 
-        saveDto.getBoardTags().forEach(
-                tag -> {
-                    BoardTag boardTag = BoardTag.builder()
-                            .board(board)
-                            .tagName(tag)
-                            .build();
-                    boardTagRepository.save(boardTag);
+        if (saveDto.getBoardTags() != null) {
+            saveDto.getBoardTags().forEach(
+                    tag -> {
+                        BoardTag boardTag = BoardTag
+                                .builder()
+                                .board(board)
+                                .tagName(tag)
+                                .build();
+                        boardTagRepository.save(boardTag);
+                    }
+            );
                 }
-        );
 
         return new BoardResponseDto.DetailDto(savedBoard);
     }
