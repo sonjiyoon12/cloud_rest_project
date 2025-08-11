@@ -1,5 +1,6 @@
 package com.cloud.cloud_rest.corp;
 
+import com.cloud.cloud_rest._global.exception.Exception403;
 import com.cloud.cloud_rest._global.utils.DateUtil;
 import com.cloud.cloud_rest.corpskill.CorpSkill;
 import com.cloud.cloud_rest.skill.Skill;
@@ -41,6 +42,10 @@ public class Corp {
     @Builder.Default
     private Role role = Role.CORP;
 
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private CorpStatus corpStatus = CorpStatus.PENDING;
+
     public void update(CorpRequest.UpdateDTO updateDTO, String imagePath) {
         if (updateDTO.getCorpName() != null) {
             this.corpName = updateDTO.getCorpName();
@@ -60,6 +65,12 @@ public class Corp {
     public void addSkill(Skill skill){
         CorpSkill corpSkill = new CorpSkill(this,skill);
         corpSkills.add(corpSkill);
+    }
+
+    public void validateApproval() {
+        if (corpStatus != CorpStatus.APPROVED) {
+            throw new Exception403("아직 인증이 되지 않은 기업입니다");
+        }
     }
 
     public String getTime(){

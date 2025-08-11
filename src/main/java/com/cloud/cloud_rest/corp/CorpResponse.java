@@ -13,6 +13,7 @@ public class CorpResponse {
         private String email;
         private String corpImage;
         private String createdAt;
+        private CorpStatus corpStatus;
 
         @Builder
         public CorpDTO(Corp corp){
@@ -21,6 +22,7 @@ public class CorpResponse {
             this.email = corp.getEmail();
             this.corpImage = corp.getCorpImage();
             this.createdAt = corp.getTime();
+            this.corpStatus = corp.getCorpStatus();
         }
     }
 

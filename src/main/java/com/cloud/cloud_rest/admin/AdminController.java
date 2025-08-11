@@ -35,14 +35,15 @@ public class AdminController {
                 .body(new ApiUtil<>(DTO));
     }
 
+    @Auth(roles = Role.ADMIN)
     @PostMapping("/save")
-    public ResponseEntity<?> adminSave(@Valid @RequestBody AdminRequest.SaveDTO saveDTO){
+    public ResponseEntity<?> adminSave(@Valid @RequestBody AdminRequest.SaveDTO saveDTO, @RequestAttribute("sessionUser") SessionUser sessionUser){
 
         if(!saveDTO.getPassword().equals(saveDTO.getRePassword())){
             throw new Exception401("비빌번호가 서로 다릅니다");
         }
 
-        AdminResponse.SaveDTO save = adminService.save(saveDTO);
+        AdminResponse.SaveDTO save = adminService.save(saveDTO,sessionUser);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(new ApiUtil<>(save));

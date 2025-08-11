@@ -35,12 +35,14 @@ public class AdminService {
 
 
     @Transactional
-    public AdminResponse.SaveDTO save(AdminRequest.SaveDTO saveDTO){
+    public AdminResponse.SaveDTO save(AdminRequest.SaveDTO saveDTO,SessionUser sessionUser){
         String encodePassword = passwordEncoder.encode(saveDTO.getPassword());
 
         if(userRepository.existsLoginId(saveDTO.getLoginId())){
             throw new Exception400("이미 사용 중인 아이디입니다.");
         }
+
+        AuthorizationUtil.validateAdminAccess(sessionUser);
 
         User admin = saveDTO.toEntity(encodePassword, Role.ADMIN);
         userRepository.save(admin);
@@ -109,6 +111,7 @@ public class AdminService {
         return new TodayResponse.TodayLoginResponse(dto.size(),dto);
     }
 
+    // 오늘 회원가입 한 유저들 목록
     public TodayResponse.TodaySignResponse getTodaySignupUsers(SessionUser sessionUser) {
         AuthorizationUtil.validateAdminAccess(sessionUser);
 

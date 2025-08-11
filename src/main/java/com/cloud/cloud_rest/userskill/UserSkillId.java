@@ -18,5 +18,4 @@ import java.io.Serializable;
 public class UserSkillId implements Serializable {
     private Long userId;  // User 엔티티의 PK 타입
     private Long skillId; // Skill 엔티티의 PK 타입
-
 }
