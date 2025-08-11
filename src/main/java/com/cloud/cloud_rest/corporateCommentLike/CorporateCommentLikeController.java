@@ -6,7 +6,6 @@ import com.cloud.cloud_rest.user.Role;
 import com.cloud.cloud_rest.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,11 +14,11 @@ import org.springframework.web.bind.annotation.*;
 public class CorporateCommentLikeController {
     private final CorporateCommentLikeService commentLikeService;
 
-    @Auth(roles = {Role.COMPANY})
+    @Auth(roles = {Role.CORP})
     @PostMapping("/{commentId}/likes")
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<CorporateCommentLikeResponseDto> toggleCommentLike(@PathVariable Long commentId,
-                                               @AuthenticationPrincipal User sessionUser) {
+                                                                          @RequestAttribute User sessionUser) {
         CorporateCommentLikeResponseDto responseDto = commentLikeService.toggleCommentLike(commentId, sessionUser);
         return ApiResponse.success(responseDto);
     }
