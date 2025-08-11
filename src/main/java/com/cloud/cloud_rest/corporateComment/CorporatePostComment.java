@@ -2,7 +2,7 @@ package com.cloud.cloud_rest.corporateComment;
 
 import com.cloud.cloud_rest._global._core.common.Timestamped;
 import com.cloud.cloud_rest.corporate.CorporatePost;
-import com.cloud.cloud_rest.corporateCommentLike.CorporatePostCommentLike;
+import com.cloud.cloud_rest.corporateCommentLike.CorporateCommentLike;
 import com.cloud.cloud_rest.user.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -39,7 +39,7 @@ public class CorporatePostComment extends Timestamped {
     private int likeCount;
 
     @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CorporatePostCommentLike> likes = new ArrayList<>();
+    private List<CorporateCommentLike> likes = new ArrayList<>();
 
     @Builder
     public CorporatePostComment(String content, User author, CorporatePost corporatePost) {

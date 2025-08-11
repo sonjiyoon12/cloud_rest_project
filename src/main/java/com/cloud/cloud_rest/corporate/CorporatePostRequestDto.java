@@ -25,4 +25,19 @@ public class CorporatePostRequestDto {
         @NotBlank(message = "내용은 비워둘 수 없습니다.")
         private String content;
     }
+
+    // 태그 검색용 DTO
+    @Getter
+    @Setter
+    public static class SearchDTO {
+        private String keyword;
+        private java.util.List<String> corporateTags;
+
+        public boolean hasKeyword() {
+            return keyword != null && !keyword.trim().isEmpty();
+        }
+        public boolean hasTags() {
+            return corporateTags != null && !corporateTags.isEmpty();
+        }
+    }
 }
