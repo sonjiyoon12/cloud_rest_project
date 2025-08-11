@@ -26,8 +26,7 @@ public class Comment extends Timestamped {
     @JsonBackReference
     private Board board;
 
-    @ManyToOne(fetch = FetchType.LAZY) // 1. User 객체로 직접 참조
-    @JoinColumn(name = "user_id", nullable = false)
+    // 참조 관계를 설정할 경우 밑의 Long 타입을 반드시 User 타입으로 변경!!
     private Long userId;
 
     @Lob
