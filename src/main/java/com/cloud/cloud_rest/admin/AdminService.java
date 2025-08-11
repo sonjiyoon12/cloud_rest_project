@@ -7,6 +7,7 @@ import com.cloud.cloud_rest._global.exception.Exception403;
 import com.cloud.cloud_rest._global.exception.Exception404;
 import com.cloud.cloud_rest._global.utils.AuthorizationUtil;
 import com.cloud.cloud_rest._global.utils.JwtUtil;
+import com.cloud.cloud_rest.corp.*;
 import com.cloud.cloud_rest.loginhistory.LoginHistory;
 import com.cloud.cloud_rest.loginhistory.LoginHistoryRepository;
 import com.cloud.cloud_rest.loginhistory.LoginHistoryResponse;
@@ -30,6 +31,8 @@ public class AdminService {
 
     private final UserRepository userRepository;
     private final UserService userService;
+    private final CorpRepository corpRepository;
+    private final CorpService corpService;
     private final BCryptPasswordEncoder passwordEncoder;
     private final LoginHistoryRepository loginHistoryRepository;
 
@@ -124,6 +127,52 @@ public class AdminService {
 
         return new TodayResponse.TodaySignResponse(saveDTOS.size(), saveDTOS);
     }
+
+    // 승인 되지 않은 기업 리스트 확인 하기
+    public List<CorpResponse.CorpDTO> corpPendingList(SessionUser sessionUser){
+        AuthorizationUtil.validateAdminAccess(sessionUser);
+        List<Corp> corp = corpRepository.findAll();
+        List<CorpResponse.CorpDTO> dto = corp.stream()
+                .filter(corp1 -> corp1.getCorpStatus() == CorpStatus.PENDING)
+                .map(CorpResponse.CorpDTO::new)
+                .toList();
+        return dto;
+    }
+
+    // 승인 된 기업들의 정보
+    public List<CorpResponse.CorpDTO> corpApprovedList(SessionUser sessionUser){
+        AuthorizationUtil.validateAdminAccess(sessionUser);
+        List<Corp> corp = corpRepository.findAll();
+        List<CorpResponse.CorpDTO> dto = corp.stream()
+                .filter(corp1 -> corp1.getCorpStatus() == CorpStatus.APPROVED)
+                .map(CorpResponse.CorpDTO::new)
+                .toList();
+        return dto;
+    }
+
+    // 승인 승인거부된 기업들의 정보
+    public List<CorpResponse.CorpDTO> corpREJECTEDList(SessionUser sessionUser){
+        AuthorizationUtil.validateAdminAccess(sessionUser);
+        List<Corp> corp = corpRepository.findAll();
+        List<CorpResponse.CorpDTO> dto = corp.stream()
+                .filter(corp1 -> corp1.getCorpStatus() == CorpStatus.REJECTED)
+                .map(CorpResponse.CorpDTO::new)
+                .toList();
+        return dto;
+    }
+
+    // 기업 정보 승인 하기
+    @Transactional
+    public CorpResponse.CorpDTO corpApproved(Long corpId,SessionUser sessionUser){
+        AuthorizationUtil.validateAdminAccess(sessionUser);
+        Corp corp = corpService.getCorpId(corpId);
+        if(corp.getCorpStatus().equals(CorpStatus.APPROVED)){
+            throw new Exception403("이미 승인된 기업입니다");
+        }
+        corp.setCorpStatus(CorpStatus.APPROVED);
+        return new CorpResponse.CorpDTO(corp);
+    }
+
 
     public User getLoginId(String loginId){
         return userRepository.findByUserId(loginId).orElseThrow(() -> new Exception404("해당 유저가 존재하지 않습니다"));

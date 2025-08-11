@@ -29,6 +29,7 @@ public class Skill {
     @Column(nullable = false, unique = true)
     private String name;
 
+    @Builder.Default
     @OneToMany(mappedBy = "skill",
             cascade = CascadeType.ALL,
             orphanRemoval = true)
@@ -38,9 +39,11 @@ public class Skill {
     @OneToMany(mappedBy = "skill", cascade = CascadeType.ALL)
     private List<ResumeSkill> resumeSkills = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "skill" , cascade = CascadeType.ALL)
     private List<UserSkill> userSkills = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "skill" , cascade = CascadeType.ALL)
     private List<CorpSkill> corpSkills = new ArrayList<>();
 

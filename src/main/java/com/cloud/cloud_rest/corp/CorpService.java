@@ -69,7 +69,6 @@ public class CorpService {
     @Transactional
     public CorpResponse.UpdateDTO updateDTO(Long id, CorpRequest.UpdateDTO dto,SessionUser sessionUser) {
         Corp corp = getCorpId(id); // 해당 유저가 있는지
-        
         corp.validateApproval(); // 승인된 기업만 정보 수정 가능
         AuthorizationUtil.validateCorpAccess(id, sessionUser); // 어드민 유저 및 본인 권한 검사
 
@@ -111,10 +110,9 @@ public class CorpService {
     @Transactional
     public void deleteById(Long id, SessionUser sessionUser) {
 
+        AuthorizationUtil.validateCorpAccess(id, sessionUser); // 어드민 유저 및 본인 권한 검사
         Corp corp = getCorpId(id);
         corp.validateApproval(); // 승인된 기업만 정보 수정 가능
-
-        AuthorizationUtil.validateCorpAccess(id, sessionUser); // 어드민 유저 및 본인 권한 검사
 
         corpRepository.delete(corp);
     }
