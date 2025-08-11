@@ -25,6 +25,6 @@ public class CommentResponseDto {
         this.content = comment.getContent();
         this.userId = comment.getUserId();
         this.isSecret = comment.getIsSecret();
-        this.commentedAt = comment.getCommentedAt();
+        this.commentedAt = comment.getCreatedAt();
     }
 }
