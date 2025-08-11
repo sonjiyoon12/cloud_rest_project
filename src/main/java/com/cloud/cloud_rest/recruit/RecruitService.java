@@ -138,4 +138,13 @@ public class RecruitService {
         log.info("기업별 공고 갯수 조회 요청 - corpId: {}", corpId);
         return recruitRepository.countByCorpId(corpId);
     }
+
+    // 키워드 검색
+    public List<RecruitResponse.RecruitListDTO> searchByKeyword(String keyword) {
+        log.info("키워드 검색 요청 - keyword: {}", keyword);
+        List<Recruit> recruits = recruitRepository.findByKeyword(keyword);
+        return recruits.stream()
+                .map(RecruitResponse.RecruitListDTO::of)
+                .collect(Collectors.toList());
+    }
 }

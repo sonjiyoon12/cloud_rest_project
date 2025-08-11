@@ -35,4 +35,17 @@ public interface RecruitRepository extends JpaRepository<Recruit, Long> {
                 WHERE cs.skill.name IN :skillNames
             """)
     List<Recruit> findByMatchingSkills(@Param("skillNames") List<String> skillNames);
+
+    // 제목, 회사명, 기술스택으로 통합 검색
+    @Query("""
+            SELECT DISTINCT r
+            FROM Recruit r
+            LEFT JOIN r.corp c
+            LEFT JOIN r.recruitSkills rs
+            LEFT JOIN rs.skill s
+            WHERE LOWER(r.title) LIKE LOWER(CONCAT('%', :keyword, '%'))
+            OR LOWER(c.corpName) LIKE LOWER(CONCAT('%', :keyword, '%'))
+            OR LOWER(s.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
+            """)
+    List<Recruit> findByKeyword(@Param("keyword") String keyword);
 }
