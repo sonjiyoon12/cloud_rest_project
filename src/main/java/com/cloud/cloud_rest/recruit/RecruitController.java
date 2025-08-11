@@ -12,6 +12,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
@@ -32,6 +34,13 @@ public class RecruitController {
     public ResponseEntity<?> findById(@PathVariable Long id) {
         RecruitResponse.RecruitDetailDTO responseDTO = recruitService.findById(id);
         return ResponseEntity.ok(new ApiUtil<>(responseDTO));
+    }
+
+    // 통합 검색 (제목, 회사명, 기술스택)
+    @GetMapping("/recruits/search")
+    public ResponseEntity<?> searchByKeyword(@RequestParam("keyword") String keyword) {
+        List<RecruitResponse.RecruitListDTO> responseDTOs = recruitService.searchByKeyword(keyword);
+        return ResponseEntity.ok(new ApiUtil<>(responseDTOs));
     }
 
     // 공고 저장 - 로그인 및 소유권 확인 필요
