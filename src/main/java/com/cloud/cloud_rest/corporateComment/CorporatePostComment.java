@@ -2,8 +2,8 @@ package com.cloud.cloud_rest.corporateComment;
 
 import com.cloud.cloud_rest._global._core.common.Timestamped;
 import com.cloud.cloud_rest.corporate.CorporatePost;
+import com.cloud.cloud_rest.corp.Corp;
 import com.cloud.cloud_rest.corporateCommentLike.CorporateCommentLike;
-import com.cloud.cloud_rest.user.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -21,15 +21,15 @@ public class CorporatePostComment extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "corporate_post_comment_id") // ID 컬럼명 통일
+    @Column(name = "corporate_post_comment_id")
     private Long id;
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User author;
+    @JoinColumn(name = "corp_id", nullable = false)
+    private Corp author;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "corporate_post_id", nullable = false)
@@ -42,7 +42,7 @@ public class CorporatePostComment extends Timestamped {
     private List<CorporateCommentLike> likes = new ArrayList<>();
 
     @Builder
-    public CorporatePostComment(String content, User author, CorporatePost corporatePost) {
+    public CorporatePostComment(String content, Corp author, CorporatePost corporatePost) {
         this.content = content;
         this.author = author;
         this.corporatePost = corporatePost;

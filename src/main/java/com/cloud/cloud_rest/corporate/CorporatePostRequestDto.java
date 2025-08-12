@@ -4,6 +4,8 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 public class CorporatePostRequestDto {
 
     @Getter
@@ -14,6 +16,8 @@ public class CorporatePostRequestDto {
 
         @NotBlank(message = "내용은 비워둘 수 없습니다.")
         private String content;
+
+        private List<String> tags;
     }
 
     @Getter
@@ -24,6 +28,8 @@ public class CorporatePostRequestDto {
 
         @NotBlank(message = "내용은 비워둘 수 없습니다.")
         private String content;
+
+        private List<String> tags;
     }
 
     // 태그 검색용 DTO
