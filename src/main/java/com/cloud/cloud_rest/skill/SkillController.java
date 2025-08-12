@@ -14,20 +14,20 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/skills")
 public class SkillController {
 
     private final SkillService skillService;
 
     //스킬 목록
-    @GetMapping("/skills")
+    @GetMapping
     public ResponseEntity<?> findAll() {
         List<SkillResponse.SkillListDTO> respDTO = skillService.findAll();
         return ResponseEntity.ok(new ApiUtil<>(respDTO));
     }
 
     // 스킬 저장
-    @PostMapping("/skills")
+    @PostMapping
     @Auth(roles = {Role.ADMIN})
     public ResponseEntity<?> save(@RequestBody @Valid SkillRequest.SkillSaveDTO reqDTO, @RequestAttribute("sessionUser") SessionUser sessionUser) {
         SkillResponse.SkillDetailDTO respDTO = skillService.save(reqDTO, sessionUser);
@@ -35,18 +35,18 @@ public class SkillController {
     }
 
     // 스킬 수정
-    @PutMapping("/skills")
+    @PutMapping("/{skillId}")
     @Auth(roles = {Role.ADMIN})
-    public ResponseEntity<?> update(@RequestParam Long id, @RequestBody @Valid SkillRequest.SkillUpdateDTO reqDTO, @RequestAttribute("sessionUser") SessionUser sessionUser) {
-        SkillResponse.SkillDetailDTO respDTO = skillService.update(id, reqDTO, sessionUser);
+    public ResponseEntity<?> update(@PathVariable Long skillId, @RequestBody @Valid SkillRequest.SkillUpdateDTO reqDTO, @RequestAttribute("sessionUser") SessionUser sessionUser) {
+        SkillResponse.SkillDetailDTO respDTO = skillService.update(skillId, reqDTO, sessionUser);
         return ResponseEntity.ok(new ApiUtil<>(respDTO));
     }
 
     // 스킬 삭제
-    @DeleteMapping("/skills")
+    @DeleteMapping("/{skillId}")
     @Auth(roles = {Role.ADMIN})
-    public ResponseEntity<?> delete(@RequestParam Long id, @RequestAttribute("sessionUser") SessionUser sessionUser) {
-        skillService.delete(id, sessionUser);
+    public ResponseEntity<?> delete(@PathVariable Long skillId, @RequestAttribute("sessionUser") SessionUser sessionUser) {
+        skillService.delete(skillId, sessionUser);
         return ResponseEntity.ok(new ApiUtil<>(null));
     }
 }

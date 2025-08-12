@@ -5,6 +5,7 @@ import com.cloud.cloud_rest._global._core.common.ApiUtil;
 import com.cloud.cloud_rest._global.auth.Auth;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -30,9 +31,9 @@ public class RecruitController {
     }
 
     // 공고 상세 조회 - Public
-    @GetMapping("/recruits/{id}")
-    public ResponseEntity<?> findById(@PathVariable Long id) {
-        RecruitResponse.RecruitDetailDTO responseDTO = recruitService.findById(id);
+    @GetMapping("/recruits/{recruitId}")
+    public ResponseEntity<?> findById(@PathVariable Long recruitId) {
+        RecruitResponse.RecruitDetailDTO responseDTO = recruitService.findById(recruitId);
         return ResponseEntity.ok(new ApiUtil<>(responseDTO));
     }
 

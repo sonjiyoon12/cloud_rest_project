@@ -46,7 +46,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "/api/admin/login",
                         // 구인공고
                         "/api/recruits/**",
-                        // 구인공고
+                        "/api/paids/**",
+                        // 공지사항
                         "/api/bulletins/**",
                         // 스킬
                         "/api/skills/**",

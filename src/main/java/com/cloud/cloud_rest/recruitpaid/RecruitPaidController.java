@@ -20,7 +20,7 @@ public class RecruitPaidController {
     private final RecruitPaidService recruitPaidService;
 
     //유료 공고 전환
-    @Auth(roles = {Role.CORP})
+    @Auth(roles = {Role.CORP, Role.ADMIN})
     @PostMapping
     public ResponseEntity<RecruitPaidResponse.PaidSaveDTO> paidSave(
             @RequestBody @Valid RecruitPaidRequest.PaidSaveDTO dto,
