@@ -1,9 +1,9 @@
 package com.cloud.cloud_rest.corporate;
 
+import com.cloud.cloud_rest._global.SessionUser;
 import com.cloud.cloud_rest._global.auth.Auth;
 import com.cloud.cloud_rest._global.response.ApiResponse;
 import com.cloud.cloud_rest.user.Role;
-import com.cloud.cloud_rest.user.User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,12 +22,10 @@ public class CorporatePostController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<Void> savePost(@Valid @RequestBody CorporatePostRequestDto.SaveDto saveDTO,
-                                       @RequestAttribute User sessionUser) {
+                                      @RequestAttribute("sessionUser") SessionUser sessionUser) {
         corporatePostService.savePost(saveDTO, sessionUser);
         return ApiResponse.success();
     }
-
-
 
 
 
@@ -47,7 +45,8 @@ public class CorporatePostController {
     @PutMapping("/{id}")
     public ApiResponse<Void> updatePost(@PathVariable Long id,
                                         @Valid @RequestBody CorporatePostRequestDto.UpdateDto updateDTO,
-                                        @RequestAttribute User sessionUser) {
+                                        @RequestAttribute("sessionUser") SessionUser sessionUser) {
+
         corporatePostService.updatePost(id, updateDTO, sessionUser);
         return ApiResponse.success();
     }
@@ -55,16 +54,16 @@ public class CorporatePostController {
     @Auth(roles = {Role.CORP})
     @DeleteMapping("/{id}")
     public ApiResponse<Void> deletePost(@PathVariable Long id,
-                                        @RequestAttribute User sessionUser) {
+                                        @RequestAttribute("sessionUser") SessionUser sessionUser) { // User -> SessionUser로 수정
         corporatePostService.deletePost(id, sessionUser);
         return ApiResponse.success();
     }
 
-    @Auth(roles = {Role.CORP}) //
+    @Auth(roles = {Role.CORP})
     @PostMapping("/{id}/likes")
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<Void> toggleLike(@PathVariable Long id,
-                                        @RequestAttribute User sessionUser) {
+                                        @RequestAttribute("sessionUser") SessionUser sessionUser) { // User -> SessionUser로 수정
         corporatePostService.togglePostLike(id, sessionUser);
         return ApiResponse.success();
     }
