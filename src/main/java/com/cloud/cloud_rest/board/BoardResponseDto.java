@@ -1,110 +1,58 @@
 package com.cloud.cloud_rest.board;
 
-import com.cloud.cloud_rest.Comment.CommentResponseDto;
+import com.cloud.cloud_rest.Comment.Comment;
 import com.cloud.cloud_rest.board.board_tag.BoardTag;
-import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class BoardResponseDto {
 
-    // 게시글 하나의 상세 정보를 응답하는 Dto
-    @Data
-    public static class DetailDto {
-        private Long boardId;
-        private String title;
-        private String content;
-        private Long userId;
-        private LocalDateTime createdAt;
-        private Integer views;
-        private String imagePath;
-        private List<CommentResponseDto> comments;
-
-
-
-        @Builder
-        public DetailDto(Board board) {
-            this.boardId = board.getBoardId();
-            this.title = board.getTitle();
-            this.content = board.getContent();
-            this.userId = board.getUser().getUserId();
-            this.createdAt = board.getCreatedAt();
-            this.views = board.getViews();
-            this.imagePath = board.getImagePath();
-        }
-
-
-    }
-
-    // 게시글 목록을 응답하는 Dto
-    @Data
+    @Getter
     public static class ListDto {
-        private Long boardId;
-        private String title;
-        private Long userId;
-        private LocalDateTime createdAt;
-        private Integer views;
-        private String imagePath;
-        private List<TagDTO> tags = new ArrayList<>();
+        private final Long id;
+        private final String title;
+        private final String authorName;
+        private final Integer viewCount;
+        private final Integer likeCount;
+        private final LocalDateTime createdAt;
+        private final List<String> tags;
 
         public ListDto(Board board) {
-            this.boardId = board.getBoardId();
+            this.id = board.getBoardId();
             this.title = board.getTitle();
-            this.userId = board.getUser().getUserId();
+            this.authorName = board.getUser().getUsername();
+            this.viewCount = board.getViews();
+            this.likeCount = board.getLikeCount();
             this.createdAt = board.getCreatedAt();
-            this.views = board.getViews();
-            this.imagePath = board.getImagePath();
-
-            for (BoardTag tag : board.getTags()) {
-                this.tags.add(new TagDTO(tag));
-            }
-        }
-
-        // board 엔티티 리스트를 ListDto로 변환하는 정적 메서드
-        public static List<ListDto> toList(List<Board> boards) {
-            return boards.stream()
-                    .map(ListDto::new)
-                    .toList();
-        }
-
-        @Data
-        public static class TagDTO {
-            private Long id;
-            private Long boardId;
-            private String tagName;
-
-            public TagDTO(BoardTag boardTag) {
-                this.id = boardTag.getBoardTagId();
-                this.boardId = boardTag.getBoard().getBoardId();
-                this.tagName = boardTag.getTagName();
-            }
+            this.tags = board.getTags().stream().map(BoardTag::getName).collect(Collectors.toList());
         }
     }
 
-    // 게시글 수정 완료 후 응답하는 Dto
-    @Data
-    public static class UpdateDto {
-        private Long boardId;
-        private String title;
-        private String content;
-        private Long userId;
-        private LocalDateTime createAt;
-        private Integer views;
-        private Integer likeCount;
-        private String imagePath;
+    @Getter
+    public static class DetailDto {
+        private final Long id;
+        private final String title;
+        private final String content;
+        private final String authorName;
+        private final Integer viewCount;
+        private final Integer likeCount;
+        private final LocalDateTime createdAt;
+        private final List<String> tags;
+        private final List<Comment> comments;
 
-        @Builder
-        public UpdateDto(Board board) {
-            this.boardId = board.getBoardId();
+        public DetailDto(Board board) {
+            this.id = board.getBoardId();
             this.title = board.getTitle();
             this.content = board.getContent();
-            this.userId = board.getUser().getUserId();
-            this.createAt = board.getCreatedAt();
-            this.views = board.getViews();
-            this.imagePath = board.getImagePath();
+            this.authorName = board.getUser().getUsername();
+            this.viewCount = board.getViews();
+            this.likeCount = board.getLikeCount();
+            this.createdAt = board.getCreatedAt();
+            this.tags = board.getTags().stream().map(BoardTag::getName).collect(Collectors.toList());
+            this.comments = board.getComments();
         }
     }
 }

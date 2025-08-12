@@ -1,7 +1,7 @@
 package com.cloud.cloud_rest.corporatePostLike;
 
+import com.cloud.cloud_rest.corp.Corp;
 import com.cloud.cloud_rest.corporate.CorporatePost;
-import com.cloud.cloud_rest.user.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
         uniqueConstraints = {
                 @UniqueConstraint(
                         name = "corporate_post_like_uk",
-                        columnNames = {"user_id", "corporate_post_id"}
+                        columnNames = {"corp_id", "corporate_post_id"}
                 )
         })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -25,16 +25,16 @@ public class CorporatePostLike {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @JoinColumn(name = "corp_id", nullable = false)
+    private Corp corp;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "corporate_post_id", nullable = false)
     private CorporatePost corporatePost;
 
     @Builder
-    public CorporatePostLike(User user, CorporatePost corporatePost) {
-        this.user = user;
+    public CorporatePostLike(Corp corp, CorporatePost corporatePost) {
+        this.corp = corp;
         this.corporatePost = corporatePost;
     }
 }

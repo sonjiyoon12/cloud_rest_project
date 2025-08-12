@@ -27,7 +27,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
                 .where(
                         // 검색 조건들을 동적으로 조합
                         keywordContains(searchDTO.getKeyword()),
-                        tagsIn(searchDTO.getBoardTags())
+                        tagsIn(searchDTO.getTags())
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -41,7 +41,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
                 .leftJoin(board.tags, boardTag)
                 .where(
                         keywordContains(searchDTO.getKeyword()),
-                        tagsIn(searchDTO.getBoardTags())
+                        tagsIn(searchDTO.getTags())
                 )
                 .fetchOne();
 
@@ -64,6 +64,6 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
         if (tags == null || tags.isEmpty()) {
             return null; // tags가 없으면 조건 무시
         }
-        return QBoardTag.boardTag.tagName.in(tags);
+        return QBoardTag.boardTag.name.in(tags);
     }
 }

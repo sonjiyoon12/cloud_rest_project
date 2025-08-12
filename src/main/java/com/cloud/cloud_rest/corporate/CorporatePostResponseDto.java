@@ -2,6 +2,7 @@ package com.cloud.cloud_rest.corporate;
 
 import lombok.Getter;
 
+import java.util.List;
 import java.time.LocalDateTime;
 
 public class CorporatePostResponseDto {
@@ -14,6 +15,7 @@ public class CorporatePostResponseDto {
         private final int viewCount;
         private final int likeCount;
         private final LocalDateTime createdAt;
+        private final List<String> tags;
 
         public ListDto(CorporatePost post) {
             this.id = post.getId();
@@ -22,6 +24,7 @@ public class CorporatePostResponseDto {
             this.viewCount = post.getViewCount();
             this.likeCount = post.getLikeCount();
             this.createdAt = post.getCreatedAt();
+            this.tags = post.getTags().stream().map(tag -> tag.getName()).collect(java.util.stream.Collectors.toList());
         }
     }
 
@@ -34,6 +37,7 @@ public class CorporatePostResponseDto {
         private final int viewCount;
         private final int likeCount;
         private final LocalDateTime createdAt;
+        private final List<String> tags;
 
         public DetailDto(CorporatePost post) {
             this.id = post.getId();
@@ -43,6 +47,7 @@ public class CorporatePostResponseDto {
             this.viewCount = post.getViewCount();
             this.likeCount = post.getLikeCount();
             this.createdAt = post.getCreatedAt();
+            this.tags = post.getTags().stream().map(tag -> tag.getName()).collect(java.util.stream.Collectors.toList());
         }
     }
 }

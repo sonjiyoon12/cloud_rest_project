@@ -41,6 +41,13 @@ public class CorporatePostController {
         return ApiResponse.success(postDetail);
     }
 
+    @GetMapping("/search")
+    public ApiResponse<List<CorporatePostResponseDto.ListDto>> searchPosts(
+            @ModelAttribute CorporatePostRequestDto.SearchDTO searchDTO) {
+        List<CorporatePostResponseDto.ListDto> postList = corporatePostService.searchPosts(searchDTO);
+        return ApiResponse.success(postList);
+    }
+
     @Auth(roles = {Role.CORP})
     @PutMapping("/{id}")
     public ApiResponse<Void> updatePost(@PathVariable Long id,
@@ -56,15 +63,6 @@ public class CorporatePostController {
     public ApiResponse<Void> deletePost(@PathVariable Long id,
                                         @RequestAttribute("sessionUser") SessionUser sessionUser) { // User -> SessionUser로 수정
         corporatePostService.deletePost(id, sessionUser);
-        return ApiResponse.success();
-    }
-
-    @Auth(roles = {Role.CORP})
-    @PostMapping("/{id}/likes")
-    @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<Void> toggleLike(@PathVariable Long id,
-                                        @RequestAttribute("sessionUser") SessionUser sessionUser) { // User -> SessionUser로 수정
-        corporatePostService.togglePostLike(id, sessionUser);
         return ApiResponse.success();
     }
 }

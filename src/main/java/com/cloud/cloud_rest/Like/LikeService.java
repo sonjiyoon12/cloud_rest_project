@@ -51,21 +51,18 @@ public class LikeService {
 
         if (existingLike.isPresent()) {
             likeRepository.delete(existingLike.get());
-            board.setLikeCount(board.getLikeCount() - 1);
+            board.updateLikeCount(board.getLikeCount() - 1);
             return LikeResponseDto.builder()
                     .isLiked(false)
                     .newLikeCount(board.getLikeCount())
                     .build();
         } else {
-            boolean isOwner = board.getUser() != null && board.getUser().getUserId().equals(user.getUserId());
-
             BoardLike newLike = BoardLike.builder()
                     .board(board)
                     .user(user)
-                    .isOwner(isOwner)
                     .build();
             likeRepository.save(newLike);
-            board.setLikeCount(board.getLikeCount() + 1);
+            board.updateLikeCount(board.getLikeCount() + 1);
             return LikeResponseDto.builder()
                     .isLiked(true)
                     .newLikeCount(board.getLikeCount())
@@ -77,11 +74,11 @@ public class LikeService {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new NoSuchElementException("ID " + commentId + "를 가진 댓글을 찾을 수 없습니다."));
 
-        Optional<CommentLike> existingLike = commentLikeRepository.findByCommentAndUser(comment, user);
+        Optional<CommentLike> existingLike = commentLikeRepository.findByUserAndComment(user, comment);
 
         if (existingLike.isPresent()) {
             commentLikeRepository.delete(existingLike.get());
-            comment.setLikeCount(comment.getLikeCount() - 1);
+            comment.updateLikeCount(comment.getLikeCount() - 1);
             return LikeResponseDto.builder()
                     .isLiked(false)
                     .newLikeCount(comment.getLikeCount())
@@ -92,7 +89,7 @@ public class LikeService {
                     .user(user)
                     .build();
             commentLikeRepository.save(newLike);
-            comment.setLikeCount(comment.getLikeCount() + 1);
+            comment.updateLikeCount(comment.getLikeCount() + 1);
             return LikeResponseDto.builder()
                     .isLiked(true)
                     .newLikeCount(comment.getLikeCount())

@@ -1,10 +1,10 @@
 package com.cloud.cloud_rest.corporateComment;
 
+import com.cloud.cloud_rest._global.SessionUser;
+import com.cloud.cloud_rest.corp.Corp;
+import com.cloud.cloud_rest.corp.CorpRepository;
 import com.cloud.cloud_rest.corporate.CorporatePost;
 import com.cloud.cloud_rest.corporate.CorporatePostRepository;
-import com.cloud.cloud_rest.corporateCommentLike.CorporateCommentLikeRepository;
-import com.cloud.cloud_rest.corporateCommentLike.CorporateCommentLike;
-import com.cloud.cloud_rest.user.User;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,23 +21,27 @@ public class CorporateCommentService {
 
     private final CorporateCommentRepository commentRepository;
     private final CorporatePostRepository postRepository;
-    private final CorporateCommentLikeRepository commentLikeRepository;
+    private final CorpRepository corpRepository;
 
     @Transactional
-    public void saveComment(Long postId, CorporateCommentRequestDto.SaveDto saveDto, User sessionUser) {
+    public void saveComment(Long postId, CorporateCommentRequestDto.SaveDto saveDto, SessionUser sessionUser) {
         CorporatePost post = postRepository.findById(postId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 ID의 게시물을 찾을 수 없습니다: " + postId));
 
+        // SessionUser의 ID를 사용하여 Corp 엔티티를 조회
+        Corp author = corpRepository.findById(sessionUser.getId())
+                .orElseThrow(() -> new EntityNotFoundException("작성자를 찾을 수 없습니다: " + sessionUser.getId()));
+
         CorporatePostComment comment = CorporatePostComment.builder()
                 .content(saveDto.getContent())
-                .author(sessionUser)
+                .author(author)
                 .corporatePost(post)
                 .build();
 
         commentRepository.save(comment);
     }
 
-    public List<CorporateCommentResponseDto.CommentDto> findCommentsByPostId(Long postId, User sessionUser) {
+    public List<CorporateCommentResponseDto.CommentDto> findCommentsByPostId(Long postId, SessionUser sessionUser) {
         List<CorporatePostComment> comments = commentRepository.findAllByPostIdWithAuthor(postId);
         return comments.stream()
                 .map(comment -> new CorporateCommentResponseDto.CommentDto(comment, sessionUser))
@@ -45,36 +49,17 @@ public class CorporateCommentService {
     }
 
     @Transactional
-    public void updateComment(Long commentId, CorporateCommentRequestDto.UpdateDto updateDto, User sessionUser) {
+    public void updateComment(Long commentId, CorporateCommentRequestDto.UpdateDto updateDto, SessionUser sessionUser) {
         CorporatePostComment comment = findCommentById(commentId);
         checkOwnership(comment, sessionUser);
         comment.update(updateDto.getContent());
     }
 
     @Transactional
-    public void deleteComment(Long commentId, User sessionUser) {
+    public void deleteComment(Long commentId, SessionUser sessionUser) {
         CorporatePostComment comment = findCommentById(commentId);
         checkOwnership(comment, sessionUser);
         commentRepository.delete(comment);
-    }
-
-    @Transactional
-    public void toggleCommentLike(Long commentId, User sessionUser) {
-        CorporatePostComment comment = findCommentById(commentId);
-
-        commentLikeRepository.findByUserAndComment(sessionUser, comment).ifPresentOrElse(
-                // 좋아요가 존재하면
-                like -> {
-                    commentLikeRepository.delete(like);
-                    comment.updateLikeCount(comment.getLikeCount() - 1);
-                },
-                // 좋아요가 없으면
-                () -> {
-                    CorporateCommentLike newLike = CorporateCommentLike.builder().user(sessionUser).comment(comment).build();
-                    commentLikeRepository.save(newLike);
-                    comment.updateLikeCount(comment.getLikeCount() + 1);
-                }
-        );
     }
 
     private CorporatePostComment findCommentById(Long commentId) {
@@ -82,8 +67,9 @@ public class CorporateCommentService {
                 .orElseThrow(() -> new EntityNotFoundException("해당 ID의 댓글을 찾을 수 없습니다: " + commentId));
     }
 
-    private void checkOwnership(CorporatePostComment comment, User sessionUser) {
-        if (!Objects.equals(comment.getAuthor().getUserId(), sessionUser.getUserId())) {
+    private void checkOwnership(CorporatePostComment comment, SessionUser sessionUser) {
+        // 댓글 작성자의 Corp ID와 세션 사용자의 ID를 비교
+        if (!Objects.equals(comment.getAuthor().getCorpId(), sessionUser.getId())) {
             throw new SecurityException("해당 댓글에 대한 권한이 없습니다.");
         }
     }

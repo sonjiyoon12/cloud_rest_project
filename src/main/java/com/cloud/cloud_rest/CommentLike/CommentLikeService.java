@@ -1,79 +1,46 @@
 package com.cloud.cloud_rest.CommentLike;
 
+import com.cloud.cloud_rest._global.SessionUser;
 import com.cloud.cloud_rest.Comment.Comment;
 import com.cloud.cloud_rest.Comment.CommentRepository;
 import com.cloud.cloud_rest.user.User;
 import com.cloud.cloud_rest.user.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CommentLikeService {
 
-    private final CommentLikeRepository commentLikeRepository;
     private final CommentRepository commentRepository;
+    private final CommentLikeRepository commentLikeRepository;
     private final UserRepository userRepository;
 
-    /**
-     * 댓글 좋아요를 등록하거나 취소하고, 변경된 좋아요 개수를 포함한 응답을 반환합니다.
-     *
-     * @return 좋아요 등록 시 CommentLikeWithCountDto, 취소 시 null을 반환합니다.
-     */
-    @Transactional
-    public CommentLikeWithCountDto toggleCommentLike(Long commentId, Long userId) {
+    public CommentLikeResponseDto toggleCommentLike(Long commentId, SessionUser sessionUser) {
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 댓글입니다."));
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+                .orElseThrow(() -> new EntityNotFoundException("해당 ID의 댓글을 찾을 수 없습니다: " + commentId));
 
-        if (comment.getIsSecret() && !comment.getUserId().equals(user.getUserId())) {
-            throw new IllegalArgumentException("비밀 댓글에는 작성자만 좋아요를 누를 수 있습니다.");
-        }
+        User user = userRepository.findById(sessionUser.getId())
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다: " + sessionUser.getId()));
 
-        Optional<CommentLike> existingLike = commentLikeRepository.findByCommentAndUser(comment, user);
-
-        CommentLike savedLike = null;
-        if (existingLike.isPresent()) {
-            // 이미 좋아요를 누른 경우, 좋아요 취소
-            commentLikeRepository.delete(existingLike.get());
-        } else {
-            // 좋아요를 누르지 않은 경우, 좋아요 등록
-            CommentLike newLike = CommentLike.builder()
-                    .comment(comment)
-                    .user(user)
-                    .build();
-            savedLike = commentLikeRepository.save(newLike);
-        }
-
-        // 좋아요 개수를 조회하고, 응답 DTO를 반환
-        Long likeCount = commentLikeRepository.countByComment(comment);
-
-        // 좋아요 취소 시에는 null을 반환
-        if (savedLike == null) {
-            return null;
-        }
-        CommentLikeResponseDto commentLikeResponseDto = savedLike != null ?
-                new CommentLikeResponseDto(savedLike) : null;
-        // 좋아요 등록 시에는 DTO를 반환
-        return CommentLikeWithCountDto.builder()
-                .commentLike(commentLikeResponseDto)
-                .likeCount(likeCount)
-                .build();
+        return commentLikeRepository.findByUserAndComment(user, comment)
+                .map(this::removeLike)
+                .orElseGet(() -> addLike(user, comment));
     }
 
-    /**
-     * 특정 댓글의 좋아요 개수를 조회합니다.
-     *
-     * @return 좋아요 개수
-     */
-    @Transactional(readOnly = true)
-    public long getCommentLikeCount(Long commentId) {
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 댓글입니다."));
-        return commentLikeRepository.countByComment(comment);
+    private CommentLikeResponseDto addLike(User user, Comment comment) {
+        commentLikeRepository.save(CommentLike.builder().user(user).comment(comment).build());
+        comment.updateLikeCount(comment.getLikeCount() + 1);
+        return new CommentLikeResponseDto(comment.getLikeCount(), true);
+    }
+
+    private CommentLikeResponseDto removeLike(CommentLike like) {
+        Comment comment = like.getComment();
+        commentLikeRepository.delete(like);
+        comment.updateLikeCount(comment.getLikeCount() - 1);
+        return new CommentLikeResponseDto(comment.getLikeCount(), false);
     }
 }

@@ -1,6 +1,6 @@
 package com.cloud.cloud_rest.corporateComment;
 
-import com.cloud.cloud_rest.user.User;
+import com.cloud.cloud_rest._global.SessionUser;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -17,13 +17,13 @@ public class CorporateCommentResponseDto {
         private final LocalDateTime createdAt;
         private final boolean isOwner;
 
-        public CommentDto(CorporatePostComment comment, User sessionUser) {
+        public CommentDto(CorporatePostComment comment, SessionUser sessionUser) {
             this.id = comment.getId();
             this.content = comment.getContent();
-            this.authorName = comment.getAuthor().getUsername();
+            this.authorName = comment.getAuthor().getCorpName();
             this.likeCount = comment.getLikeCount();
             this.createdAt = comment.getCreatedAt();
-            this.isOwner = sessionUser != null && Objects.equals(comment.getAuthor().getUserId(), sessionUser.getUserId());
+            this.isOwner = sessionUser != null && Objects.equals(comment.getAuthor().getCorpId(), sessionUser.getId());
         }
     }
 }

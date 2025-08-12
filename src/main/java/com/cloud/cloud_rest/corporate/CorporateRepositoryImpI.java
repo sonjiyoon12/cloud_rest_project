@@ -64,6 +64,6 @@ public class CorporateRepositoryImpI implements CorporateRepositoryCustom {
         if (tags == null || tags.isEmpty()) {
             return null; // tags가 없으면 조건 무시
         }
-        return QCorporateTag.corporateTag.tagName.in(tags);
+        return QCorporateTag.corporateTag.name.in(tags);
     }
 }

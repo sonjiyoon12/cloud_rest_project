@@ -1,33 +1,43 @@
 package com.cloud.cloud_rest.corporate.corporate_tag;
 
-
 import com.cloud.cloud_rest.corporate.CorporatePost;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@Embeddable
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode
 @Entity
-@Table(name = "corporate_tag_tb")
+@Getter
+@Table(name = "corporate_tag_tb",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "corporate_post_tag_uk",
+                        columnNames = {"corporate_post_id", "name"}
+                )
+        })
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CorporateTag {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long corporateTagId;
+    private Long id;
+
+    @Column(nullable = false, length = 50)
+    private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "corporate_id")
+    @JoinColumn(name = "corporate_post_id", nullable = false)
     private CorporatePost corporatePost;
 
-    @Column(name = "tag_name")
-    private String tagName;
-
     @Builder
-    public CorporateTag(CorporatePost corporatePost, String tagName) {
+    public CorporateTag(String name, CorporatePost corporatePost) {
+        this.name = name;
         this.corporatePost = corporatePost;
-        this.tagName = tagName;
     }
 
+    // 연관관계 편의 메서드 (양방향 관계 설정 시 사용)
+    public void setCorporatePost(CorporatePost corporatePost) {
+        this.corporatePost = corporatePost;
+    }
 }

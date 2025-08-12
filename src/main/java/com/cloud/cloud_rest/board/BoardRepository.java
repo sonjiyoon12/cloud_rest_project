@@ -1,20 +1,22 @@
 package com.cloud.cloud_rest.board;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public interface BoardRepository extends JpaRepository<Board, Long>, BoardRepositoryCustom {
+import java.util.List;
+import java.util.Optional;
 
-    // 키워드를 포함하는 제목 또는 내용의 게시글을 페이징하여 조회
-    @Query("SELECT b FROM Board b WHERE b.title LIKE %:keyword% OR b.content LIKE %:keyword%")
-    Page<Board> searchByKeyword(@Param("keyword") String keyword, Pageable pageable);
+public interface BoardRepository extends JpaRepository<Board, Long> {
 
-    // 특정 사용자가 댓글을 작성한 모든 게시글을 조회
-    @Query("SELECT b FROM Board b WHERE b.boardId IN (SELECT c.board.boardId FROM Comment c WHERE c.userId = :userId)")
-    Page<Board> findBoardsCommentedByUser(@Param("userId") Long userId, Pageable pageable);
+    @Query("SELECT b FROM Board b JOIN FETCH b.user u LEFT JOIN FETCH b.tags t ORDER BY b.createdAt DESC")
+    List<Board> findAllWithUserAndTags();
+
+    @Query("SELECT b FROM Board b JOIN FETCH b.user u LEFT JOIN FETCH b.tags t LEFT JOIN FETCH b.comments c WHERE b.boardId = :id")
+    Optional<Board> findByIdWithDetails(@Param("id") Long id);
+
+    @Query("SELECT DISTINCT b FROM Board b JOIN FETCH b.user u LEFT JOIN b.tags t " +
+            "WHERE (:keyword IS NULL OR b.title LIKE %:keyword% OR b.content LIKE %:keyword%) " +
+            "AND (:tags IS NULL OR t.name IN :tags) ORDER BY b.createdAt DESC")
+    List<Board> search(@Param("keyword") String keyword, @Param("tags") List<String> tags);
 }
