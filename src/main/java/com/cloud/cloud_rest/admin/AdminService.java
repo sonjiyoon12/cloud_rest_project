@@ -173,6 +173,18 @@ public class AdminService {
         return new CorpResponse.CorpDTO(corp);
     }
 
+    // 일반 유저 admin 유저로 승인 하기
+    @Transactional
+    public AdminResponse.SaveDTO userAdvancement(Long userId,SessionUser sessionUser){
+        AuthorizationUtil.validateAdminAccess(sessionUser);
+        User user = userService.getUserId(userId);
+        if(user.getRole().equals(Role.ADMIN)){
+            throw new Exception403("이미 어드민 권한 부여자입니다");
+        }
+        user.setRole(Role.ADMIN);
+        return new AdminResponse.SaveDTO(user);
+    }
+
 
     public User getLoginId(String loginId){
         return userRepository.findByUserId(loginId).orElseThrow(() -> new Exception404("해당 유저가 존재하지 않습니다"));

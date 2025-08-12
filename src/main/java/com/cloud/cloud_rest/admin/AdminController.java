@@ -103,8 +103,18 @@ public class AdminController {
     @PostMapping("/corp/approved/{id}")
     public ResponseEntity<?> corpApproved(@PathVariable Long id,
                                           @RequestAttribute("sessionUser") SessionUser sessionUser) {
-        CorpResponse.CorpDTO corpDTO = adminService.corpApproved(id,sessionUser);
+        CorpResponse.CorpDTO corpDTO = adminService.corpApproved(id, sessionUser);
         return ResponseEntity.ok(new ApiUtil<>(corpDTO));
     }
+
+    // 유저 Admin 승인하기
+    @Auth(roles = Role.ADMIN)
+    @PostMapping("/user/advancement/{id}")
+    public ResponseEntity<?> userAdvancement(@PathVariable Long id,
+                                             @RequestAttribute("sessionUser") SessionUser sessionUser) {
+        AdminResponse.SaveDTO saveDTO = adminService.userAdvancement(id, sessionUser);
+        return ResponseEntity.ok(new ApiUtil<>(saveDTO));
+    }
+
 
 }
