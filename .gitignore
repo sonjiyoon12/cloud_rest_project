@@ -303,3 +303,6 @@ build/
 .idea/
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,intellij,macos,visualstudiocode,eclipse,linux,java
+
+# QueryDSL generated sources
+/src/main/generated/
