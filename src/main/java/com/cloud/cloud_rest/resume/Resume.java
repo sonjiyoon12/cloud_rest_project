@@ -49,7 +49,7 @@ public class Resume {
         return this.user.getUserId().equals(checkUserId);
     }
 
-    public String getFormatTime() {
+    public String getTime() {
         return DateUtil.timestampFormat(createdAt);
     }
 

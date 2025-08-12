@@ -25,5 +25,6 @@ public interface CorpRepository extends JpaRepository<Corp, Long> {
     """)
     List<Corp> findByMatchingSkills(@Param("skillNames") List<String> skillNames);
 
-
+    @Query("select c from Corp c where c.corpStatus = :APPROVED")
+    List<Corp> findByAllCorpStatusApproved();
 }

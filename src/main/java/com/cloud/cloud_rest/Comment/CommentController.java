@@ -30,7 +30,7 @@ public class CommentController {
     @GetMapping
     public ResponseEntity<Page<CommentResponseDto>> getCommentsByBoardId(
             @PathVariable Long boardId,
-            @PageableDefault(sort = "commentedAt", direction = Sort.Direction.DESC) Pageable pageable) {
+            @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<CommentResponseDto> commentPage = commentService.getCommentsByBoardId(boardId, pageable);
         return new ResponseEntity<>(commentPage, HttpStatus.OK);
     }

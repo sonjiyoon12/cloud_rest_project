@@ -1,6 +1,7 @@
 package com.cloud.cloud_rest.CommentLike;
 
 import com.cloud.cloud_rest._global._core.common.ApiUtil;
+import com.cloud.cloud_rest._global.auth.Auth;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ public class CommentLikeController {
 
     // 댓글 좋아요 등록 및 취소 (POST /api/comments/{commentId}/likes)
     @PostMapping
+    @Auth
     public ResponseEntity<?> toggleCommentLike(
             @PathVariable Long commentId,
             @RequestBody CommentLikeRequestDto.SaveDto requestDto) {
