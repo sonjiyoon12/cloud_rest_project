@@ -1,5 +1,6 @@
 package com.cloud.cloud_rest.qnaAnswer;
 
+import com.cloud.cloud_rest._global.SessionUser;
 import com.cloud.cloud_rest._global._core.common.ApiUtil;
 import com.cloud.cloud_rest._global.auth.Auth;
 import com.cloud.cloud_rest.user.Role;
@@ -24,8 +25,9 @@ public class QnaAnswerController {
     @PostMapping
     @Operation(summary = "답변 작성하기")
     public ResponseEntity<?> save(@PathVariable(name = "qnaBoardId") Long qnaBoardId,
-                                  @Valid @RequestBody QnaAnswerRequest.SaveDTO saveDTO){
-        QnaAnswerResponse.QnaAnswerResponseDTO savedQnaAnswer = qnaAnswerService.save(qnaBoardId, saveDTO);
+                                  @Valid @RequestBody QnaAnswerRequest.SaveDTO saveDTO,
+                                  @RequestAttribute("sessionUser")SessionUser sessionUser){
+        QnaAnswerResponse.QnaAnswerResponseDTO savedQnaAnswer = qnaAnswerService.save(qnaBoardId, saveDTO, sessionUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiUtil<>(savedQnaAnswer));
 
     }
@@ -35,8 +37,9 @@ public class QnaAnswerController {
     @PutMapping("/{id}")
     @Operation(summary = "답변 수정하기")
     public ResponseEntity<?> update(@PathVariable(name = "id") Long qnaAnswerId,
-                                    @Valid @RequestBody QnaAnswerRequest.UpdateDTO updateDTO) {
-        QnaAnswerResponse.QnaAnswerResponseDTO updateQnaAnswer = qnaAnswerService.update(qnaAnswerId, updateDTO);
+                                    @Valid @RequestBody QnaAnswerRequest.UpdateDTO updateDTO,
+                                    @RequestAttribute("sessionUser")SessionUser sessionUser) {
+        QnaAnswerResponse.QnaAnswerResponseDTO updateQnaAnswer = qnaAnswerService.update(qnaAnswerId, updateDTO, sessionUser);
         return ResponseEntity.ok(new ApiUtil<>(updateQnaAnswer));
     }
 
@@ -44,8 +47,9 @@ public class QnaAnswerController {
     @Auth(roles = {Role.ADMIN})
     @DeleteMapping("/{id}")
     @Operation(summary = "답변 삭제하기")
-    public ResponseEntity<ApiUtil<String>> delete(@PathVariable(name = "id") Long qnaAnswerId){
-        qnaAnswerService.deleteById(qnaAnswerId);
+    public ResponseEntity<ApiUtil<String>> delete(@PathVariable(name = "id") Long qnaAnswerId,
+                                                  @RequestAttribute("sessionUser")SessionUser sessionUser){
+        qnaAnswerService.deleteById(qnaAnswerId,sessionUser);
         return ResponseEntity.ok(new ApiUtil<>("답변 삭제 성공"));
     }
 

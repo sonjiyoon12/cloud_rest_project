@@ -1,22 +1,14 @@
 package com.cloud.cloud_rest.CommentLike;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 
-import java.time.LocalDateTime;
-
-@Data
+@Getter
 public class CommentLikeResponseDto {
-    private Long id;
-    private Long commentId;
-    private Long userId;
-    private LocalDateTime likeAt;
+    private final int likeCount;
+    private final boolean isLiked;
 
-    @Builder
-    public CommentLikeResponseDto(CommentLike commentLike) {
-        this.id = commentLike.getId();
-        this.commentId = commentLike.getComment().getCommentId();
-        this.userId = commentLike.getUser().getUserId();
-        this.likeAt = commentLike.getLikedAt();
+    public CommentLikeResponseDto(int likeCount, boolean isLiked) {
+        this.likeCount = likeCount;
+        this.isLiked = isLiked;
     }
 }

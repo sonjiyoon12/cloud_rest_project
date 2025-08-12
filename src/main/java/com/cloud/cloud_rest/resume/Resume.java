@@ -5,17 +5,16 @@ import com.cloud.cloud_rest.career.Career;
 import com.cloud.cloud_rest.resumeskill.ResumeSkill;
 import com.cloud.cloud_rest.user.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.apache.commons.lang3.builder.ToStringExclude;
 import org.hibernate.annotations.CreationTimestamp;
 
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,6 +22,7 @@ import java.util.List;
 @Data
 @Table(name = "resume_tb")
 @Entity
+@EqualsAndHashCode(exclude = {"user", "resumeSkills", "careers"})
 public class Resume {
 
     @Id
@@ -63,11 +63,11 @@ public class Resume {
 
     @Builder.Default
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ResumeSkill> resumeSkills = new ArrayList<>();
+    private Set<ResumeSkill> resumeSkills = new HashSet<>();
 
     @Builder.Default
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Career> careers = new ArrayList<>();
+    private Set<Career> careers = new HashSet<>();
 
     public void addCareer(Career career) {
         careers.add(career);

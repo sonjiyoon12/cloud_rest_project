@@ -23,7 +23,7 @@ public class CommentResponseDto {
     public CommentResponseDto(Comment comment) {
         this.commentId = comment.getCommentId();
         this.content = comment.getContent();
-        this.userId = comment.getUserId();
+        this.userId = comment.getCommentId();
         this.isSecret = comment.getIsSecret();
         this.commentedAt = comment.getCreatedAt();
     }

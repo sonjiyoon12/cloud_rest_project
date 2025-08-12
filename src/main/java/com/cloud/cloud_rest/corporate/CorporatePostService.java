@@ -3,9 +3,8 @@ package com.cloud.cloud_rest.corporate;
 import com.cloud.cloud_rest._global.SessionUser;
 import com.cloud.cloud_rest.corp.Corp;
 import com.cloud.cloud_rest.corp.CorpRepository;
-import com.cloud.cloud_rest.corporatePostLike.CorporatePostLike;
-import com.cloud.cloud_rest.corporatePostLike.CorporatePostLikeRepository;
-import com.cloud.cloud_rest.user.User;
+import com.cloud.cloud_rest.corporate.corporate_tag.CorporateTag;
+import com.cloud.cloud_rest.corporate.corporate_tag.CorporateTagRepository;
 import com.cloud.cloud_rest.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +21,8 @@ import java.util.stream.Collectors;
 public class CorporatePostService {
 
     private final CorporatePostRepository corporatePostRepository;
-    private final CorporatePostLikeRepository corporatePostLikeRepository;
     private final CorpRepository corpRepository;
+    private final CorporateTagRepository corporateTagRepository; 
     private final UserRepository userRepository;
 
     @Transactional
@@ -37,6 +36,9 @@ public class CorporatePostService {
                 .author(author)
                 .build();
         corporatePostRepository.save(post);
+
+        // 태그 저장
+        saveTags(post, saveDTO.getTags());
     }
 
     public List<CorporatePostResponseDto.ListDto> findAll() {
@@ -56,7 +58,10 @@ public class CorporatePostService {
     public void updatePost(Long id, CorporatePostRequestDto.UpdateDto updateDTO, SessionUser sessionUser) {
         CorporatePost post = findByPostById(id);
         checkOwnership(post, sessionUser);
+
         post.update(updateDTO.getTitle(), updateDTO.getContent());
+        // 태그 업데이트
+        updateTags(post, updateDTO.getTags());
     }
 
     @Transactional
@@ -64,32 +69,6 @@ public class CorporatePostService {
         CorporatePost post = findByPostById(id);
         checkOwnership(post, sessionUser);
         corporatePostRepository.delete(post);
-    }
-
-    /**
-     * 게시물 좋아요/좋아요 취소
-     */
-    @Transactional
-    public void togglePostLike(Long postId, SessionUser sessionUser) {
-        CorporatePost post = findByPostById(postId);
-
-        // SessionUser의 ID로 User 엔티티를 조회
-        User user = userRepository.findById(sessionUser.getId())
-                .orElseThrow(() -> new EntityNotFoundException("좋아요를 누른 사용자를 찾을 수 없습니다: " + sessionUser.getId()));
-
-        corporatePostLikeRepository.findByUserAndCorporatePost(user, post).ifPresentOrElse(
-                // 좋아요가 존재하면
-                like -> {
-                    corporatePostLikeRepository.delete(like);
-                    post.updateLikeCount(post.getLikeCount() - 1);
-                },
-                // 좋아요가 없으면
-                () -> {
-                    CorporatePostLike newLike = CorporatePostLike.builder().user(user).corporatePost(post).build();
-                    corporatePostLikeRepository.save(newLike);
-                    post.updateLikeCount(post.getLikeCount() + 1);
-                }
-        );
     }
 
     /**
@@ -107,5 +86,36 @@ public class CorporatePostService {
         if (!Objects.equals(post.getAuthor().getCorpId(), sessionUser.getId())) {
             throw new SecurityException("해당 게시물에 대한 권한이 없습니다");
         }
+    }
+
+    // 태그 저장 로직
+    private void saveTags(CorporatePost post, List<String> tagNames) {
+        if (tagNames != null && !tagNames.isEmpty()) {
+            for (String tagName : tagNames) {
+                CorporateTag tag = CorporateTag.builder()
+                        .name(tagName)
+                        .corporatePost(post)
+                        .build();
+                post.addTag(tag);
+            }
+        }
+    }
+
+    // 태그 업데이트 로직
+    private void updateTags(CorporatePost post, List<String> newTagNames) {
+        post.clearTags();
+        // 새로운 태그 저장
+        saveTags(post, newTagNames);
+    }
+
+    // 태그 및 키워드 검색
+    public List<CorporatePostResponseDto.ListDto> searchPosts(CorporatePostRequestDto.SearchDTO searchDTO) {
+        String keyword = searchDTO.hasKeyword() ? searchDTO.getKeyword() : null;
+        List<String> tags = searchDTO.hasTags() ? searchDTO.getCorporateTags() : null;
+
+        List<CorporatePost> posts = corporatePostRepository.searchPosts(keyword, tags);
+        return posts.stream()
+                .map(CorporatePostResponseDto.ListDto::new)
+                .collect(Collectors.toList());
     }
 }

@@ -1,94 +1,63 @@
 package com.cloud.cloud_rest.Comment;
 
+import com.cloud.cloud_rest._global.SessionUser;
 import com.cloud.cloud_rest.board.Board;
 import com.cloud.cloud_rest.board.BoardRepository;
+import com.cloud.cloud_rest.user.User;
+import com.cloud.cloud_rest.user.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.Objects;
 
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Transactional
 public class CommentService {
 
     private final CommentRepository commentRepository;
     private final BoardRepository boardRepository;
+    private final UserRepository userRepository;
 
-    /**
-     * 특정 게시글의 댓글 목록을 페이징하여 조회하는 메서드
-     *
-     * @param boardId  게시글 ID
-     * @param pageable 페이징 정보
-     * @return 댓글 목록 페이지
-     */
-    public Page<CommentResponseDto> getCommentsByBoardId(Long boardId, Pageable pageable) {
-         Page<Comment> commentPage = commentRepository.findByBoardBoardId(boardId, pageable);
-         return commentPage.map(CommentResponseDto::new);
-    }
-
-    /**
-     * 댓글 등록 메서드
-     *
-     * @param boardId 게시글 ID (URL 경로 변수로부터 전달됨)
-     * @param requestDto 댓글 내용, 비밀 댓글 여부를 담은 DTO
-     * @param userId     댓글 작성자의 ID
-     * @return 등록된 댓글 정보를 담은 응답 DTO
-     */
-    @Transactional
-    public CommentResponseDto writeComment(Long boardId, CommentRequestDto requestDto, Long userId) {
+    public void saveComment(Long boardId, CommentRequestDto.SaveDto saveDto, SessionUser sessionUser) {
         Board board = boardRepository.findById(boardId)
-                .orElseThrow(() -> new NoSuchElementException("게시글을 찾을 수 없습니다."));
+                .orElseThrow(() -> new EntityNotFoundException("해당 ID의 게시물을 찾을 수 없습니다: " + boardId));
 
-        Comment newComment = Comment.builder()
+        User user = userRepository.findById(sessionUser.getId())
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다: " + sessionUser.getId()));
+
+        Comment comment = Comment.builder()
                 .board(board)
-                .userId(userId)
-                .content(requestDto.getContent())
-                .isSecret(requestDto.getIsSecret())
+                .user(user)
+                .content(saveDto.getContent())
+                .isSecret(saveDto.isSecret())
                 .build();
 
-        commentRepository.save(newComment);
-        return new CommentResponseDto(newComment);
+        commentRepository.save(comment);
     }
 
-    /**
-     * 댓글 수정 메서드
-     *
-     * @param commentId  수정할 댓글의 ID
-     * @param requestDto 새로운 내용을 담은 DTO
-     * @param userId     댓글 수정 권한 확인을 위한 사용자 ID
-     */
-    @Transactional
-    public void updateComment(Long commentId, CommentRequestDto requestDto, Long userId) {
-        Optional<Comment> optionalComment = commentRepository.findByCommentIdAndUserId(commentId, userId);
-        Comment comment = optionalComment.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 댓글이거나 수정 권한이 없습니다."));
-        comment.update(requestDto);
+    public void updateComment(Long commentId, CommentRequestDto.UpdateDto updateDto, SessionUser sessionUser) {
+        Comment comment = findCommentById(commentId);
+        checkOwnership(comment, sessionUser);
+        comment.update(updateDto);
     }
 
-    /**
-     * 댓글 삭제 메서드
-     *
-     * @param commentId 삭제할 댓글의 ID
-     * @param userId    댓글 삭제 권한 확인을 위한 사용자 ID
-     */
-    @Transactional
-    public void deleteComment(Long commentId, Long userId) {
-        Optional<Comment> optionalComment = commentRepository.findByCommentIdAndUserId(commentId, userId);
-        Comment comment = optionalComment.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 댓글이거나 삭제 권한이 없습니다."));
+    public void deleteComment(Long commentId, SessionUser sessionUser) {
+        Comment comment = findCommentById(commentId);
+        checkOwnership(comment, sessionUser);
         commentRepository.delete(comment);
     }
 
-    /**
-     * 사용자의 모든 댓글을 삭제하는 메서드
-     *
-     * @param userId 모든 댓글을 삭제할 사용자의 ID
-     */
-    @Transactional
-    public void deleteAllUserComments(Long userId) {
-        commentRepository.deleteByUserId(userId);
+    private Comment findCommentById(Long commentId) {
+        return commentRepository.findById(commentId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 ID의 댓글을 찾을 수 없습니다: " + commentId));
+    }
+
+    private void checkOwnership(Comment comment, SessionUser sessionUser) {
+        if (!Objects.equals(comment.getUser().getUserId(), sessionUser.getId())) {
+            throw new SecurityException("해당 댓글에 대한 권한이 없습니다.");
+        }
     }
 }

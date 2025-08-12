@@ -1,62 +1,38 @@
 package com.cloud.cloud_rest.board;
 
-import com.cloud.cloud_rest.user.User;
-import lombok.Data;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class BoardRequestDto {
 
-    // 게시글 작성 요청 DTO
-    @Data
+    @Getter
+    @Setter
     public static class SaveDto {
+        @NotBlank(message = "제목은 비워둘 수 없습니다.")
         private String title;
+        @NotBlank(message = "내용은 비워둘 수 없습니다.")
         private String content;
-        private Long userId;
-        private String base64Image;
-        private List<String> boardTags = new ArrayList<>();
-
-        public Board toEntity(User user, String imagePath) {
-            return Board.builder()
-                    .title(title)
-                    .content(content)
-                    .user(user)
-                    .views(0)
-                    .likeCount(0)
-                    .imagePath(imagePath)
-                    .build();
-        }
+        private List<String> tags;
+        private MultipartFile image;
     }
 
-    // 게시글 수정 요청 DTO
-    @Data
+    @Getter
+    @Setter
     public static class UpdateDto {
         private String title;
         private String content;
-        private Long userId;
-        private String imagePathBase64;
+        private List<String> tags;
+        private MultipartFile image;
     }
 
-    // 태그 검색용 DTO
-    @Data
+    @Getter
+    @Setter
     public static class SearchDTO {
         private String keyword;
-        private List<String> boardTags;
-
-        // --- Helper Methods ---
-        public boolean hasKeyword() {
-            return keyword != null && !keyword.trim().isEmpty();
-        }
-
-        public boolean hasTags() {
-            return boardTags != null && !boardTags.isEmpty();
-        }
-    }
-
-    @Data
-    public static class FilterOptionDTO {
-        private String name;    // 옵션의 이름
-        private boolean checked; // 현재 선택되었는지 여부
+        private List<String> tags;
     }
 }

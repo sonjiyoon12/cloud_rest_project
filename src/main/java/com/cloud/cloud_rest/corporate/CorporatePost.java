@@ -63,7 +63,18 @@ public class CorporatePost extends Timestamped {
     public void updateLikeCount(int count) {
         this.likeCount = count;
     }
-    @OneToMany(mappedBy = "corporatePost", cascade = CascadeType.ALL)
+
+    public void addTag(CorporateTag tag) {
+        this.tags.add(tag);
+        tag.setCorporatePost(this);
+    }
+
+    public void clearTags() {
+        this.tags.clear();
+    }
+
+
+    @OneToMany(mappedBy = "corporatePost", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     private List<CorporateTag> tags = new ArrayList<>();
 }

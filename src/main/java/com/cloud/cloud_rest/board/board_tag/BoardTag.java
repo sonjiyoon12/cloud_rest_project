@@ -2,30 +2,29 @@ package com.cloud.cloud_rest.board.board_tag;
 
 import com.cloud.cloud_rest.board.Board;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@Embeddable
+@Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode
-@Entity
 @Table(name = "board_tag_tb")
 public class BoardTag {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long boardTagId;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
     private Board board;
 
-    @Column(name = "tag_name")
-    private String tagName;
+    private String name;
 
     @Builder
-    public BoardTag(Board board, String tagName) {
+    public BoardTag(Board board, String name) {
         this.board = board;
-        this.tagName = tagName;
+        this.name = name;
     }
 }
