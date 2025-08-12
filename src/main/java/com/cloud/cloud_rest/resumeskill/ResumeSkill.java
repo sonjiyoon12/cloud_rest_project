@@ -3,10 +3,7 @@ package com.cloud.cloud_rest.resumeskill;
 import com.cloud.cloud_rest.resume.Resume;
 import com.cloud.cloud_rest.skill.Skill;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -14,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Table(name = "resume_skill_tb")
 @Entity
+@EqualsAndHashCode(exclude = {"resume", "skill"})
 public class ResumeSkill {
 
     @EmbeddedId
