@@ -1,10 +1,10 @@
 package com.cloud.cloud_rest.corporate;
 
 import com.cloud.cloud_rest._global._core.common.Timestamped;
+import com.cloud.cloud_rest.corp.Corp;
 import com.cloud.cloud_rest.corporate.corporate_tag.CorporateTag;
 import com.cloud.cloud_rest.corporateComment.CorporatePostComment;
 import com.cloud.cloud_rest.corporatePostLike.CorporatePostLike;
-import com.cloud.cloud_rest.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,8 +29,8 @@ public class CorporatePost extends Timestamped {
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User author;
+    @JoinColumn(name = "corp_id", nullable = false)
+    private Corp author;
 
     @Column(columnDefinition = "integer default 0", nullable = false)
     private int viewCount;
@@ -45,7 +45,7 @@ public class CorporatePost extends Timestamped {
     private List<CorporatePostComment> comments = new ArrayList<>();
 
     @Builder
-    public CorporatePost(String title, String content, User author) {
+    public CorporatePost(String title, String content, Corp author) {
         this.title = title;
         this.content = content;
         this.author = author;

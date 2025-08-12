@@ -18,7 +18,7 @@ public class CorporatePostResponseDto {
         public ListDto(CorporatePost post) {
             this.id = post.getId();
             this.title = post.getTitle();
-            this.authorName = post.getAuthor().getUsername();
+            this.authorName = post.getAuthor().getCorpName();
             this.viewCount = post.getViewCount();
             this.likeCount = post.getLikeCount();
             this.createdAt = post.getCreatedAt();
@@ -39,7 +39,7 @@ public class CorporatePostResponseDto {
             this.id = post.getId();
             this.title = post.getTitle();
             this.content = post.getContent();
-            this.authorName = post.getAuthor().getUsername();
+            this.authorName = post.getAuthor().getCorpName();
             this.viewCount = post.getViewCount();
             this.likeCount = post.getLikeCount();
             this.createdAt = post.getCreatedAt();
