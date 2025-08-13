@@ -30,8 +30,6 @@ public class Resume {
     private String content;
     private String image;
 
-    @Builder.Default
-    private Boolean isRep = false;
 
     @CreationTimestamp
     private Timestamp createdAt;
@@ -54,7 +52,6 @@ public class Resume {
     public void update(ResumeRequest.UpdateDTO updateDTO, String image) {
         this.title = updateDTO.getTitle();
         this.content = updateDTO.getContent();
-        this.isRep = updateDTO.isRep();
         this.image = image;
     }
 

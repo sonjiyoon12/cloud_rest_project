@@ -3,11 +3,11 @@ package com.cloud.cloud_rest.board;
 import com.cloud.cloud_rest._global.SessionUser;
 import com.cloud.cloud_rest._global.auth.Auth;
 import com.cloud.cloud_rest._global.response.ApiResponse;
+import com.cloud.cloud_rest.Comment.CommentResponseDto;
+import com.cloud.cloud_rest.Comment.CommentService;
 import com.cloud.cloud_rest.user.Role;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -19,11 +19,12 @@ import java.util.List;
 public class BoardController {
 
     private final BoardService boardService;
+    private final CommentService commentService;
 
     @Auth(roles = {Role.USER, Role.ADMIN})
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<Void> savePost(@ModelAttribute @Valid BoardRequestDto.SaveDto saveDto,
+    public ApiResponse<Void> savePost(@RequestBody BoardRequestDto.SaveDto saveDto,
                                       @RequestAttribute("sessionUser") SessionUser sessionUser) throws IOException {
         boardService.savePost(saveDto, sessionUser);
         return ApiResponse.success();
@@ -39,15 +40,23 @@ public class BoardController {
         return ApiResponse.success(boardService.findById(id));
     }
 
+    @GetMapping("/{id}/comments") // 게시글 ID에 해당하는 댓글 목록 조회 API
+    public ApiResponse<List<CommentResponseDto>> getComments(@PathVariable Long id,
+                                                             @RequestAttribute("sessionUser") SessionUser sessionUser) {
+        // CommentService의 findCommentsByPostId 메서드 호출
+        List<CommentResponseDto> comments = commentService.findCommentsByPostId(id, sessionUser);
+        return ApiResponse.success(comments);
+    }
+
     @GetMapping("/search")
-    public ApiResponse<List<BoardResponseDto.ListDto>> searchPosts(@ModelAttribute BoardRequestDto.SearchDTO searchDTO) {
+    public ApiResponse<List<BoardResponseDto.ListDto>> searchPosts(@RequestBody BoardRequestDto.SearchDTO searchDTO) {
         return ApiResponse.success(boardService.search(searchDTO));
     }
 
     @Auth(roles = {Role.USER, Role.ADMIN})
-    @PostMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping("/{id}")
     public ApiResponse<Void> updatePost(@PathVariable Long id,
-                                        @ModelAttribute @Valid BoardRequestDto.UpdateDto updateDto,
+                                        @RequestBody BoardRequestDto.UpdateDto updateDto,
                                         @RequestAttribute("sessionUser") SessionUser sessionUser) throws IOException {
         boardService.updatePost(id, updateDto, sessionUser);
         return ApiResponse.success();

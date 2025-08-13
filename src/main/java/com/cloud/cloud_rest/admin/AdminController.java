@@ -10,6 +10,7 @@ import com.cloud.cloud_rest.corp_approval.CorpApprovalResponse;
 import com.cloud.cloud_rest.corp_approval.CorpApprovalService;
 import com.cloud.cloud_rest.loginhistory.LoginHistoryResponse;
 import com.cloud.cloud_rest.loginhistory.TodayResponse;
+import com.cloud.cloud_rest.report.ReportRequestDto;
 import com.cloud.cloud_rest.user.Role;
 import com.cloud.cloud_rest.user.User;
 import jakarta.validation.Valid;
@@ -45,7 +46,7 @@ public class AdminController {
     public ResponseEntity<?> adminSave(@Valid @RequestBody AdminRequest.SaveDTO saveDTO, @RequestAttribute("sessionUser") SessionUser sessionUser) {
 
         if (!saveDTO.getPassword().equals(saveDTO.getRePassword())) {
-            throw new Exception401("비빌번호가 서로 다릅니다");
+            throw new Exception401("비밀번호가 서로 다릅니다");
         }
 
         AdminResponse.SaveDTO save = adminService.save(saveDTO, sessionUser);
@@ -122,6 +123,44 @@ public class AdminController {
             @RequestBody CorpApprovalRequest.ApprovalDTO corpApprovalRequest) {
         CorpApprovalResponse.ApprovalDTO approvalDTO = corpApprovalService.userApproval(id,sessionUser, corpApprovalRequest);
         return ResponseEntity.ok(new ApiUtil<>(approvalDTO));
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // 신고 관리 기능 추가
+    // -----------------------------------------------------------------------------------------------------------------
+
+    // 모든 신고 목록을 조회하는 엔드포인트
+    @Auth(roles = Role.ADMIN)
+    @GetMapping("/reports")
+    public ResponseEntity<?> getAllReports(@RequestAttribute("sessionUser") SessionUser sessionUser) {
+        List<AdminResponse.ReportListDTO> reports = adminService.getReports(sessionUser);
+        return ResponseEntity.ok(new ApiUtil<>(reports));
+    }
+
+    // 미처리된 신고 목록을 조회하는 엔드포인트
+    @Auth(roles = Role.ADMIN)
+    @GetMapping("/reports/pending")
+    public ResponseEntity<?> getPendingReports(@RequestAttribute("sessionUser") SessionUser sessionUser) {
+        List<AdminResponse.ReportListDTO> reports = adminService.getPendingReports(sessionUser);
+        return ResponseEntity.ok(new ApiUtil<>(reports));
+    }
+
+    // 특정 신고의 상세 정보를 조회하는 엔드포인트
+    @Auth(roles = Role.ADMIN)
+    @GetMapping("/reports/{id}")
+    public ResponseEntity<?> getReportDetail(@PathVariable Long id, @RequestAttribute("sessionUser") SessionUser sessionUser) {
+        AdminResponse.ReportListDTO report = adminService.getReportById(id, sessionUser);
+        return ResponseEntity.ok(new ApiUtil<>(report));
+    }
+
+    // 신고 상태를 업데이트하는 엔드포인트
+    @Auth(roles = Role.ADMIN)
+    @PostMapping("/reports/{id}/status")
+    public ResponseEntity<?> updateReportStatus(@PathVariable Long id,
+                                                @RequestBody ReportRequestDto.Update update,
+                                                @RequestAttribute("sessionUser") SessionUser sessionUser) {
+        AdminResponse.ReportListDTO updatedReport = adminService.updateReportStatus(id, update, sessionUser);
+        return ResponseEntity.ok(new ApiUtil<>(updatedReport));
     }
 
 }
