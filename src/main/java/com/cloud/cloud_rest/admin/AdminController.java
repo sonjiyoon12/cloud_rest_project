@@ -5,6 +5,9 @@ import com.cloud.cloud_rest._global._core.common.ApiUtil;
 import com.cloud.cloud_rest._global.auth.Auth;
 import com.cloud.cloud_rest._global.exception.Exception401;
 import com.cloud.cloud_rest.corp.CorpResponse;
+import com.cloud.cloud_rest.corp_approval.CorpApprovalRequest;
+import com.cloud.cloud_rest.corp_approval.CorpApprovalResponse;
+import com.cloud.cloud_rest.corp_approval.CorpApprovalService;
 import com.cloud.cloud_rest.loginhistory.LoginHistoryResponse;
 import com.cloud.cloud_rest.loginhistory.TodayResponse;
 import com.cloud.cloud_rest.user.Role;
@@ -23,6 +26,7 @@ import java.util.List;
 public class AdminController {
 
     private final AdminService adminService;
+    private final CorpApprovalService corpApprovalService;
 
     @PostMapping("/login")
     public ResponseEntity<?> adminLogin(@Valid @RequestBody AdminRequest.LoginDTO loginDTO) {
@@ -98,14 +102,6 @@ public class AdminController {
         return ResponseEntity.ok(new ApiUtil<>(corpDTO));
     }
 
-    // 기업 승인하기
-    @Auth(roles = Role.ADMIN)
-    @PostMapping("/corp/approved/{id}")
-    public ResponseEntity<?> corpApproved(@PathVariable Long id,
-                                          @RequestAttribute("sessionUser") SessionUser sessionUser) {
-        CorpResponse.CorpDTO corpDTO = adminService.corpApproved(id, sessionUser);
-        return ResponseEntity.ok(new ApiUtil<>(corpDTO));
-    }
 
     // 유저 Admin 승인하기
     @Auth(roles = Role.ADMIN)
@@ -116,5 +112,16 @@ public class AdminController {
         return ResponseEntity.ok(new ApiUtil<>(saveDTO));
     }
 
+
+    // 기업 승인하기
+    @Auth(roles = Role.ADMIN)
+    @PostMapping("/corp/approved/{id}")
+    public ResponseEntity<?> userApproval(
+            @PathVariable Long id,
+            @RequestAttribute("sessionUser") SessionUser sessionUser,
+            @RequestBody CorpApprovalRequest.ApprovalDTO corpApprovalRequest) {
+        CorpApprovalResponse.ApprovalDTO approvalDTO = corpApprovalService.userApproval(id,sessionUser, corpApprovalRequest);
+        return ResponseEntity.ok(new ApiUtil<>(approvalDTO));
+    }
 
 }
