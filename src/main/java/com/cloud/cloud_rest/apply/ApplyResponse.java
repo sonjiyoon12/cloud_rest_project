@@ -45,14 +45,12 @@ public class ApplyResponse {
     public static class ResumeDTO {
         private String title;
         private String content;
-        private Boolean isRep;
         private String createdAt;
 
         @Builder
         public ResumeDTO(Resume resume) {
             this.title = resume.getTitle();
             this.content = resume.getContent();
-            this.isRep = resume.getIsRep();
             this.createdAt = resume.getCreatedAt().toString();
         }
     }
