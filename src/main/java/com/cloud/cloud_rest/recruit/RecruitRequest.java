@@ -16,15 +16,17 @@ public class RecruitRequest {
 
         private String title;
         private String content;
+        private String image;
         private String message;
         private LocalDate deadline;
         private List<Long> skillIds;
 
-        public Recruit toEntity(Corp corp) {
+        public Recruit toEntity(Corp corp, String savedFileName) {
             return Recruit.builder()
                     .corp(corp)
                     .title(title)
                     .content(content)
+                    .image(savedFileName)
                     .deadline(deadline)
                     .build();
         }
@@ -35,6 +37,7 @@ public class RecruitRequest {
     public static class RecruitUpdateDTO {
         private String title;
         private String content;
+        private String image;
         private LocalDate deadline;
         private List<Long> skillIds;
     }

@@ -20,6 +20,7 @@ public class RecruitResponse {
         private Long recruitId;
         private String title;
         private String content;
+        private String image;
         private LocalDate deadline;
         private LocalDateTime createdAt;
         private Long corpId;
@@ -31,6 +32,7 @@ public class RecruitResponse {
                     recruit.getRecruitId(),
                     recruit.getTitle(),
                     recruit.getContent(),
+                    recruit.getImage(),
                     recruit.getDeadline(),
                     recruit.getCreatedAt(),
                     recruit.getCorp().getCorpId(),
@@ -47,6 +49,7 @@ public class RecruitResponse {
         private Long recruitId;
         private String title;
         private String content;
+        private String image;
         private LocalDate deadline;
         private LocalDateTime createdAt;
         private Long corpId;
@@ -59,6 +62,7 @@ public class RecruitResponse {
             dto.setRecruitId(recruit.getRecruitId());
             dto.setTitle(recruit.getTitle());
             dto.setContent(recruit.getContent());
+            dto.setImage(recruit.getImage());
             dto.setDeadline(recruit.getDeadline());
             dto.setCreatedAt(recruit.getCreatedAt());
             dto.setCorpId(recruit.getCorp().getCorpId());

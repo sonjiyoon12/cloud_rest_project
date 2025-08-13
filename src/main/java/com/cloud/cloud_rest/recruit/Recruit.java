@@ -34,6 +34,7 @@ public class Recruit {
 
     @Lob
     private String content;
+    private String image;
 
     private LocalDate deadline;
 
@@ -57,9 +58,10 @@ public class Recruit {
     private RecruitPaid recruitPaid;
 
     @Builder
-    public Recruit(String title, String content, LocalDate deadline, Corp corp) {
+    public Recruit(String title, String content, String image, LocalDate deadline, Corp corp) {
         this.title = title;
         this.content = content;
+        this.image = image;
         this.deadline = deadline;
         this.corp = corp;
     }
@@ -70,9 +72,10 @@ public class Recruit {
     }
 
     //업데이트 메서드
-    public void update(RecruitRequest.RecruitUpdateDTO dto, List<Skill> newSkills) {
+    public void update(RecruitRequest.RecruitUpdateDTO dto, String image, List<Skill> newSkills) {
         this.title = dto.getTitle();
         this.content = dto.getContent();
+        this.image = image;
         this.deadline = dto.getDeadline();
         updateSkills(newSkills);
     }

@@ -18,6 +18,7 @@ upload:
   user-dir: user-images/
   board-dir: board-images/
   resume-dir: resume-images/
+  recruit-dir: recruit-images/
 
 # 로그 레벨의 개념
 # ERROR > WARN > INFO > DEBUG > TRACE

@@ -3,6 +3,9 @@ package com.cloud.cloud_rest.recruit;
 import com.cloud.cloud_rest._global.SessionUser;
 import com.cloud.cloud_rest._global.exception.Exception403;
 import com.cloud.cloud_rest._global.exception.Exception404;
+import com.cloud.cloud_rest._global.utils.Base64FileConverterUtil;
+import com.cloud.cloud_rest._global.utils.FileUploadUtil;
+import com.cloud.cloud_rest._global.utils.UploadProperties;
 import com.cloud.cloud_rest.corp.Corp;
 import com.cloud.cloud_rest.corp.CorpRepository;
 import com.cloud.cloud_rest.noti.NotiService;
@@ -15,7 +18,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,6 +35,8 @@ public class RecruitService {
     private final CorpRepository corpRepository;
     private final SkillRepository skillRepository;
     private final NotiService notiService;
+    private final FileUploadUtil fileUploadUtil; // 이미지 저장 및 삭제 기능
+    private final UploadProperties uploadPath; // 이미지 저장 경로 설정
 
 
     //공고 저장
@@ -44,7 +51,18 @@ public class RecruitService {
         Corp corp = corpRepository.findById(corpId)
                 .orElseThrow(() -> new Exception404("해당 기업을 찾을 수 없습니다."));
 
-        Recruit recruit = dto.toEntity(corp);
+        String savedFileName = null;
+        if (dto.getImage() != null && !dto.getImage().isBlank()) {
+            try {
+                MultipartFile targetFile = Base64FileConverterUtil.convert(dto.getImage());
+                savedFileName = fileUploadUtil.uploadProfileImage(targetFile, uploadPath.getRecruitDir());
+            } catch (IOException e) {
+                throw new RuntimeException("이미지 업로드에 실패했습니다.", e);
+            }
+        }
+
+        //dto.toEntity()에 savedFileName을 전달하여 위임합니다.
+        Recruit recruit = dto.toEntity(corp, savedFileName);
 
         // DTO로부터 Skill 엔티티 목록을 조회
         List<Skill> skills = skillRepository.findAllById(dto.getSkillIds());
@@ -76,6 +94,31 @@ public class RecruitService {
             throw new Exception403(RecruitErr.RECRUIT_FORBIDDEN.getMessage());
         }
 
+        String oldImagePath = recruit.getImage();
+        String savedFileName = oldImagePath;
+
+        try {
+            MultipartFile targetFile = null;
+
+            // 1. DTO에 새 이미지(Base64)가 있는지 확인
+            if (dto.getImage() != null && !dto.getImage().isBlank()) {
+                targetFile = Base64FileConverterUtil.convert(dto.getImage());
+            }
+
+            // 2. 변환된 파일이 있으면 서버에 업로드
+            if (targetFile != null) {
+                savedFileName = fileUploadUtil.uploadProfileImage(targetFile, uploadPath.getRecruitDir());
+            }
+
+            // 3. 새 이미지 저장이 성공했고, 옛 이미지가 있었다면 삭제
+            if (savedFileName != null && !savedFileName.equals(oldImagePath) && oldImagePath != null) {
+                fileUploadUtil.deleteProfileImage(oldImagePath);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("이미지 처리 중 오류가 발생했습니다", e);
+        }
+
+
         // DTO에서 Skill 목록 조회
         List<Skill> newSkills;
         if (dto.getSkillIds() != null && !dto.getSkillIds().isEmpty()) {
@@ -88,7 +131,7 @@ public class RecruitService {
         }
 
         // 엔티티에 업데이트 위임
-        recruit.update(dto, newSkills);
+        recruit.update(dto, savedFileName, newSkills);
 
         return RecruitResponse.RecruitListDTO.of(recruit);
     }
@@ -103,6 +146,10 @@ public class RecruitService {
 
         if (!recruit.getCorp().getCorpId().equals(sessionUser.getId()) || !recruit.getCorp().getCorpId().equals(corpId)) {
             throw new Exception403(RecruitErr.RECRUIT_FORBIDDEN.getMessage());
+        }
+
+        if (recruit.getImage() != null && !recruit.getImage().isBlank()) {
+            fileUploadUtil.deleteProfileImage(recruit.getImage());
         }
 
         recruitRepository.delete(recruit);
