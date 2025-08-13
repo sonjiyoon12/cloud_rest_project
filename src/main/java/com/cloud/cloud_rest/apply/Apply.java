@@ -4,8 +4,10 @@ import com.cloud.cloud_rest._global.utils.DateUtil;
 import com.cloud.cloud_rest.recruit.Recruit;
 import com.cloud.cloud_rest.resume.Resume;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.builder.ToStringExclude;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -14,7 +16,11 @@ import java.sql.Timestamp;
 @Builder
 @Entity
 @Data
-@Table(name = "apply_tb")
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "apply_tb", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"resume_id", "recruit_id"})
+})
 public class Apply {
 
     @Id
