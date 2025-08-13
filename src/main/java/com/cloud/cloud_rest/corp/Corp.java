@@ -73,6 +73,12 @@ public class Corp {
         }
     }
 
+    public void validateRejected() {
+        if (corpStatus != CorpStatus.REJECTED) {
+            throw new Exception403("승인이 거부된 기업입니다");
+        }
+    }
+
     public String getTime(){
         return DateUtil.timestampFormat(createdAt);
     }

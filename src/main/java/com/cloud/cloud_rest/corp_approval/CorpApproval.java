@@ -41,8 +41,8 @@ public class CorpApproval {
     @CreationTimestamp
     private Timestamp createdAt;
 
-    public void getTime(){
-        DateUtil.timestampFormat(createdAt);
+    public String getTime(){
+        return DateUtil.timestampFormat(createdAt);
     }
 
 }

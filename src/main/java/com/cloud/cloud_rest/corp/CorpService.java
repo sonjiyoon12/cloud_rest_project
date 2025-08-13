@@ -1,10 +1,12 @@
 package com.cloud.cloud_rest.corp;
 
 import com.cloud.cloud_rest._global.SessionUser;
+import com.cloud.cloud_rest._global.exception.ApprovalRejectedException;
 import com.cloud.cloud_rest._global.exception.Exception400;
 import com.cloud.cloud_rest._global.exception.Exception403;
 import com.cloud.cloud_rest._global.exception.Exception404;
 import com.cloud.cloud_rest._global.utils.*;
+import com.cloud.cloud_rest.corp_approval.CorpApprovalService;
 import com.cloud.cloud_rest.skill.Skill;
 import com.cloud.cloud_rest.skill.SkillRepository;
 import com.cloud.cloud_rest.user.Role;
@@ -23,6 +25,7 @@ import java.io.IOException;
 public class CorpService {
     private final CorpRepository corpRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final CorpApprovalService corpApprovalService;
     private final FileUploadUtil fileUploadUtil; // 이미지 저장 및 삭제 기능
     private final UploadProperties uploadPath; // 이미지 저장 경로 설정
     private final SkillRepository skillRepository;
@@ -62,7 +65,15 @@ public class CorpService {
             throw  new Exception403("기업 유저가 아닙니다");
         }
 
-        corp.validateApproval(); // 승인된 기업만 정보 수정 가능
+
+        if (corp.getCorpStatus() == CorpStatus.REJECTED) {
+            String reason = corpApprovalService.getLatestRejectionReason(corp.getCorpId());
+            throw new ApprovalRejectedException(reason);
+        }
+
+        if (corp.getCorpStatus() != CorpStatus.APPROVED) {
+            throw new Exception403("승인 대기 중인 기업입니다");
+        }
 
         return JwtUtil.createToken(corp);
     }
