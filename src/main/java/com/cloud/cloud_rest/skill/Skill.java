@@ -1,7 +1,7 @@
 package com.cloud.cloud_rest.skill;
 
 import com.cloud.cloud_rest.corpskill.CorpSkill;
-import com.cloud.cloud_rest.recruitskill.RecruitSkill;
+import com.cloud.cloud_rest.recruit_skill.RecruitSkill;
 import com.cloud.cloud_rest.userskill.UserSkill;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

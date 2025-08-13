@@ -1,4 +1,4 @@
-package com.cloud.cloud_rest.bulletin;
+package com.cloud.cloud_rest.admin_bulletin;
 
 import com.cloud.cloud_rest.user.User;
 import jakarta.validation.constraints.NotEmpty;

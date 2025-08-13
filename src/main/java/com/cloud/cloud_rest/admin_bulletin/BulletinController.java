@@ -1,4 +1,4 @@
-package com.cloud.cloud_rest.bulletin;
+package com.cloud.cloud_rest.admin_bulletin;
 
 import com.cloud.cloud_rest._global.SessionUser;
 import com.cloud.cloud_rest._global.auth.Auth;
@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid; // Valid import 추가
 
 import java.io.IOException;
 
@@ -40,7 +41,7 @@ public class BulletinController {
     @Auth(roles = {Role.ADMIN})
     @PostMapping
     public ResponseEntity<BulletinResponse.DetailDTO> save(
-            @RequestBody BulletinRequest.SaveDTO requestDTO,
+            @RequestBody @Valid BulletinRequest.SaveDTO requestDTO, // @Valid 추가
             @RequestAttribute SessionUser sessionUser) throws IOException {
         BulletinResponse.DetailDTO response = bulletinService.save(requestDTO, sessionUser);
         return ResponseEntity.ok(response);
@@ -51,7 +52,7 @@ public class BulletinController {
     @PutMapping("/{id}")
     public ResponseEntity<BulletinResponse.DetailDTO> update(
             @PathVariable Long id,
-            @RequestBody BulletinRequest.UpdateDTO requestDTO,
+            @RequestBody @Valid BulletinRequest.UpdateDTO requestDTO, // @Valid 추가
             @RequestAttribute SessionUser sessionUser) {
         BulletinResponse.DetailDTO response = bulletinService.update(id, requestDTO, sessionUser);
         return ResponseEntity.ok(response);

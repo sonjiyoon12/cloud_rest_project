@@ -1,4 +1,4 @@
-package com.cloud.cloud_rest.bulletin;
+package com.cloud.cloud_rest.admin_bulletin;
 
 import com.cloud.cloud_rest._global.SessionUser;
 import com.cloud.cloud_rest._global.exception.Exception403;

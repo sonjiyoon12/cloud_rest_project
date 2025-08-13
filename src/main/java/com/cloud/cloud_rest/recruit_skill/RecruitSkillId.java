@@ -1,4 +1,4 @@
-package com.cloud.cloud_rest.recruitskill;
+package com.cloud.cloud_rest.recruit_skill;
 
 import jakarta.persistence.Embeddable;
 

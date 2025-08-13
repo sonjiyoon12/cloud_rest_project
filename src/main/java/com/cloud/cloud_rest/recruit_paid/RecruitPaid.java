@@ -1,4 +1,4 @@
-package com.cloud.cloud_rest.recruitpaid;
+package com.cloud.cloud_rest.recruit_paid;
 
 import com.cloud.cloud_rest.recruit.Recruit;
 import jakarta.persistence.*;
