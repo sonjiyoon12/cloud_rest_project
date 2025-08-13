@@ -21,7 +21,6 @@ public class ResumeRequest {
         @NotBlank(message = "내용을 입력해주세요")
         @Size(max = 2000, message = "내용은 2000자 이내로 작성해주세요")
         private String content;
-        private boolean isRep = false;
         private String image;
         private List<Long> skillIds = new ArrayList<>();
         private List<CareerRequest.SaveDTO> careers = new ArrayList<>();
@@ -30,7 +29,6 @@ public class ResumeRequest {
             return Resume.builder()
                     .title(this.title)
                     .content(this.content)
-                    .isRep(this.isRep)
                     .image(image)
                     .user(user)
                     .build();
@@ -47,7 +45,6 @@ public class ResumeRequest {
         @NotBlank(message = "내용을 입력해주세요")
         @Size(max = 2000, message = "내용은 2000자 이내로 작성해주세요")
         private String content;
-        private boolean isRep = false;
         private String image;
         private List<Long> skillIds = new ArrayList<>();
         private List<CareerRequest.UpdateDTO> careers = new ArrayList<>();
