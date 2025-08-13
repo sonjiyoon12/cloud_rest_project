@@ -62,5 +62,12 @@ public class WebExceptionHendler {
         return new ResponseEntity<>(new ApiUtil<>(401, e.getMessage()), HttpStatus.UNAUTHORIZED);
     }
 
-
+    @ExceptionHandler(ApprovalRejectedException.class)
+    public ResponseEntity<ApiUtil<?>> handleApprovalRejected(ApprovalRejectedException e) {
+        log.warn("승인 거부된 기업 로그인 시도: {}", e.getReason());
+        return new ResponseEntity<>(
+                new ApiUtil<>(403, e.getMessage() + " 사유: " + e.getReason()),
+                HttpStatus.FORBIDDEN
+        );
+    }
 }
