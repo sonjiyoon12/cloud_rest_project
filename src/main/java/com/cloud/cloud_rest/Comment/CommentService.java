@@ -10,7 +10,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +40,14 @@ public class CommentService {
         commentRepository.save(comment);
     }
 
+    // 게시글 ID로 댓글 목록을 조회하는 메서드 추가
+    @Transactional(readOnly = true)
+    public List<CommentResponseDto> findCommentsByPostId(Long boardId, SessionUser sessionUser) {
+        return commentRepository.findAllByBoardId(boardId).stream()
+                .map(comment -> new CommentResponseDto(comment))
+                .collect(Collectors.toList());
+    }
+
     public void updateComment(Long commentId, CommentRequestDto.UpdateDto updateDto, SessionUser sessionUser) {
         Comment comment = findCommentById(commentId);
         checkOwnership(comment, sessionUser);
@@ -49,6 +59,7 @@ public class CommentService {
         checkOwnership(comment, sessionUser);
         commentRepository.delete(comment);
     }
+
 
     private Comment findCommentById(Long commentId) {
         return commentRepository.findById(commentId)

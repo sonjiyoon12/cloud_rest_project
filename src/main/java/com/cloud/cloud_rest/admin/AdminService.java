@@ -12,6 +12,10 @@ import com.cloud.cloud_rest.loginhistory.LoginHistory;
 import com.cloud.cloud_rest.loginhistory.LoginHistoryRepository;
 import com.cloud.cloud_rest.loginhistory.LoginHistoryResponse;
 import com.cloud.cloud_rest.loginhistory.TodayResponse;
+import com.cloud.cloud_rest.report.Report;
+import com.cloud.cloud_rest.report.ReportRepository;
+import com.cloud.cloud_rest.report.ReportRequestDto;
+import com.cloud.cloud_rest.report.ReportStatus;
 import com.cloud.cloud_rest.user.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -35,6 +39,7 @@ public class AdminService {
     private final CorpService corpService;
     private final BCryptPasswordEncoder passwordEncoder;
     private final LoginHistoryRepository loginHistoryRepository;
+    private final ReportRepository reportRepository;
 
 
     @Transactional
@@ -188,5 +193,44 @@ public class AdminService {
 
     public User getLoginId(String loginId){
         return userRepository.findByUserId(loginId).orElseThrow(() -> new Exception404("해당 유저가 존재하지 않습니다"));
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // 신고 관리 기능 추가
+    // -----------------------------------------------------------------------------------------------------------------
+
+    // 모든 신고 목록을 조회하는 메서드
+    public List<AdminResponse.ReportListDTO> getReports(SessionUser sessionUser) {
+        AuthorizationUtil.validateAdminAccess(sessionUser);
+        List<Report> reports = reportRepository.findAll();
+        return AdminResponse.ReportListDTO.fromEntityList(reports);
+    }
+
+    // 미처리된 신고 목록을 조회하는 메서드
+    public List<AdminResponse.ReportListDTO> getPendingReports(SessionUser sessionUser) {
+        AuthorizationUtil.validateAdminAccess(sessionUser);
+        List<Report> reports = reportRepository.findByStatus(ReportStatus.PENDING);
+        return AdminResponse.ReportListDTO.fromEntityList(reports);
+    }
+
+    // 특정 신고의 상세 정보를 조회하는 메서드
+    public AdminResponse.ReportListDTO getReportById(Long reportId, SessionUser sessionUser) {
+        AuthorizationUtil.validateAdminAccess(sessionUser);
+        Report report = reportRepository.findById(reportId)
+                .orElseThrow(() -> new Exception404("해당 신고를 찾을 수 없습니다."));
+        return new AdminResponse.ReportListDTO(report);
+    }
+
+    // 신고 상태를 업데이트하는 메서드
+    @Transactional
+    public AdminResponse.ReportListDTO updateReportStatus(Long reportId, ReportRequestDto.Update update, SessionUser sessionUser) {
+        AuthorizationUtil.validateAdminAccess(sessionUser);
+        Report report = reportRepository.findById(reportId)
+                .orElseThrow(() -> new Exception404("해당 신고를 찾을 수 없습니다."));
+
+        report.setStatus(update.getStatus());
+        report.setReason(update.getReason());
+
+        return new AdminResponse.ReportListDTO(reportRepository.save(report));
     }
 }
