@@ -62,6 +62,8 @@ public class CorpService {
             throw  new Exception403("기업 유저가 아닙니다");
         }
 
+        corp.validateApproval(); // 승인된 기업만 정보 수정 가능
+
         return JwtUtil.createToken(corp);
     }
 

@@ -69,7 +69,7 @@ public class Corp {
 
     public void validateApproval() {
         if (corpStatus != CorpStatus.APPROVED) {
-            throw new Exception403("아직 인증이 되지 않은 기업입니다");
+            throw new Exception403("아직 승인 되지 않은 기업입니다");
         }
     }
 
