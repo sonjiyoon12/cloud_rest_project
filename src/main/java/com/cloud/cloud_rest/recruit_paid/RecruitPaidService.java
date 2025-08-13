@@ -51,7 +51,7 @@ public class RecruitPaidService {
     public RecruitPaidResponse.PaidDetailDTO paidDetail(Long recruitId) {
         return recruitPaidRepository.findById(recruitId)
                 .map(RecruitPaidResponse.PaidDetailDTO::new) // 찾으면, 유료 상태 DTO 생성
-                .orElse(new RecruitPaidResponse.PaidDetailDTO(recruitId)); // 못 찾으면, 무료 상태 DTO 생성
+                .orElseThrow(() -> new Exception404(RecruitPaidErr.NOT_FOUND.getMessage())); // 못 찾으면, 404 에러 발생
     }
 
     // 관리자용 유료공고 목록 조회

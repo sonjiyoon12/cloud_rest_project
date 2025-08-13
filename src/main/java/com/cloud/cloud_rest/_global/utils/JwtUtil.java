@@ -22,8 +22,8 @@ public class JwtUtil {
 
     // JWT 서명에 사용할 비밀키 선언(실세 운영에서는 환경변수로 관리)
     private static final String SECRET_KEY = "cloud_rest";
-    // 토큰 만료 시간(1시간 = 1000 * 60 * 60)
-    private static final long EXPIRATION_TIME = 1000 * 60 * 60;
+    // 토큰 만료 시간(6시간 = 1000 * 60 * 60 * 6)
+    private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 6;
     // 토큰 주세 (이 애플리케이션을 식별하는 값)
     private static final String SUBJECT = "Cloud_rest_blog";
 
