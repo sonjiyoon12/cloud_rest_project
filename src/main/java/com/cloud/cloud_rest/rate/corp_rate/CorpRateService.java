@@ -23,8 +23,8 @@ public class CorpRateService {
     private final UserRepository userRepository;
 
     @Transactional
-    public CorpRateResponse.SaveDTO save(CorpRateRequest.SaveDTO saveDTO, SessionUser sessionUser, Long userId) {
-        User user = userRepository.findById(userId)
+    public CorpRateResponse.SaveDTO save(CorpRateRequest.SaveDTO saveDTO, SessionUser sessionUser) {
+        User user = userRepository.findById(saveDTO.getUserId())
                 .orElseThrow(() -> new Exception403("존재하지 않는 유저입니다."));
 
         Corp corp = corpRepository.findById(sessionUser.getId())

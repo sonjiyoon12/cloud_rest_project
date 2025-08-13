@@ -23,11 +23,11 @@ public class UserRateService {
     private final UserRepository userRepository;
 
     @Transactional
-    public UserRateResponse.SaveDTO save(UserRateRequest.SaveDTO saveDTO, SessionUser sessionUser, Long corpId) {
+    public UserRateResponse.SaveDTO save(UserRateRequest.SaveDTO saveDTO, SessionUser sessionUser) {
         User user = userRepository.findById(sessionUser.getId())
                 .orElseThrow(() -> new Exception403("평점을 남길 수 있는 권한이 없습니다."));
 
-        Corp corp = corpRepository.findById(corpId)
+        Corp corp = corpRepository.findById(saveDTO.getCorpId())
                 .orElseThrow(() -> new Exception404("존재하지 않는 회사입니다."));
 
         UserRate userRate = userRateJpaRepository.findByUserUserIdAndCorpCorpId(user.getUserId(), corp.getCorpId());

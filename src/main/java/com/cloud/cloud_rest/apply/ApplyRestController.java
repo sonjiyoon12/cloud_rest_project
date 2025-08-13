@@ -1,5 +1,6 @@
 package com.cloud.cloud_rest.apply;
 
+import com.cloud.cloud_rest._global.SessionUser;
 import com.cloud.cloud_rest._global._core.common.ApiUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,10 +24,9 @@ public class ApplyRestController {
     // 공고 지원
     @Operation(summary = "공고 지원")
     @PostMapping
-    public ResponseEntity<?> save(@RequestParam(name = "resumeId") Long resumeId,
-                                  @RequestParam(name = "recruitId") Long recruitId) {
+    public ResponseEntity<?> save(@RequestBody ApplyRequest.SaveDTO saveDTO) {
 
-        ApplyResponse.SaveDTO savedApply = applyService.save(resumeId, recruitId);
+        ApplyResponse.SaveDTO savedApply = applyService.save(saveDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiUtil<>(savedApply));
     }
 
@@ -41,8 +41,9 @@ public class ApplyRestController {
     // 특정 공고 지원 내역 조회
     @Operation(summary = "특정 공고 지원 내역 조회")
     @GetMapping("/{id}")
-    public ResponseEntity<?> findById(@PathVariable(name = "id") Long applyId) {
-        ApplyResponse.DetailDTO apply = applyService.findById(applyId);
+    public ResponseEntity<?> findById(@PathVariable(name = "id") Long applyId,
+                                      @RequestAttribute("sessionUser")SessionUser sessionUser) {
+        ApplyResponse.DetailDTO apply = applyService.findById(applyId, sessionUser);
         return ResponseEntity.ok().body(new ApiUtil<>(apply));
     }
 
