@@ -24,7 +24,7 @@ public class CorpApprovalResponse {
             this.user = corpApproval.getUser();
             this.text = corpApproval.getText();
             this.corpStatus = corpApproval.getCorpStatus();
-            this.createdAt = getCreatedAt();
+            this.createdAt = corpApproval.getTime();
         }
     }
 }
