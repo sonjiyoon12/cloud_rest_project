@@ -38,7 +38,6 @@ public class ResumeResponse {
         private String writerName;
         private String createdAt;
         private boolean isResumeOwner;
-        private boolean isRep;
         private String image;
         private List<String> skills;
         private List<CareerResponse.InfoDTO> careers;
@@ -50,7 +49,6 @@ public class ResumeResponse {
             this.writerName = resume.getUser().getUsername();
             this.createdAt = resume.getTime();
             this.isResumeOwner = sessionUser != null && resume.isOwner(sessionUser.getId());
-            this.isRep = resume.getIsRep();
             this.image = resume.getImage();
             this.skills = resume.getResumeSkills().stream()
                     .map(resumeSkill -> resumeSkill.getSkill().getName())
@@ -69,7 +67,6 @@ public class ResumeResponse {
         private String content;
         private String writerName;
         private String createdAt;
-        private boolean isRep;
         private String image;
         private List<String> skills;
         private List<CareerResponse.InfoDTO> careers;
@@ -81,7 +78,6 @@ public class ResumeResponse {
             this.content = resume.getContent();
             this.writerName = resume.getUser().getUsername();
             this.createdAt = resume.getTime();
-            this.isRep = resume.getIsRep();
             this.image = resume.getImage();
             this.skills = resume.getResumeSkills().stream()
                     .map(resumeSkill -> resumeSkill.getSkill().getName())
@@ -100,7 +96,6 @@ public class ResumeResponse {
         private String content;
         private String writerName;
         private String createdAt;
-        private boolean isRep;
         private String image;
         private List<String> skills;
         private List<CareerResponse.InfoDTO> careers;
@@ -112,7 +107,6 @@ public class ResumeResponse {
             this.content = resume.getContent();
             this.writerName = resume.getUser().getUsername();
             this.createdAt = resume.getTime();
-            this.isRep = resume.getIsRep();
             this.image = resume.getImage();
             this.skills = resume.getResumeSkills().stream()
                     .map(resumeSkill -> resumeSkill.getSkill().getName())

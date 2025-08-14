@@ -306,3 +306,7 @@ build/
 
 # QueryDSL generated sources
 /src/main/generated/
+
+# Project-specific ignores
+# Ignore uploaded files
+uploads/

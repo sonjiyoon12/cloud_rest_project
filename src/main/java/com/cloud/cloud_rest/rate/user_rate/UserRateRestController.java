@@ -26,14 +26,13 @@ public class UserRateRestController {
     @PostMapping
     public ResponseEntity<?> save(@RequestBody @Valid UserRateRequest.SaveDTO saveDTO,
                                   BindingResult result,
-                                  @RequestAttribute("sessionUser")SessionUser sessionUser,
-                                  @RequestParam("corpId") Long corpId) {
+                                  @RequestAttribute("sessionUser")SessionUser sessionUser) {
 
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().build();
         }
 
-        UserRateResponse.SaveDTO savedRate = userRateService.save(saveDTO, sessionUser, corpId);
+        UserRateResponse.SaveDTO savedRate = userRateService.save(saveDTO, sessionUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiUtil<>(savedRate));
     }
 

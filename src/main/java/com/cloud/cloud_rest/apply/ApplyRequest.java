@@ -11,6 +11,9 @@ public class ApplyRequest {
     @Schema(name = "applySaveRequest")
     public static class SaveDTO {
 
+        private Long resumeId;
+        private Long recruitId;
+
         public Apply toEntity(Resume resume, Recruit recruit) {
             return Apply.builder()
                     .resume(resume)

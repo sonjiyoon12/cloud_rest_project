@@ -1,9 +1,17 @@
 package com.cloud.cloud_rest.admin;
 
+import com.cloud.cloud_rest.board.Board;
+import com.cloud.cloud_rest.report.Report;
+import com.cloud.cloud_rest.report.ReportStatus;
+import com.cloud.cloud_rest.report.ReportType;
 import com.cloud.cloud_rest.user.Role;
 import com.cloud.cloud_rest.user.User;
 import lombok.Builder;
 import lombok.Data;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class AdminResponse {
     @Data
@@ -74,5 +82,41 @@ public class AdminResponse {
             this.createdAt = user.getCreatedAt().toString();
             this.role = user.getRole();
         }
+    }
+
+    // 관리자 페이지에서 신고 목록을 보여주기 위한 DTO
+    @Data
+    public static class ReportListDTO {
+        private Long id;
+        private ReportType reportType;
+        private Board targetId;
+        private String reason;
+        private ReportStatus status;
+        private LocalDateTime createdAt;
+        private Long reporterId; // 신고한 유저 ID
+
+        @Builder
+        public ReportListDTO(Report report) {
+            this.id = report.getId();
+            this.reportType = report.getReportType();
+            this.targetId = report.getBoard();
+            this.reason = report.getReason();
+            this.status = report.getStatus();
+            this.createdAt = report.getCreatedAt();
+            this.reporterId = report.getReporter().getUserId();
+        }
+
+        // Report 엔티티 리스트를 ReportListDTO 리스트로 변환하는 정적 메서드
+        public static List<ReportListDTO> fromEntityList(List<Report> reports) {
+            return reports.stream()
+                    .map(ReportListDTO::new)
+                    .collect(Collectors.toList());
+        }
+    }
+
+    // 신고 상태를 업데이트하기 위한 Request DTO (Controller 에서 RequestBody로 받음)
+    @Data
+    public static class ReportStatusUpdateDTO {
+        private ReportStatus status;
     }
 }

@@ -19,12 +19,15 @@ public class CommentResponseDto {
     private Long userId; // 댓글 작성자 Id
     private Boolean isSecret; // 비밀 댓글 여부
     private LocalDateTime commentedAt; // 댓글 작성일시
+    private String authorName; // 댓글 작성자 이름
+
 
     public CommentResponseDto(Comment comment) {
         this.commentId = comment.getCommentId();
         this.content = comment.getContent();
-        this.userId = comment.getCommentId();
+        this.userId = comment.getUser().getUserId();
         this.isSecret = comment.getIsSecret();
         this.commentedAt = comment.getCreatedAt();
+        this.authorName = comment.getUser().getUsername();
     }
 }

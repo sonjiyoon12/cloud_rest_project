@@ -2,8 +2,8 @@ package com.cloud.cloud_rest.recruit;
 
 import com.cloud.cloud_rest.corp.Corp;
 import com.cloud.cloud_rest.noti.Noti;
-import com.cloud.cloud_rest.recruitpaid.RecruitPaid;
-import com.cloud.cloud_rest.recruitskill.RecruitSkill;
+import com.cloud.cloud_rest.recruit_paid.RecruitPaid;
+import com.cloud.cloud_rest.recruit_skill.RecruitSkill;
 import com.cloud.cloud_rest.skill.Skill;
 import jakarta.persistence.*;
 import lombok.Builder;
