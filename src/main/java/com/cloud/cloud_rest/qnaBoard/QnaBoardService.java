@@ -5,6 +5,7 @@ import com.cloud.cloud_rest._global.exception.Exception403;
 import com.cloud.cloud_rest._global.exception.Exception404;
 import com.cloud.cloud_rest.qnaAnswer.QnaAnswerJpaRepository;
 import com.cloud.cloud_rest.qnaAnswer.QnaAnswer;
+import com.cloud.cloud_rest.user.Role;
 import com.cloud.cloud_rest.user.User;
 import com.cloud.cloud_rest.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -72,7 +73,7 @@ public class QnaBoardService {
         QnaBoard qnaBoard = qnaBoardJpaRepository.findById(qnaBoardId).orElseThrow(() ->
                 new Exception404("삭제하려는 문의가 없습니다"));
 
-        if(!qnaBoard.isOwner(sessionUser.getId())){
+        if(sessionUser.getRole().equals(Role.USER) && !qnaBoard.isOwner(sessionUser.getId())){
             throw new Exception403("본인이 작성한 문의만 삭제할 수 있습니다");
         }
         qnaBoardJpaRepository.deleteById(qnaBoardId);
