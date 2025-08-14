@@ -3,6 +3,8 @@ package com.cloud.cloud_rest.apply;
 import com.cloud.cloud_rest._global.SessionUser;
 import com.cloud.cloud_rest._global.exception.Exception403;
 import com.cloud.cloud_rest._global.exception.Exception404;
+import com.cloud.cloud_rest.corp.Corp;
+import com.cloud.cloud_rest.corp.CorpRepository;
 import com.cloud.cloud_rest.recruit.Recruit;
 import com.cloud.cloud_rest.recruit.RecruitRepository;
 import com.cloud.cloud_rest.resume.Resume;
@@ -25,6 +27,7 @@ public class ApplyService {
     private final ResumeJpaRepository resumeJpaRepository;
     private final RecruitRepository recruitJpaRepository;
     private final UserRepository userRepository;
+    private final CorpRepository corpRepository;
 
     // 공고 지원
     @Transactional
@@ -37,9 +40,27 @@ public class ApplyService {
 
         ApplyRequest.SaveDTO saveDTOs = new ApplyRequest.SaveDTO();
         Apply apply = saveDTOs.toEntity(resume, recruit);
+        apply.setApplyStatus(ApplyStatus.SUBMITTED);
         applyJpaRepository.save(apply);
 
         return new ApplyResponse.SaveDTO(apply);
+    }
+
+    // 지원 내역 검토
+    @Transactional
+    public ApplyResponse.DetailDTO reviewApply(Long applyId, ApplyRequest.ReviewDTO reviewDTO, SessionUser sessionUser) {
+        Apply apply = applyJpaRepository.findById(applyId)
+                .orElseThrow(() -> new Exception404("지원 내역을 찾을 수 없습니다."));
+
+        Corp corp = corpRepository.findById(sessionUser.getId())
+                .orElseThrow(() -> new Exception404("존재하지 않는 회사입니다."));
+
+        if (!apply.getRecruit().isOwner(corp)) {
+            throw new Exception403("해당 공고의 작성자만 검토 가능합니다.");
+        }
+
+        apply.setApplyStatus(ApplyStatus.valueOf(reviewDTO.validate()));
+        return new ApplyResponse.DetailDTO(apply);
     }
 
     // 전체 공고 지원 내역 조회

@@ -37,6 +37,9 @@ public class Apply {
     @ToStringExclude
     private Recruit recruit;
 
+    @Enumerated(EnumType.STRING)
+    private ApplyStatus applyStatus;
+
     @CreationTimestamp
     private Timestamp createdAt;
 
