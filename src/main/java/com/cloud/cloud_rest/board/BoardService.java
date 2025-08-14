@@ -64,8 +64,10 @@ public class BoardService {
 
     @Transactional
     public BoardResponseDto.DetailDto findById(Long id) {
-        Board board = boardRepository.findByIdWithDetails(id)
-                .orElseThrow(() -> new EntityNotFoundException("게시물을 찾을 수 없습니다."));
+        Board board = boardRepository.findByIdWithUser(id)
+                .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
+        boardRepository.findByIdWithComments(id);
+        boardRepository.findByIdWithTags(id);
         board.increaseViewCount();
         return new BoardResponseDto.DetailDto(board);
     }

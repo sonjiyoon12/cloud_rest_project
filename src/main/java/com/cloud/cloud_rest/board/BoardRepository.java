@@ -12,8 +12,14 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     @Query("SELECT b FROM Board b JOIN FETCH b.user u LEFT JOIN FETCH b.tags t ORDER BY b.createdAt DESC")
     List<Board> findAllWithUserAndTags();
 
-    @Query("SELECT b FROM Board b JOIN FETCH b.user u LEFT JOIN FETCH b.tags t LEFT JOIN FETCH b.comments c WHERE b.boardId = :id")
-    Optional<Board> findByIdWithDetails(@Param("id") Long id);
+    @Query("SELECT b FROM Board b JOIN FETCH b.user u WHERE b.boardId = :id")
+    Optional<Board> findByIdWithUser(@Param("id") Long id);
+
+    @Query("SELECT b FROM Board b JOIN FETCH b.comments c WHERE b.boardId = :id")
+    Optional<Board> findByIdWithComments(@Param("id") Long id);
+
+    @Query("SELECT b FROM Board b JOIN FETCH b.tags t WHERE b.boardId = :id")
+    Optional<Board> findByIdWithTags(@Param("id") Long id);
 
     @Query("SELECT DISTINCT b FROM Board b JOIN FETCH b.user u LEFT JOIN b.tags t " +
             "WHERE (:keyword IS NULL OR b.title LIKE %:keyword% OR b.content LIKE %:keyword%) " +

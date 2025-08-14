@@ -202,7 +202,7 @@ public class AdminService {
     // 모든 신고 목록을 조회하는 메서드
     public List<AdminResponse.ReportListDTO> getReports(SessionUser sessionUser) {
         AuthorizationUtil.validateAdminAccess(sessionUser);
-        List<Report> reports = reportRepository.findAll();
+        List<Report> reports = reportRepository.findAllWithDetails();
         return AdminResponse.ReportListDTO.fromEntityList(reports);
     }
 
@@ -225,7 +225,7 @@ public class AdminService {
     @Transactional
     public AdminResponse.ReportListDTO updateReportStatus(Long reportId, ReportRequestDto.Update update, SessionUser sessionUser) {
         AuthorizationUtil.validateAdminAccess(sessionUser);
-        Report report = reportRepository.findById(reportId)
+        Report report = reportRepository.findByIdWithDetails(reportId)
                 .orElseThrow(() -> new Exception404("해당 신고를 찾을 수 없습니다."));
 
         report.setStatus(update.getStatus());
