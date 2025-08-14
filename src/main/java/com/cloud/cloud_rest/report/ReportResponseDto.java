@@ -1,10 +1,6 @@
 package com.cloud.cloud_rest.report;
 
-
-import com.cloud.cloud_rest.board.Board;
-import com.cloud.cloud_rest.user.User;
 import lombok.*;
-
 import java.time.LocalDateTime;
 
 @Getter
@@ -15,9 +11,9 @@ public class ReportResponseDto {
 
     private Long id;
     private ReportType reportType;
-    private Board board;
+    private Long boardId;
     private String reason;
-    private User reportId;
+    private Long reporterId;
     private ReportStatus status;
     private LocalDateTime createdAt;
 
@@ -25,9 +21,9 @@ public class ReportResponseDto {
     public ReportResponseDto (Report report) {
         this.id = report.getId();
         this.reportType = report.getReportType();
-        this.board = report.getBoard();
+        this.boardId = report.getBoard().getBoardId();
         this.reason = report.getReason();
-        this.reportId = report.getReporter();
+        this.reporterId = report.getReporter().getUserId();
         this.status = report.getStatus();
         this.createdAt = report.getCreatedAt();
     }

@@ -1,11 +1,12 @@
 package com.cloud.cloud_rest.admin;
 
-import com.cloud.cloud_rest.board.Board;
+import com.cloud.cloud_rest.board.BoardResponseDto;
 import com.cloud.cloud_rest.report.Report;
 import com.cloud.cloud_rest.report.ReportStatus;
 import com.cloud.cloud_rest.report.ReportType;
 import com.cloud.cloud_rest.user.Role;
 import com.cloud.cloud_rest.user.User;
+import com.cloud.cloud_rest.user.UserResponse;
 import lombok.Builder;
 import lombok.Data;
 
@@ -89,21 +90,22 @@ public class AdminResponse {
     public static class ReportListDTO {
         private Long id;
         private ReportType reportType;
-        private Board targetId;
+        private String boardId;
+        private BoardResponseDto.DetailDto board;
         private String reason;
         private ReportStatus status;
         private LocalDateTime createdAt;
-        private Long reporterId; // 신고한 유저 ID
+        private UserResponse.UserDTO user;
 
         @Builder
         public ReportListDTO(Report report) {
             this.id = report.getId();
             this.reportType = report.getReportType();
-            this.targetId = report.getBoard();
+            this.board = new BoardResponseDto.DetailDto(report.getBoard());
             this.reason = report.getReason();
             this.status = report.getStatus();
             this.createdAt = report.getCreatedAt();
-            this.reporterId = report.getReporter().getUserId();
+            this.user = new UserResponse.UserDTO(report.getReporter());
         }
 
         // Report 엔티티 리스트를 ReportListDTO 리스트로 변환하는 정적 메서드

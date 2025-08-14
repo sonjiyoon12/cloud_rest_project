@@ -68,4 +68,9 @@ public class BoardController {
         boardService.deletePost(id, sessionUser);
         return ApiResponse.success();
     }
+
+    @GetMapping("/commented-by/{userId}")
+    public ApiResponse<List<BoardResponseDto.ListDto>> getCommentedBoardsByUser(@PathVariable Long userId) {
+        return ApiResponse.success(boardService.findCommentedBoardsByUser(userId));
+    }
 }
