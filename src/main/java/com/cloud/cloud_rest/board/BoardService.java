@@ -1,5 +1,7 @@
 package com.cloud.cloud_rest.board;
 
+import com.cloud.cloud_rest.Comment.Comment;
+import com.cloud.cloud_rest.Comment.CommentRepository;
 import com.cloud.cloud_rest._global.SessionUser;
 import com.cloud.cloud_rest._global.utils.FileUploadUtil;
 import com.cloud.cloud_rest._global.utils.UploadProperties;
@@ -15,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,6 +30,7 @@ public class BoardService {
     private final BoardTagRepository boardTagRepository;
     private final FileUploadUtil fileUploadUtil;
     private final UploadProperties uploadProperties;
+    private final CommentRepository commentRepository;
 
     @Transactional
     public void savePost(BoardRequestDto.SaveDto saveDto, SessionUser sessionUser) throws IOException {
@@ -108,5 +112,20 @@ public class BoardService {
     private void updateTags(Board board, List<String> tagNames) {
         board.clearTags();
         saveTags(board, tagNames);
+    }
+    public List<BoardResponseDto.ListDto> findCommentedBoardsByUser(Long userId) {
+
+        List<Comment> comments = commentRepository.findByUser_UserId(userId);
+
+
+        Set<Long> boardIds = comments.stream()
+                .map(comment -> comment.getBoard().getBoardId())
+                .collect(Collectors.toSet());
+
+
+        List<Board> boards = boardRepository.findAllById(boardIds);
+
+
+        return BoardResponseDto.ListDto.toDtoList(boards);
     }
 }
