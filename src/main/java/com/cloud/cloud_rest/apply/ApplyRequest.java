@@ -29,12 +29,12 @@ public class ApplyRequest {
     public static class ReviewDTO {
         private String applyStatus;
 
-        public String validate() {
+        public String validate(Apply apply) {
             if (applyStatus == null || applyStatus.trim().isEmpty()) {
                 throw new Exception400("검토는 필수입니다.");
             } else {
                 for (ApplyStatus status : ApplyStatus.values()) {
-                    if (applyStatus.toUpperCase().equals(status.toString()) && applyStatus.toUpperCase().equals(ApplyStatus.SUBMITTED.toString())) {
+                    if (applyStatus.toUpperCase().equals(status.toString()) && apply.getApplyStatus().toString().toUpperCase().equals(ApplyStatus.SUBMITTED.toString())) {
                         return applyStatus.toUpperCase();
                     }
                 }

@@ -59,7 +59,7 @@ public class ApplyService {
             throw new Exception403("해당 공고의 작성자만 검토 가능합니다.");
         }
 
-        apply.setApplyStatus(ApplyStatus.valueOf(reviewDTO.validate()));
+        apply.setApplyStatus(ApplyStatus.valueOf(reviewDTO.validate(apply)));
         return new ApplyResponse.DetailDTO(apply);
     }
 
