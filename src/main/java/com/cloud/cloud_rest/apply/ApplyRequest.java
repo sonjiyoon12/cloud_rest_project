@@ -34,12 +34,12 @@ public class ApplyRequest {
                 throw new Exception400("검토는 필수입니다.");
             } else {
                 for (ApplyStatus status : ApplyStatus.values()) {
-                    if (applyStatus.toUpperCase().equals(status.toString())) {
+                    if (applyStatus.toUpperCase().equals(status.toString()) && applyStatus.toUpperCase().equals(ApplyStatus.SUBMITTED.toString())) {
                         return applyStatus.toUpperCase();
                     }
                 }
             }
-            throw new Exception400("잘못된 요청입니다.");
+            throw new Exception400("이미 검토했거나 잘못된 요청입니다.");
         }
     }
 }
