@@ -6,6 +6,7 @@ import com.cloud.cloud_rest._global.exception.Exception403;
 import com.cloud.cloud_rest._global.exception.Exception404;
 import com.cloud.cloud_rest.recruit.Recruit;
 import com.cloud.cloud_rest.recruit.RecruitRepository;
+import com.cloud.cloud_rest.user.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,10 +49,18 @@ public class RecruitPaidService {
     }
 
     // 유료공고 상세보기
-    public RecruitPaidResponse.PaidDetailDTO paidDetail(Long recruitId) {
-        return recruitPaidRepository.findById(recruitId)
-                .map(RecruitPaidResponse.PaidDetailDTO::new) // 찾으면, 유료 상태 DTO 생성
-                .orElseThrow(() -> new Exception404(RecruitPaidErr.NOT_FOUND.getMessage())); // 못 찾으면, 404 에러 발생
+    public RecruitPaidResponse.PaidDetailDTO paidDetail(Long recruitId, SessionUser sessionUser) {
+        // 1. 유료 공고 조회
+        RecruitPaid recruitPaid = recruitPaidRepository.findById(recruitId)
+                .orElseThrow(() -> new Exception404(RecruitPaidErr.NOT_FOUND.getMessage()));
+
+        // 2. 권한 확인 (관리자는 통과, 기업은 자기 공고인지 확인)
+        if (sessionUser.getRole() == Role.CORP && !recruitPaid.getRecruit().getCorp().getCorpId().equals(sessionUser.getId())) {
+            throw new Exception403(RecruitPaidErr.FORBIDDEN.getMessage());
+        }
+
+        // 3. DTO로 변환 후 반환
+        return new RecruitPaidResponse.PaidDetailDTO(recruitPaid);
     }
 
     // 관리자용 유료공고 목록 조회
