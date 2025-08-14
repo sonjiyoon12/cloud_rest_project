@@ -1,10 +1,13 @@
 package com.cloud.cloud_rest.board;
 
+import com.cloud.cloud_rest.Comment.Comment;
+import com.cloud.cloud_rest.Comment.CommentRepository;
 import com.cloud.cloud_rest._global.SessionUser;
 import com.cloud.cloud_rest._global.utils.FileUploadUtil;
 import com.cloud.cloud_rest._global.utils.UploadProperties;
 import com.cloud.cloud_rest.board.board_tag.BoardTag;
 import com.cloud.cloud_rest.board.board_tag.BoardTagRepository;
+import com.cloud.cloud_rest.user.Role;
 import com.cloud.cloud_rest.user.User;
 import com.cloud.cloud_rest.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -15,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,6 +31,7 @@ public class BoardService {
     private final BoardTagRepository boardTagRepository;
     private final FileUploadUtil fileUploadUtil;
     private final UploadProperties uploadProperties;
+    private final CommentRepository commentRepository;
 
     @Transactional
     public void savePost(BoardRequestDto.SaveDto saveDto, SessionUser sessionUser) throws IOException {
@@ -95,7 +100,9 @@ public class BoardService {
     }
 
     private void checkOwnership(Board board, SessionUser sessionUser) {
-        if (!Objects.equals(board.getUser().getUserId(), sessionUser.getId())) {
+        // 게시물 작성자이거나 관리자(Role.ADMIN)인 경우에만 통과
+        if (!Objects.equals(board.getUser().getUserId(), sessionUser.getId()) &&
+                !Objects.equals(sessionUser.getRole(), Role.ADMIN)) {
             throw new SecurityException("해당 게시물에 대한 권한이 없습니다.");
         }
     }
@@ -108,5 +115,20 @@ public class BoardService {
     private void updateTags(Board board, List<String> tagNames) {
         board.clearTags();
         saveTags(board, tagNames);
+    }
+    public List<BoardResponseDto.ListDto> findCommentedBoardsByUser(Long userId) {
+
+        List<Comment> comments = commentRepository.findByUser_UserId(userId);
+
+
+        Set<Long> boardIds = comments.stream()
+                .map(comment -> comment.getBoard().getBoardId())
+                .collect(Collectors.toSet());
+
+
+        List<Board> boards = boardRepository.findAllById(boardIds);
+
+
+        return BoardResponseDto.ListDto.toDtoList(boards);
     }
 }

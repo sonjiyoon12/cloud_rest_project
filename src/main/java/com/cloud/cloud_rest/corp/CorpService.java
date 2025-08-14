@@ -65,12 +65,13 @@ public class CorpService {
             throw  new Exception403("기업 유저가 아닙니다");
         }
 
-
+        // 승인 거부 상태면 메세지를 보여줌
         if (corp.getCorpStatus() == CorpStatus.REJECTED) {
             String reason = corpApprovalService.getLatestRejectionReason(corp.getCorpId());
             throw new ApprovalRejectedException(reason);
         }
 
+        // 승인 대기 중이면 메세지를 보여줌
         if (corp.getCorpStatus() != CorpStatus.APPROVED) {
             throw new Exception403("승인 대기 중인 기업입니다");
         }
@@ -82,7 +83,6 @@ public class CorpService {
     @Transactional
     public CorpResponse.UpdateDTO updateDTO(Long id, CorpRequest.UpdateDTO dto,SessionUser sessionUser) {
         Corp corp = getCorpId(id); // 해당 유저가 있는지
-        corp.validateApproval(); // 승인된 기업만 정보 수정 가능
         AuthorizationUtil.validateCorpAccess(id, sessionUser); // 어드민 유저 및 본인 권한 검사
 
         String oldImagePath = corp.getCorpImage();
@@ -125,7 +125,6 @@ public class CorpService {
 
         AuthorizationUtil.validateCorpAccess(id, sessionUser); // 어드민 유저 및 본인 권한 검사
         Corp corp = getCorpId(id);
-        corp.validateApproval(); // 승인된 기업만 정보 수정 가능
 
         corpRepository.delete(corp);
     }

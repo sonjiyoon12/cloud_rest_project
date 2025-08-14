@@ -2,6 +2,7 @@ package com.cloud.cloud_rest.apply;
 
 import com.cloud.cloud_rest.recruit.Recruit;
 import com.cloud.cloud_rest.resume.Resume;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
 
@@ -9,6 +10,7 @@ import java.time.LocalDate;
 
 public class ApplyResponse {
 
+    @Schema(name = "ApplySaveRequest")
     @Data
     public static class SaveDTO {
         private Long id;
@@ -25,11 +27,13 @@ public class ApplyResponse {
         }
     }
 
+    @Schema(name = "ApplyDetailRequest")
     @Data
     public static class DetailDTO {
         private Long id;
         private ResumeDTO resume;
         private RecruitDTO recruit;
+        private ApplyStatus applyStatus;
         private String createdAt;
 
         @Builder
@@ -37,10 +41,12 @@ public class ApplyResponse {
             this.id = apply.getApplyId();
             this.resume = new ResumeDTO(apply.getResume());
             this.recruit = new RecruitDTO(apply.getRecruit());
+            this.applyStatus = apply.getApplyStatus();
             this.createdAt = apply.getTime();
         }
     }
 
+    @Schema(name = "ApplyResumeDTO")
     @Data
     public static class ResumeDTO {
         private String title;
@@ -55,6 +61,7 @@ public class ApplyResponse {
         }
     }
 
+    @Schema(name = "ApplyRecruitDTO")
     @Data
     public static class RecruitDTO {
         private String title;
@@ -70,4 +77,6 @@ public class ApplyResponse {
             this.createdAt = recruit.getCreatedAt().toString();
         }
     }
+
+
 }

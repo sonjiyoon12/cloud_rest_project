@@ -67,18 +67,6 @@ public class Corp {
         corpSkills.add(corpSkill);
     }
 
-    public void validateApproval() {
-        if (corpStatus != CorpStatus.APPROVED) {
-            throw new Exception403("아직 승인 되지 않은 기업입니다");
-        }
-    }
-
-    public void validateRejected() {
-        if (corpStatus != CorpStatus.REJECTED) {
-            throw new Exception403("승인이 거부된 기업입니다");
-        }
-    }
-
     public String getTime(){
         return DateUtil.timestampFormat(createdAt);
     }

@@ -30,6 +30,17 @@ public class ApplyRestController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiUtil<>(savedApply));
     }
 
+    // 공고 검토(기업)
+    @Operation(summary = "공고 검토")
+    @PostMapping("/corp/review/{applyId}")
+    public ResponseEntity<?> reviewApplies(@PathVariable("applyId") Long applyId,
+                                           @RequestBody ApplyRequest.ReviewDTO reviewDTO,
+                                           @RequestAttribute("sessionUser") SessionUser sessionUser) {
+
+        ApplyResponse.DetailDTO reviewedApply = applyService.reviewApply(applyId, reviewDTO, sessionUser);
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiUtil<>(reviewedApply));
+    }
+
     // 전체 공고 지원 내역 조회
     @Operation(summary = "전체 공고 지원 내역 조회")
     @GetMapping

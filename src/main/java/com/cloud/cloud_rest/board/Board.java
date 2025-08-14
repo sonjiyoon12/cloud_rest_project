@@ -16,7 +16,6 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "board_tb")
-@Builder
 public class Board extends Timestamped {
 
     @Id
@@ -64,7 +63,7 @@ public class Board extends Timestamped {
     private List<BoardTag> tags = new ArrayList<>();
 
     @Builder
-    public Board(Long boardId, String title, String content, User user, Integer views, Integer likeCount, List<Comment> comments, String imagePath, List<BoardLike> likes, List<BoardTag> tags) {
+    public Board(Long boardId, String title, String content, User user, Integer views, Integer likeCount, List<Comment> comments, String imagePath, List<BoardLike> likes) {
         this.boardId = boardId;
         this.title = title;
         this.content = content;
@@ -74,7 +73,6 @@ public class Board extends Timestamped {
         this.comments = comments;
         this.imagePath = imagePath;
         this.likes = likes;
-        this.tags = tags;
     }
 
     public void increaseViewCount() {

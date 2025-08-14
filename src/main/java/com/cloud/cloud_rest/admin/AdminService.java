@@ -230,7 +230,8 @@ public class AdminService {
 
         report.setStatus(update.getStatus());
         report.setReason(update.getReason());
-
-        return new AdminResponse.ReportListDTO(reportRepository.save(report));
+        reportRepository.save(report);
+        return new AdminResponse.ReportListDTO(report);
     }
+
 }
