@@ -7,6 +7,7 @@ import com.cloud.cloud_rest._global.utils.FileUploadUtil;
 import com.cloud.cloud_rest._global.utils.UploadProperties;
 import com.cloud.cloud_rest.board.board_tag.BoardTag;
 import com.cloud.cloud_rest.board.board_tag.BoardTagRepository;
+import com.cloud.cloud_rest.user.Role;
 import com.cloud.cloud_rest.user.User;
 import com.cloud.cloud_rest.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -99,7 +100,9 @@ public class BoardService {
     }
 
     private void checkOwnership(Board board, SessionUser sessionUser) {
-        if (!Objects.equals(board.getUser().getUserId(), sessionUser.getId())) {
+        // 게시물 작성자이거나 관리자(Role.ADMIN)인 경우에만 통과
+        if (!Objects.equals(board.getUser().getUserId(), sessionUser.getId()) &&
+                !Objects.equals(sessionUser.getRole(), Role.ADMIN)) {
             throw new SecurityException("해당 게시물에 대한 권한이 없습니다.");
         }
     }
