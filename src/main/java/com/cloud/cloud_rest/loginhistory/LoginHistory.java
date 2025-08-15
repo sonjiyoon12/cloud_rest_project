@@ -1,6 +1,7 @@
 package com.cloud.cloud_rest.loginhistory;
 
 import com.cloud.cloud_rest._global.utils.DateUtil;
+import com.cloud.cloud_rest.corp.Corp;
 import com.cloud.cloud_rest.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -25,6 +26,9 @@ public class LoginHistory {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Corp corp;
 
     @CreationTimestamp
     private Timestamp loginTime;

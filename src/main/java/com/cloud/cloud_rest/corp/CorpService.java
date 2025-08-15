@@ -7,9 +7,12 @@ import com.cloud.cloud_rest._global.exception.Exception403;
 import com.cloud.cloud_rest._global.exception.Exception404;
 import com.cloud.cloud_rest._global.utils.*;
 import com.cloud.cloud_rest.corp_approval.CorpApprovalService;
+import com.cloud.cloud_rest.loginhistory.LoginHistoryRequest;
+import com.cloud.cloud_rest.loginhistory.LoginHistoryService;
 import com.cloud.cloud_rest.skill.Skill;
 import com.cloud.cloud_rest.skill.SkillRepository;
 import com.cloud.cloud_rest.user.Role;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,6 +32,7 @@ public class CorpService {
     private final FileUploadUtil fileUploadUtil; // 이미지 저장 및 삭제 기능
     private final UploadProperties uploadPath; // 이미지 저장 경로 설정
     private final SkillRepository skillRepository;
+    private final LoginHistoryService loginHistoryService;
 
     @Transactional
     public CorpResponse.CorpDTO save(CorpRequest.SaveDTO saveDTO) {
@@ -52,8 +56,9 @@ public class CorpService {
         return new CorpResponse.CorpDTO(corp);
     }
 
-    // 로그인 API 
-    public String login(CorpRequest.LoginDTO loginDTO) {
+    // 로그인 API
+    @Transactional
+    public String login(CorpRequest.LoginDTO loginDTO, HttpServletRequest request) {
 
         Corp corp = getLoginId(loginDTO.getLoginId());
 
@@ -75,6 +80,15 @@ public class CorpService {
         if (corp.getCorpStatus() != CorpStatus.APPROVED) {
             throw new Exception403("승인 대기 중인 기업입니다");
         }
+
+        loginHistoryService.deactivateAllActiveCorpLogins(corp.getCorpId());
+
+
+        String ipAddress = HttpRequestUtil.getClientIp(request);
+        String userAgent = HttpRequestUtil.getUserAgent(request);
+
+        LoginHistoryRequest.SaveCorpDTO saveCorpDTO = new LoginHistoryRequest.SaveCorpDTO();
+        loginHistoryService.saveCorp(corp, saveCorpDTO, ipAddress, userAgent);
 
         return JwtUtil.createToken(corp);
     }

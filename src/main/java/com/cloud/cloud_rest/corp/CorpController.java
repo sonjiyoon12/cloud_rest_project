@@ -5,7 +5,10 @@ import com.cloud.cloud_rest._global._core.common.ApiUtil;
 import com.cloud.cloud_rest._global.auth.Auth;
 import com.cloud.cloud_rest._global.exception.Exception401;
 import com.cloud.cloud_rest._global.exception.Exception403;
+import com.cloud.cloud_rest.loginhistory.LoginHistory;
+import com.cloud.cloud_rest.loginhistory.LoginHistoryService;
 import com.cloud.cloud_rest.user.Role;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class CorpController {
 
     private final CorpService corpService;
-
+    private final LoginHistoryService loginHistoryService;
 
     @PostMapping("/save")
     public ResponseEntity<?> save(@Valid @RequestBody CorpRequest.SaveDTO saveDTO){
@@ -36,8 +39,8 @@ public class CorpController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody CorpRequest.LoginDTO loginDTO){
-        String jwtToken = corpService.login(loginDTO);
+    public ResponseEntity<?> login(@Valid @RequestBody CorpRequest.LoginDTO loginDTO, HttpServletRequest httpServletRequest){
+        String jwtToken = corpService.login(loginDTO,httpServletRequest);
         Corp corp = corpService.getLoginId(loginDTO.getLoginId());
 
         CorpResponse.LoginDTO login = new CorpResponse.LoginDTO(corp);
@@ -88,8 +91,9 @@ public class CorpController {
 
     // 임시로 로그아웃 (사실상 필요없음)
     @GetMapping("/logout")
-    public ResponseEntity<SessionUser> logout(@RequestAttribute("sessionUser") SessionUser sessionUser) {
-
-        return ResponseEntity.ok(sessionUser);
+    public ResponseEntity<String> logout(@RequestAttribute("sessionUser") SessionUser sessionUser) {
+        loginHistoryService.deactivateLatest(sessionUser.getId(), sessionUser.getRole());
+        return ResponseEntity.ok("로그아웃 처리 완료");
     }
+
 }

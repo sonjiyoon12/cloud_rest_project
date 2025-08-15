@@ -7,8 +7,6 @@ import com.cloud.cloud_rest.loginhistory.LoginHistoryRequest;
 import com.cloud.cloud_rest.loginhistory.LoginHistoryService;
 import com.cloud.cloud_rest.skill.Skill;
 import com.cloud.cloud_rest.skill.SkillRepository;
-import com.cloud.cloud_rest.userskill.UserSkill;
-import com.cloud.cloud_rest.userskill.UserSkillRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -66,11 +64,14 @@ public class UserService {
             throw new Exception403("로그인 권한이 없습니다.");
         } // jwt 인증 토큰이 아님 (회원가입 Session 여부 토큰임)
 
+
+        loginHistoryService.deactivateAllActiveUserLogins(user.getUserId());
+
         String ipAddress = HttpRequestUtil.getClientIp(request);
         String userAgent = HttpRequestUtil.getUserAgent(request);
 
-        LoginHistoryRequest.SaveDTO saveDTO = new LoginHistoryRequest.SaveDTO();
-        loginHistoryService.save(user, saveDTO, ipAddress, userAgent);
+        LoginHistoryRequest.SaveUserDTO saveUserDTO = new LoginHistoryRequest.SaveUserDTO();
+        loginHistoryService.saveUser(user, saveUserDTO, ipAddress, userAgent);
 
         return JwtUtil.createToken(user);
     }

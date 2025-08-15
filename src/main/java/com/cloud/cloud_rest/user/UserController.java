@@ -7,6 +7,7 @@ import com.cloud.cloud_rest._global.exception.Exception401;
 import com.cloud.cloud_rest._global.exception.Exception403;
 import com.cloud.cloud_rest.corp.CorpRequest;
 import com.cloud.cloud_rest.corp.CorpResponse;
+import com.cloud.cloud_rest.loginhistory.LoginHistoryService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+    private final LoginHistoryService loginHistoryService;
 
 
     // 유저 회원가입
@@ -89,11 +91,11 @@ public class UserController {
     }
 
     // 임시로 로그아웃 (사실상 필요없음) 서버에서 JWT를 강제로 무효화하려면 블랙리스트 같은 추가 설계 필요
-    @Auth(roles = {Role.ADMIN,Role.USER})
     @GetMapping("/logout")
-    public ResponseEntity<SessionUser> logout(@RequestAttribute("sessionUser") SessionUser sessionUser) {
-
-        return ResponseEntity.ok(sessionUser);
+    public ResponseEntity<String> logout(@RequestAttribute("sessionUser") SessionUser sessionUser) {
+        loginHistoryService.deactivateLatest(sessionUser.getId(), sessionUser.getRole());
+        return ResponseEntity.ok("로그아웃 처리 완료");
     }
+
 
 }
