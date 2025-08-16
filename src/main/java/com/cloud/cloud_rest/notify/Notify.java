@@ -13,7 +13,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.sql.Timestamp;
 
 @Data
-@Table(name = "notification_tb")
+@Table(name = "notify_tb")
 @Entity
 @Builder
 @NoArgsConstructor
