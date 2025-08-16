@@ -1,10 +1,7 @@
 package com.cloud.cloud_rest.loginhistory;
 
-import com.cloud.cloud_rest.user.User;
 import lombok.Builder;
 import lombok.Data;
-
-import java.sql.Timestamp;
 
 public class LoginHistoryResponse {
 

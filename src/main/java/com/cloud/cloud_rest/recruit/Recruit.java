@@ -1,7 +1,7 @@
 package com.cloud.cloud_rest.recruit;
 
 import com.cloud.cloud_rest.corp.Corp;
-import com.cloud.cloud_rest.noti.Noti;
+import com.cloud.cloud_rest.notify.Notify;
 import com.cloud.cloud_rest.recruit_paid.RecruitPaid;
 import com.cloud.cloud_rest.recruit_skill.RecruitSkill;
 import com.cloud.cloud_rest.skill.Skill;
@@ -47,7 +47,7 @@ public class Recruit {
     private Corp corp;
 
     @OneToMany(mappedBy = "recruit")
-    private List<Noti> notifications = new ArrayList<>();
+    private List<Notify> notifies = new ArrayList<>();
 
     @OneToMany(mappedBy = "recruit",
             cascade = CascadeType.ALL,

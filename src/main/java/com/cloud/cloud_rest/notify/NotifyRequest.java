@@ -1,18 +1,18 @@
-package com.cloud.cloud_rest.noti;
+package com.cloud.cloud_rest.notify;
 
 import com.cloud.cloud_rest.recruit.Recruit;
 import com.cloud.cloud_rest.user.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
-public class NotiRequest {
+public class NotifyRequest {
 
     @Data
-    @Schema(name = "notiSaveRequest")
+    @Schema(name = "notifySaveRequest")
     public static class SaveDTO {
 
-        public Noti toEntity(Recruit recruit, User user, String message) {
-            return Noti.builder()
+        public Notify toEntity(Recruit recruit, User user, String message) {
+            return Notify.builder()
                     .recruit(recruit)
                     .user(user)
                     .isRead(false)

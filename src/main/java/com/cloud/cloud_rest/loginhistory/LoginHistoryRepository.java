@@ -5,13 +5,12 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.awt.print.Pageable;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
 public interface LoginHistoryRepository extends JpaRepository<LoginHistory,Long> {
-    @Query("select lh from LoginHistory lh where lh.loginTime >= :todayStart")
+    @Query("select lh from LoginHistory lh where lh.loginTime >= :todayStart AND lh.user.userId IS NOT NULL")
     List<LoginHistory> findAllByLoginTimeAfter(@Param("todayStart") Timestamp todayStart);
 
     @Query("SELECT lh FROM LoginHistory lh WHERE lh.user.userId = :userId AND lh.isActive = true ORDER BY lh.loginTime DESC")

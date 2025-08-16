@@ -3,8 +3,7 @@ package com.cloud.cloud_rest.recruit;
 import com.cloud.cloud_rest._global.SessionUser;
 import com.cloud.cloud_rest._global.exception.Exception404;
 import com.cloud.cloud_rest.corp.Corp;
-import com.cloud.cloud_rest.corp.CorpRepository;
-import com.cloud.cloud_rest.noti.NotiService;
+import com.cloud.cloud_rest.notify.NotifyService;
 import com.cloud.cloud_rest.skill.Skill;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +22,7 @@ import java.util.stream.Collectors;
 public class RecruitService {
 
     private final RecruitRepository recruitRepository;
-    private final NotiService notiService;
+    private final NotifyService notifyService;
     private final RecruitServiceHelper recruitServiceHelper;
 
 
@@ -46,7 +45,7 @@ public class RecruitService {
         // 채용공고 엔티티 저장
         recruitRepository.save(recruit);
         // 알림 저장
-        notiService.save(recruit, dto.getMessage());
+        notifyService.save(recruit, dto.getMessage());
         // DTO로 변환하여 반환
         return RecruitResponse.RecruitListDTO.of(recruit);
     }

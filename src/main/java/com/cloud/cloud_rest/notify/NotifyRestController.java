@@ -1,4 +1,4 @@
-package com.cloud.cloud_rest.noti;
+package com.cloud.cloud_rest.notify;
 
 import com.cloud.cloud_rest._global.SessionUser;
 import com.cloud.cloud_rest._global._core.common.ApiUtil;
@@ -14,11 +14,11 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/notifications")
-@Tag(name = "Notification", description = "구독자 알림 관리 API")
-public class NotiRestController {
+@RequestMapping("/api/notifies")
+@Tag(name = "Notify", description = "구독자 알림 관리 API")
+public class NotifyRestController {
 
-    private final NotiService notiService;
+    private final NotifyService notifyService;
 
     // 모든 알림 불러오기(특정 사용자)
     @Operation(summary = "특정 사용자의 모든 알림 불러오기")
@@ -27,7 +27,7 @@ public class NotiRestController {
                                              @PathVariable("userId") Long userId,
                                              @PageableDefault(size = 10, page = 0) Pageable pageable) {
 
-        List<NotiResponse.DetailDTO> notis = notiService.findAllByUserId(sessionUser, userId, pageable);
+        List<NotifyResponse.DetailDTO> notis = notifyService.findAllByUserId(sessionUser, userId, pageable);
         return ResponseEntity.ok().body(new ApiUtil<>(notis));
     }
 
@@ -36,17 +36,17 @@ public class NotiRestController {
     @GetMapping("/{userId}/all/read")
     public ResponseEntity<?> readAllByUserId(@RequestAttribute("sessionUser")SessionUser sessionUser,
                                              @PathVariable("userId") Long userId) {
-        notiService.readAllByUserId(sessionUser, userId);
+        notifyService.readAllByUserId(sessionUser, userId);
         return ResponseEntity.ok().build();
     }
 
     // 특정 알림 불러오기
     @Operation(summary = "특정 알림 불러오기")
-    @GetMapping("/{notiId}")
-    public ResponseEntity<?> findByNotiId(@RequestAttribute("sessionUser") SessionUser sessionUser,
-                                          @PathVariable("notiId") Long notiId) {
+    @GetMapping("/{notifyId}")
+    public ResponseEntity<?> findByNotifyId(@RequestAttribute("sessionUser") SessionUser sessionUser,
+                                          @PathVariable("notifyId") Long notifyId) {
 
-        NotiResponse.DetailDTO noti = notiService.findByNotiId(sessionUser, notiId);
-        return ResponseEntity.ok().body(new ApiUtil<>(noti));
+        NotifyResponse.DetailDTO notify = notifyService.findByNotiId(sessionUser, notifyId);
+        return ResponseEntity.ok().body(new ApiUtil<>(notify));
     }
 }

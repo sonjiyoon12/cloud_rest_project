@@ -1,4 +1,4 @@
-package com.cloud.cloud_rest.noti;
+package com.cloud.cloud_rest.notify;
 
 import com.cloud.cloud_rest._global.utils.DateUtil;
 import com.cloud.cloud_rest.recruit.Recruit;
@@ -18,11 +18,11 @@ import java.sql.Timestamp;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Noti {
+public class Notify {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long notificationId;
+    private Long notifyId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)

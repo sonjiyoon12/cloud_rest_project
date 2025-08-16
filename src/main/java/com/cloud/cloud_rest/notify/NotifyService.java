@@ -1,4 +1,4 @@
-package com.cloud.cloud_rest.noti;
+package com.cloud.cloud_rest.notify;
 
 import com.cloud.cloud_rest._global.SessionUser;
 import com.cloud.cloud_rest._global.exception.Exception403;
@@ -20,9 +20,9 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class NotiService {
+public class NotifyService {
 
-    private final NotiJpaRepository notiJpaRepository;
+    private final NotifyJpaRepository notifyJpaRepository;
     private final RecruitRepository recruitRepository;
     private final SubCorpJpaRepository subCorpJpaRepository;
     private final UserRepository userRepository;
@@ -41,7 +41,7 @@ public class NotiService {
         List<User> users = subCorpJpaRepository.findUserByCorpId(recruit.getCorp().getCorpId());
 
         // DTO 준비
-        NotiRequest.SaveDTO notiRequest = new NotiRequest.SaveDTO();
+        NotifyRequest.SaveDTO notiRequest = new NotifyRequest.SaveDTO();
 
         // 3. 실제 유저인지 확인 후, Noti 테이블에 저장
         if (!users.isEmpty()) {
@@ -49,8 +49,8 @@ public class NotiService {
                 User user1 = userRepository.findById(user.getUserId())
                         .orElseThrow(() -> new Exception404("없는 유저입니다."));
 
-                Noti noti = notiRequest.toEntity(recruit, user1, message);
-                notiJpaRepository.save(noti);
+                Notify notify = notiRequest.toEntity(recruit, user1, message);
+                notifyJpaRepository.save(notify);
             });
             return "알림 전송 완료!";
         } else {
@@ -58,7 +58,7 @@ public class NotiService {
         }
     }
 
-    public List<NotiResponse.DetailDTO> findAllByUserId(SessionUser sessionUser, Long userId, Pageable pageable) {
+    public List<NotifyResponse.DetailDTO> findAllByUserId(SessionUser sessionUser, Long userId, Pageable pageable) {
         User user = userRepository.findById(sessionUser.getId())
                 .orElse(userRepository.findById(userId)
                         .orElseThrow(() -> new Exception404("존재하지 않는 유저입니다.")));
@@ -67,8 +67,8 @@ public class NotiService {
             throw new Exception403("접근 권한이 없습니다.");
         }
 
-        Page<Noti> notis = notiJpaRepository.findByUserUserId(user.getUserId(), pageable);
-        return notis.stream().map(NotiResponse.DetailDTO::new).toList();
+        Page<Notify> notifies = notifyJpaRepository.findByUserUserId(user.getUserId(), pageable);
+        return notifies.stream().map(NotifyResponse.DetailDTO::new).toList();
     }
 
     @Transactional
@@ -80,24 +80,24 @@ public class NotiService {
             throw new Exception403("접근 권한이 없습니다.");
         }
 
-        notiJpaRepository.findByUserUserId(user.getUserId()).forEach(noti -> {
-            noti.update(true);
+        notifyJpaRepository.findByUserUserId(user.getUserId()).forEach(notify -> {
+            notify.update(true);
         });
     }
 
     @Transactional
-    public NotiResponse.DetailDTO findByNotiId(SessionUser sessionUser, Long notiId) {
+    public NotifyResponse.DetailDTO findByNotiId(SessionUser sessionUser, Long notifyId) {
         User user = userRepository.findById(sessionUser.getId())
                 .orElseThrow(() -> new Exception404("존재하지 않는 유저입니다."));
 
-        Noti noti = notiJpaRepository.findById(notiId)
+        Notify notify = notifyJpaRepository.findById(notifyId)
                 .orElseThrow(() -> new Exception404("존재하지 않는 알림입니다."));
 
-        if (!noti.getUser().getUserId().equals(user.getUserId())) {
+        if (!notify.getUser().getUserId().equals(user.getUserId())) {
             throw new Exception403("확인할 권한이 없습니다.");
         }
 
-        noti.update(true);
-        return new NotiResponse.DetailDTO(noti);
+        notify.update(true);
+        return new NotifyResponse.DetailDTO(notify);
     }
 }

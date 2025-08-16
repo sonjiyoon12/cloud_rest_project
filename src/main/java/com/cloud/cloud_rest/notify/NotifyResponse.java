@@ -1,23 +1,23 @@
-package com.cloud.cloud_rest.noti;
+package com.cloud.cloud_rest.notify;
 
 import com.cloud.cloud_rest.recruit.Recruit;
 import lombok.Data;
 
 import java.time.LocalDate;
 
-public class NotiResponse {
+public class NotifyResponse {
 
     @Data
     public static class DetailDTO {
-        private Long notiId;
+        private Long notifyId;
         private Boolean isRead;
         private Long userId;
         private String message;
         private String createdAt;
         private RecruitDTO recruit;
 
-        public DetailDTO(Noti noti) {
-            this.notiId = noti.getNotificationId();
+        public DetailDTO(Notify noti) {
+            this.notifyId = noti.getNotifyId();
             this.isRead = noti.getIsRead();
             this.userId = noti.getUser().getUserId();
             this.message = noti.getMessage();
