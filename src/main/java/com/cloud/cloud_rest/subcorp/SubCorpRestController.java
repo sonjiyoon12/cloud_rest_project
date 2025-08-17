@@ -31,7 +31,7 @@ public class SubCorpRestController {
 
     // 구독 목록 조회
     @Operation(summary = "기업 구독 목록 조회 기능")
-    @GetMapping("/{userId}")
+    @GetMapping("/{userId}/")
     public ResponseEntity<?> findAll(@PathVariable("userId") Long userId,
                                      @RequestAttribute("sessionUser") SessionUser sessionUser) {
         List<SubCorpResponse.DetailDTO> subList = subCorpService.findAll(userId, sessionUser);

@@ -32,7 +32,7 @@ public class ApplyRestController {
 
     // 공고 검토(기업)
     @Operation(summary = "공고 검토")
-    @PostMapping("/corp/review/{applyId}")
+    @PutMapping("/corp/review/{applyId}")
     public ResponseEntity<?> reviewApplies(@PathVariable("applyId") Long applyId,
                                            @RequestBody ApplyRequest.ReviewDTO reviewDTO,
                                            @RequestAttribute("sessionUser") SessionUser sessionUser) {

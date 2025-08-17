@@ -27,4 +27,13 @@ public class UserRateRequest {
                     .build();
         }
     }
+
+    @Schema(name = "userRateUpdateRequest")
+    @Data
+    public static class UpdateDTO {
+
+        @Min(value = 1, message = "평점은 1점 이상 입력해주세요.")
+        @Max(value = 5, message = "평점은 5점 이하로 입력해주세요.")
+        private Long rating;
+    }
 }

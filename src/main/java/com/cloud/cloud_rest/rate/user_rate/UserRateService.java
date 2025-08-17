@@ -57,6 +57,22 @@ public class UserRateService {
     }
 
     @Transactional
+    public UserRateResponse.DetailDTO updateById(Long userRateId, SessionUser sessionUser, UserRateRequest.UpdateDTO updateDTO) {
+        User user = userRepository.findById(sessionUser.getId())
+                .orElseThrow(() -> new Exception404("유저를 찾을 수 없습니다."));
+
+        UserRate userRate = userRateJpaRepository.findById(userRateId)
+                .orElseThrow(() -> new Exception404("평점 기록을 찾을 수 없습니다."));
+
+        if (!userRate.getUser().getUserId().equals(user.getUserId())) {
+            throw new Exception403("본인이 남긴 평점만 수정 가능합니다.");
+        }
+
+        userRate.setRating(updateDTO.getRating());
+        return new UserRateResponse.DetailDTO(userRate);
+    }
+
+    @Transactional
     public void deleteById(Long userRateId, SessionUser sessionUser) {
         User user = userRepository.findById(sessionUser.getId())
                 .orElseThrow(() -> new Exception403("평점을 남길 수 있는 권한이 없습니다."));

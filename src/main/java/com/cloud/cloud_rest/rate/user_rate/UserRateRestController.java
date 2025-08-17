@@ -46,10 +46,20 @@ public class UserRateRestController {
 
     // 특정 기업의 평점 조회
     @Operation(summary = "특정 기업의 평점 조회")
-    @GetMapping
-    public ResponseEntity<?> findByCorpId(@RequestParam("corpId") Long corpId) {
+    @GetMapping("/{corpId}")
+    public ResponseEntity<?> findByCorpId(@PathVariable("corpId") Long corpId) {
         List<UserRateResponse.DetailDTO> detailRates = userRateService.findByCorpId(corpId);
         return ResponseEntity.ok().body(new ApiUtil<>(detailRates));
+    }
+
+    // 평점 수정
+    @Operation(summary = "기업 평점 수정")
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateById(@PathVariable(name = "id") Long userRateId,
+                                        @RequestAttribute("sessionUser") SessionUser sessionUser,
+                                        @RequestBody UserRateRequest.UpdateDTO updateDTO) {
+        UserRateResponse.DetailDTO updatedRate = userRateService.updateById(userRateId, sessionUser, updateDTO);
+        return ResponseEntity.ok().body(new ApiUtil<>(updatedRate));
     }
 
     // 평점 삭제

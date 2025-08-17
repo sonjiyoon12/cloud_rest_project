@@ -11,4 +11,6 @@ public interface NotifyJpaRepository extends JpaRepository<Notify, Long> {
     Page<Notify> findByUserUserId(Long userId, Pageable pageable);
 
     List<Notify> findByUserUserId(Long userId);
+
+    void deleteAllByUserUserId(Long userId);
 }

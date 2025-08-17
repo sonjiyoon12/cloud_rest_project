@@ -86,7 +86,7 @@ public class NotifyService {
     }
 
     @Transactional
-    public NotifyResponse.DetailDTO findByNotiId(SessionUser sessionUser, Long notifyId) {
+    public NotifyResponse.DetailDTO findByNotifyId(SessionUser sessionUser, Long notifyId) {
         User user = userRepository.findById(sessionUser.getId())
                 .orElseThrow(() -> new Exception404("존재하지 않는 유저입니다."));
 
@@ -99,5 +99,32 @@ public class NotifyService {
 
         notify.update(true);
         return new NotifyResponse.DetailDTO(notify);
+    }
+
+    @Transactional
+    public void deleteAllByUserId(SessionUser sessionUser, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new Exception404("존재하지 않는 유저입니다."));
+
+        if (!user.getUserId().equals(sessionUser.getId())) {
+            throw new Exception403("본인 알림만 삭제 가능합니다.");
+        }
+
+        notifyJpaRepository.deleteAllByUserUserId(user.getUserId());
+    }
+
+    @Transactional
+    public void deleteByNotifyId(SessionUser sessionUser, Long notifyId) {
+        User user = userRepository.findById(sessionUser.getId())
+                .orElseThrow(() -> new Exception404("존재하지 않는 유저입니다."));
+
+        Notify notify = notifyJpaRepository.findById(notifyId)
+                .orElseThrow(() -> new Exception404("존재하지 않는 알림입니다."));
+
+        if (!notify.getUser().getUserId().equals(user.getUserId())) {
+            throw new Exception403("본인 알림만 삭제 가능합니다.");
+        }
+
+        notifyJpaRepository.delete(notify);
     }
 }

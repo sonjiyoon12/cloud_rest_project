@@ -33,7 +33,7 @@ public class NotifyRestController {
 
     // 모든 알림 읽기(특정 사용자)
     @Operation(summary = "특정 사용자의 모든 알림 읽기")
-    @GetMapping("/{userId}/all/read")
+    @PutMapping("/{userId}/all")
     public ResponseEntity<?> readAllByUserId(@RequestAttribute("sessionUser")SessionUser sessionUser,
                                              @PathVariable("userId") Long userId) {
         notifyService.readAllByUserId(sessionUser, userId);
@@ -41,12 +41,30 @@ public class NotifyRestController {
     }
 
     // 특정 알림 불러오기
-    @Operation(summary = "특정 알림 불러오기")
-    @GetMapping("/{notifyId}")
+    @Operation(summary = "특정 알림 읽기")
+    @PutMapping("/{notifyId}")
     public ResponseEntity<?> findByNotifyId(@RequestAttribute("sessionUser") SessionUser sessionUser,
                                           @PathVariable("notifyId") Long notifyId) {
 
-        NotifyResponse.DetailDTO notify = notifyService.findByNotiId(sessionUser, notifyId);
+        NotifyResponse.DetailDTO notify = notifyService.findByNotifyId(sessionUser, notifyId);
         return ResponseEntity.ok().body(new ApiUtil<>(notify));
+    }
+
+    // 모든 알림 삭제(특정 사용자)
+    @Operation(summary = "특정 사용자의 모든 알림 삭제")
+    @DeleteMapping("/{userId}/all")
+    public ResponseEntity<?> deleteAllByUserId(@RequestAttribute("sessionUser")SessionUser sessionUser,
+                                             @PathVariable("userId") Long userId) {
+        notifyService.deleteAllByUserId(sessionUser, userId);
+        return ResponseEntity.ok().build();
+    }
+
+    // 특정 알림 삭제
+    @Operation(summary = "특정 알림 삭제")
+    @DeleteMapping("/{notifyId}")
+    public ResponseEntity<?> deleteByNotifyId(@RequestAttribute("sessionUser")SessionUser sessionUser,
+                                             @PathVariable("notifyId") Long notifyId) {
+        notifyService.deleteByNotifyId(sessionUser, notifyId);
+        return ResponseEntity.ok().build();
     }
 }

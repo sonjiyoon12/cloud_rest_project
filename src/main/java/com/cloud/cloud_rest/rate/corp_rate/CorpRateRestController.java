@@ -2,6 +2,8 @@ package com.cloud.cloud_rest.rate.corp_rate;
 
 import com.cloud.cloud_rest._global.SessionUser;
 import com.cloud.cloud_rest._global._core.common.ApiUtil;
+import com.cloud.cloud_rest.rate.user_rate.UserRateRequest;
+import com.cloud.cloud_rest.rate.user_rate.UserRateResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -50,6 +52,16 @@ public class CorpRateRestController {
     public ResponseEntity<?> findByUserId(@RequestParam("userId") Long userId) {
         List<CorpRateResponse.DetailDTO> detailRates = corpRateService.findByUserId(userId);
         return ResponseEntity.ok().body(new ApiUtil<>(detailRates));
+    }
+
+    // 평점 수정
+    @Operation(summary = "기업 평점 수정")
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateById(@PathVariable(name = "id") Long corpRateId,
+                                        @RequestAttribute("sessionUser") SessionUser sessionUser,
+                                        @RequestBody CorpRateRequest.UpdateDTO updateDTO) {
+        CorpRateResponse.DetailDTO updatedRate = corpRateService.updateById(corpRateId, sessionUser, updateDTO);
+        return ResponseEntity.ok().body(new ApiUtil<>(updatedRate));
     }
 
     // 평점 삭제

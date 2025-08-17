@@ -57,6 +57,22 @@ public class CorpRateService {
     }
 
     @Transactional
+    public CorpRateResponse.DetailDTO updateById(Long corpRateId, SessionUser sessionUser, CorpRateRequest.UpdateDTO updateDTO) {
+        Corp corp = corpRepository.findById(sessionUser.getId())
+                .orElseThrow(() -> new Exception404("유저를 찾을 수 없습니다."));
+
+        CorpRate corpRate = corpRateJpaRepository.findById(corpRateId)
+                .orElseThrow(() -> new Exception404("평점 기록을 찾을 수 없습니다."));
+
+        if (!corpRate.getCorp().getCorpId().equals(corp.getCorpId())) {
+            throw new Exception403("본인이 남긴 평점만 수정 가능합니다.");
+        }
+
+        corpRate.setRating(updateDTO.getRating());
+        return new CorpRateResponse.DetailDTO(corpRate);
+    }
+
+    @Transactional
     public void deleteById(Long corpRateId, SessionUser sessionUser) {
         Corp corp = corpRepository.findById(sessionUser.getId())
                 .orElseThrow(() -> new Exception403("평점을 남길 수 있는 권한이 없습니다."));
