@@ -64,7 +64,7 @@
   - 비즈니스 로직 담당  
 
 - **Repository Layer**  
-  - DB 접근 (JPA, QueryDSL 선택 가능)  
+  - DB 접근 (JPA)  
 
 ---
 
