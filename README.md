@@ -55,4 +55,24 @@
 - 게시판(Q&A)  
 
 
-## 🏗 프로젝트 아키텍처
+## 🏗 프로젝트 아키텍처(3계층 구조)
+
+- **Controller Layer**  
+  - REST API 요청/응답 처리  
+
+- **Service Layer**  
+  - 비즈니스 로직 담당  
+
+- **Repository Layer**  
+  - DB 접근 (JPA, QueryDSL 선택 가능)  
+
+---
+
+## ⚡ 주요 기술 스택
+
+- **Spring Web, Spring Security**  
+- **JPA (Hibernate) or MyBatis**  
+- **JWT Token 기반 인증/인가**  
+- **Validation (javax.validation)**  
+- **Swagger 문서 자동화**
+
