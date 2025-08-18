@@ -14,7 +14,7 @@
 | Database | MySQL |
 | ORM | Hibernate |
 | Build Tool | Gradle |
-| 기타 | Lombok, JWT, JPA Auditing |
+| 기타 | Lombok, JWT |
 
 ---
 
