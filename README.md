@@ -14,6 +14,7 @@
 | Database | MySQL |
 | ORM | Hibernate |
 | Build Tool | Gradle |
+| 개발 기간 | 2025.07.31~2025.08.12 |
 | 기타 | Lombok, JWT |
 
 ---
